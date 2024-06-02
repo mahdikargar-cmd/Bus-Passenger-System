@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const userRoutes = require('./routes/userRoutes');
 const coperativeRoutes = require('./routes/CoperativeRoutes');
-
+const destinationRoutes=require('./routes/DestinationRouter');
 class Server {
     constructor() {
         this.app = express();
@@ -36,6 +36,7 @@ class Server {
     setupRoutes() {
         this.app.use('/users', userRoutes);
         this.app.use('/coperative', coperativeRoutes);
+        this.app.use('/destination',destinationRoutes);
     }
 
     startServer() {
@@ -43,7 +44,7 @@ class Server {
             console.log(`Server is running on port ${this.port}`);
         });
         this.app.use((req, res, next) => {
-            console.log(req.body); // Debug line to print incoming request body
+            console.log(req.body);
             next();
         });
     }
