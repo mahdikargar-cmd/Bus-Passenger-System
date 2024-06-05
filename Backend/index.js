@@ -5,11 +5,15 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const userRoutes = require('./routes/userRoutes');
 const coperativeRoutes = require('./routes/CoperativeRoutes');
-const destinationRoutes=require('./routes/DestinationRouter');
+const destinationRoutes = require('./routes/DestinationRouter');
+const driverRoutes = require('./routes/DriverRoutes');
+const busRoutes = require('./routes/BusRoutes');
+const routeRoutes = require('./routes/RouteManagementRouter');
+const busMovement=require('./routes/BusMovementManagementRouter')
 class Server {
     constructor() {
         this.app = express();
-        this.port =  5000;
+        this.port = 5000;
 
         this.connectToDatabase();
         this.configureMiddleware();
@@ -36,16 +40,16 @@ class Server {
     setupRoutes() {
         this.app.use('/users', userRoutes);
         this.app.use('/coperative', coperativeRoutes);
-        this.app.use('/destination',destinationRoutes);
+        this.app.use('/destination', destinationRoutes);
+        this.app.use('/driver', driverRoutes);
+        this.app.use('/bus', busRoutes);
+        this.app.use('/Route', routeRoutes);
+        this.app.use('/busMovement',busMovement)
     }
 
     startServer() {
         this.app.listen(this.port, () => {
             console.log(`Server is running on port ${this.port}`);
-        });
-        this.app.use((req, res, next) => {
-            console.log(req.body);
-            next();
         });
     }
 }

@@ -39,7 +39,7 @@ class DestinationsController {
 
     async updateDestinations(req, res) {
         try {
-            const { id } = req.params;
+                const { id } = req.params;
             const { cityName } = req.body;
 
             if (!cityName) {

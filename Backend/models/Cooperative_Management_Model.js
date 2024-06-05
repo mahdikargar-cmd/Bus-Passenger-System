@@ -10,6 +10,9 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   }
+
+
+
 });
 
 const CoperativeModel = mongoose.model('Coperative', UserSchema);

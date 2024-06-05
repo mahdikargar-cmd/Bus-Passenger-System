@@ -64,9 +64,13 @@
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\WebStorm 2023.2.3\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="ReactBuddySettings">
+    <option name="extensionsIgnore" value="true" />
+  </component>
   <component name="ReactDesignerToolWindowState">
     <option name="myId2Visible">
       <map>
@@ -140,6 +144,15 @@
       <workItem from="1717275655277" duration="5052000" />
       <workItem from="1717306861731" duration="7551000" />
       <workItem from="1717338077746" duration="15009000" />
+      <workItem from="1717395843147" duration="11619000" />
+      <workItem from="1717411993827" duration="1492000" />
+      <workItem from="1717419403773" duration="7000" />
+      <workItem from="1717431427843" duration="9250000" />
+      <workItem from="1717475723099" duration="9527000" />
+      <workItem from="1717491820491" duration="9000" />
+      <workItem from="1717565183002" duration="4227000" />
+      <workItem from="1717579230616" duration="15646000" />
+      <workItem from="1717600096982" duration="10977000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />
