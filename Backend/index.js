@@ -44,7 +44,7 @@ class Server {
         this.app.use('/driver', driverRoutes);
         this.app.use('/bus', busRoutes);
         this.app.use('/Route', routeRoutes);
-        this.app.use('/busMovement',busMovement)
+        this.app.use('/busMovement',busMovement);
     }
 
     startServer() {
