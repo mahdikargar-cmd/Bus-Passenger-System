@@ -8,6 +8,7 @@ const router = express.Router();
 router.post("/registerService", createService);
 router.delete('/deleteService/:id', deleteService);
 router.patch('/updateService/:id', updateService);
+router.get('/:id', getServiceById);
 router.get('/', async (req, res) => {
     try {
         const ServiceModel = await ServicesModel.find();

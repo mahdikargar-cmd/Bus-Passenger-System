@@ -66,8 +66,20 @@ const deleteService = async (req, res) => {
     }
 };
 
+const getServiceById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const service = await ServicesModel.findById(id);
+        if (!service) {
+            return res.status(404).json({ message: 'Service not found' });
+        }
+        res.status(200).json(service);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 module.exports = {
-
+    getServiceById,
     createService,
     updateService,
     deleteService
