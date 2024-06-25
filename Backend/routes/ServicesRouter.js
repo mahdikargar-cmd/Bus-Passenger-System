@@ -1,30 +1,17 @@
 const express = require("express");
-const ServicesController = require("../controllers/ServicesController");
+const {
+    getAllServices, getServiceById, createService, updateService, deleteService
+} = require("../controllers/ServicesController");
 const ServicesModel = require("../models/ServicesModel");
 const router = express.Router();
 
-const servicesController = new ServicesController();
-
-router.post("/registerService", (req, res) => servicesController.InsertServices(req, res));
-router.delete('/deleteService/:id', (req, res) => servicesController.deleteServices(req, res));
-router.patch('/updateService/:id', (req, res) => servicesController.updateServices(req, res));
+router.post("/registerService", createService);
+router.delete('/deleteService/:id', deleteService);
+router.patch('/updateService/:id', updateService);
 router.get('/', async (req, res) => {
     try {
-        const services = await ServicesModel.find();
-        res.status(200).json(services);
-    } catch (error) {
-        res.status(500).json({message: error.message});
-    }
-});
-
-// افزودن این مسیر برای دریافت جزئیات یک سرویس خاص
-router.get('/:id', async (req, res) => {
-    try {
-        const service = await ServicesModel.findById(req.params.id).populate('seatStatuses');
-        if (!service) {
-            return res.status(404).json({ message: "Service not found" });
-        }
-        res.status(200).json(service);
+        const ServiceModel = await ServicesModel.find();
+        res.status(200).json(ServiceModel);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

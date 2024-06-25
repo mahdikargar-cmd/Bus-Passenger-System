@@ -9,11 +9,13 @@ const destinationRoutes = require('./routes/DestinationRouter');
 const driverRoutes = require('./routes/DriverRoutes');
 const busRoutes = require('./routes/BusRoutes');
 const routeRoutes = require('./routes/RouteManagementRouter');
-const busMovement=require('./routes/BusMovementManagementRouter')
+const busMovement = require('./routes/BusMovementManagementRouter');
+const servicesRoutes = require('./routes/ServicesRouter'); // Add this line
+
 class Server {
     constructor() {
         this.app = express();
-        this.port = 5000;
+        this.port =  5000; // Update to use environment variable
 
         this.connectToDatabase();
         this.configureMiddleware();
@@ -22,9 +24,8 @@ class Server {
     }
 
     connectToDatabase() {
-        mongoose.connect("mongodb://127.0.0.1:27017/Travel", {
+        mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/Travel", { // Use environment variable
             useNewUrlParser: true,
-            useCreateIndex: true,
             useUnifiedTopology: true
         }).then(() => console.log('mongodb connected'))
             .catch(err => console.error('error in mongodb:', err));
@@ -44,7 +45,8 @@ class Server {
         this.app.use('/driver', driverRoutes);
         this.app.use('/bus', busRoutes);
         this.app.use('/Route', routeRoutes);
-        this.app.use('/busMovement',busMovement);
+        this.app.use('/busMovement', busMovement);
+        this.app.use('/services', servicesRoutes); // Add this line
     }
 
     startServer() {

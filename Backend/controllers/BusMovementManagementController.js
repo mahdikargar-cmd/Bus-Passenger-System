@@ -13,14 +13,7 @@ class BusMovementController {
         }
     }
 
-    async getBusMovements(req, res) {
-        try {
-            const busMovements = await busMovementModel.find().populate('busName origin destination');
-            res.status(200).json(busMovements);
-        } catch (error) {
-            res.status(500).json({message: error.message});
-        }
-    }
+
 
     async deleteBusMovement(req, res) {
         try {
