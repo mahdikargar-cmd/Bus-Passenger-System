@@ -85,7 +85,7 @@
       </map>
     </option>
   </component>
-  <component name="RunManager" selected="npm.beckend start">
+  <component name="RunManager" selected="npm.front start">
     <configuration name="beckend start" type="js.build_tools.npm" temporary="true">
       <package-json value="$PROJECT_DIR$/Backend/package.json" />
       <command value="run" />
@@ -157,7 +157,11 @@
       <workItem from="1717600096982" duration="10977000" />
       <workItem from="1719295484659" duration="17000" />
       <workItem from="1719295706217" duration="25015000" />
-      <workItem from="1719355545949" duration="4564000" />
+      <workItem from="1719355545949" duration="5490000" />
+      <workItem from="1719425050519" duration="24000" />
+      <workItem from="1719425378078" duration="3656000" />
+      <workItem from="1719462098490" duration="11938000" />
+      <workItem from="1719481956103" duration="4894000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />
