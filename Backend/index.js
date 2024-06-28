@@ -12,7 +12,9 @@ const routeRoutes = require('./routes/RouteManagementRouter');
 const busMovement = require('./routes/BusMovementManagementRouter');
 const servicesRoutes = require('./routes/ServicesRouter');
 const ticketRoutes = require('./routes/ticketsRoute');
-const adminRoutes=require('./AAA/routes/AdminRoutes');
+const adminRoutes = require('./AAA/routes/AdminRoutes');
+const seatsRoutes = require('./routes/SeatStatusRouter');
+
 class Server {
     constructor() {
         this.app = express();
@@ -49,8 +51,8 @@ class Server {
         this.app.use('/busMovement', busMovement);
         this.app.use('/services', servicesRoutes);
         this.app.use('/tickets', ticketRoutes);
-        this.app.use('/admin',adminRoutes)
-
+        this.app.use('/admin', adminRoutes);
+        this.app.use('/seats', seatsRoutes);
     }
 
     startServer() {
