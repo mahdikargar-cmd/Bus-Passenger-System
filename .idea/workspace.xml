@@ -85,7 +85,16 @@
       </map>
     </option>
   </component>
-  <component name="RunManager" selected="npm.front start">
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="F:\Uni_project\travel\Backend\view" />
+      <recent name="F:\Uni_project\travel\Backend\AAA\routes" />
+      <recent name="F:\Uni_project\travel\Backend\AAA\models" />
+      <recent name="F:\Uni_project\travel\Backend\controllers" />
+      <recent name="F:\Uni_project\travel\Backend\AAA\controllers" />
+    </key>
+  </component>
+  <component name="RunManager" selected="npm.beckend start">
     <configuration name="beckend start" type="js.build_tools.npm" temporary="true">
       <package-json value="$PROJECT_DIR$/Backend/package.json" />
       <command value="run" />
@@ -161,7 +170,10 @@
       <workItem from="1719425050519" duration="24000" />
       <workItem from="1719425378078" duration="3656000" />
       <workItem from="1719462098490" duration="11938000" />
-      <workItem from="1719481956103" duration="4894000" />
+      <workItem from="1719481956103" duration="7819000" />
+      <workItem from="1719494490486" duration="269000" />
+      <workItem from="1719557214449" duration="329000" />
+      <workItem from="1719568442655" duration="17250000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />
