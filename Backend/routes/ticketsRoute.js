@@ -1,8 +1,10 @@
+// routes/ticketsRoute.js
 const express = require('express');
 const router = express.Router();
-const { createTicket } = require('../controllers/ticketController');
+const { createTicket, cancelTicket, getTicketsByPhone } = require('../controllers/ticketController');
 
-// Define the POST route for creating a ticket
 router.post('/', createTicket);
+router.delete('/:ticketId', cancelTicket);
+router.get('/phone/:phone', getTicketsByPhone);
 
 module.exports = router;
