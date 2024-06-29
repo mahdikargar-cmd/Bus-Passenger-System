@@ -90,9 +90,9 @@
       <recent name="F:\Uni_project\travel\front\src\Component" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="F:\Uni_project\travel\Backend\view" />
       <recent name="F:\Uni_project\travel\front\src\Component\contexts" />
       <recent name="F:\Uni_project\travel\front\src\Component\UserPanel" />
-      <recent name="F:\Uni_project\travel\Backend\view" />
       <recent name="F:\Uni_project\travel\Backend\AAA\routes" />
       <recent name="F:\Uni_project\travel\Backend\AAA\models" />
     </key>
@@ -103,6 +103,16 @@
       <command value="run" />
       <scripts>
         <script value="start" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/front/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="build" />
       </scripts>
       <node-interpreter value="project" />
       <envs />
@@ -120,11 +130,13 @@
     </configuration>
     <list>
       <item itemvalue="npm.front start" />
+      <item itemvalue="npm.build" />
       <item itemvalue="npm.beckend start" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="npm.beckend start" />
+        <item itemvalue="npm.build" />
         <item itemvalue="npm.front start" />
       </list>
     </recent_temporary>
@@ -178,6 +190,8 @@
       <workItem from="1719557214449" duration="329000" />
       <workItem from="1719568442655" duration="38223000" />
       <workItem from="1719646799353" duration="5439000" />
+      <workItem from="1719658877756" duration="2328000" />
+      <workItem from="1719688694589" duration="615000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />

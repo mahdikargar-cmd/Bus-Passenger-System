@@ -1,25 +1,20 @@
 const mongoose = require('mongoose');
 
-const UserSchema = new mongoose.Schema({
+const AmanatSchema = new mongoose.Schema({
     user: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     weight: {
-        type: String,
+        type: Number,
         required: true
     },
     phoneNumber: {
         type: String,
         required: true
-    },
-    createdAt: {type: Date, default: Date.now},
-    updatedAt: {type: Date, default: Date.now}
-
-
+    }
 });
 
-const CoperativeModel = mongoose.model('Amanat', UserSchema);
+const Amanat = mongoose.model('Amanat', AmanatSchema);
 
-module.exports = CoperativeModel;
+module.exports = Amanat;

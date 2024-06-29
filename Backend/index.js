@@ -55,7 +55,6 @@ class Server {
         this.app.use('/admin', adminRoutes);
         this.app.use('/seats', seatsRoutes);
         this.app.use('/amanat', amanatRoutes);
-
     }
 
     startServer() {
