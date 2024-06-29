@@ -14,6 +14,7 @@ const servicesRoutes = require('./routes/ServicesRouter');
 const ticketRoutes = require('./routes/ticketsRoute');
 const adminRoutes = require('./AAA/routes/AdminRoutes');
 const seatsRoutes = require('./routes/SeatStatusRouter');
+const amanatRoutes = require('./routes/AmanatRoutes');
 
 class Server {
     constructor() {
@@ -53,6 +54,8 @@ class Server {
         this.app.use('/tickets', ticketRoutes);
         this.app.use('/admin', adminRoutes);
         this.app.use('/seats', seatsRoutes);
+        this.app.use('/amanat', amanatRoutes);
+
     }
 
     startServer() {
