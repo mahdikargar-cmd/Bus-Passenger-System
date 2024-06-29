@@ -1,6 +1,9 @@
 const express = require("express");
 const {
-    getAllServices, getServiceById, createService, updateService, deleteService
+    getServiceById,
+    createService,
+    updateService,
+    deleteService
 } = require("../controllers/ServicesController");
 const ServicesModel = require("../models/ServicesModel");
 const router = express.Router();

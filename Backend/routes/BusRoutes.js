@@ -1,19 +1,51 @@
-const express = require("express");
-const BusManagementController = require("../controllers/BusManagementController");
-const BusModel = require('../models/BusManagementModel');
+const express = require('express');
 const router = express.Router();
+const Bus = require('../models/BusManagementModel');
 
-const busController = new BusManagementController();
-
-router.post("/registerBus", (req, res) => busController.registerBus(req, res));
-router.delete('/deleteBus/:id', (req, res) => busController.deleteBus(req, res));
-router.patch('/updateBus/:id', (req, res) => busController.updateBus(req, res));
+// Get all buses
 router.get('/', async (req, res) => {
     try {
-        const buses = await BusModel.find();
-        res.status(200).json(buses);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+        const buses = await Bus.find();
+        res.json(buses);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Add a new bus
+router.post('/registerBus', async (req, res) => {
+    const bus = new Bus(req.body);
+    try {
+        const newBus = await bus.save();
+        res.status(201).json(newBus);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+// Update a bus
+router.patch('/updateBus/:id', async (req, res) => {
+    try {
+        const updatedBus = await Bus.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!updatedBus) {
+            return res.status(404).json({ message: 'Bus not found' });
+        }
+        res.json(updatedBus);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+// Delete a bus
+router.delete('/deleteBus/:id', async (req, res) => {
+    try {
+        const bus = await Bus.findByIdAndDelete(req.params.id);
+        if (!bus) {
+            return res.status(404).json({ message: 'Bus not found' });
+        }
+        res.json({ message: 'Bus deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
 });
 
