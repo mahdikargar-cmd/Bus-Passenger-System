@@ -13,7 +13,7 @@ const updateSeatStatus = async (req, res) => {
         const seatStatus = await SeatStatusModel.findOneAndUpdate(
             { serviceId, seatNumber },
             { isOccupied, ticketNumber },
-            { new: true, upsert: true } // upsert: true will create the document if it doesn't exist
+            { new: true, upsert: true }
         );
 
         res.status(200).json(seatStatus);
@@ -24,7 +24,6 @@ const updateSeatStatus = async (req, res) => {
 
 const getSeatStatuses = async (req, res) => {
     const { serviceId } = req.params;
-    console.log(`Service ID: ${serviceId}`);
 
     if (!mongoose.Types.ObjectId.isValid(serviceId)) {
         return res.status(400).json({ message: "Invalid service ID" });
@@ -32,7 +31,6 @@ const getSeatStatuses = async (req, res) => {
 
     try {
         const seatStatuses = await SeatStatusModel.find({ serviceId });
-        console.log(`Seat Statuses: ${JSON.stringify(seatStatuses)}`);
         res.status(200).json(seatStatuses);
     } catch (error) {
         res.status(500).json({ message: error.message });
