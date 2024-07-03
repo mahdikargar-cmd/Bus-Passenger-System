@@ -4,7 +4,7 @@ const RouteSchema = new mongoose.Schema({
     busName: { type: mongoose.Schema.Types.ObjectId, ref: 'Bus', required: true },
     origin: { type: mongoose.Schema.Types.ObjectId, ref: 'City', required: true },
     destination: { type: mongoose.Schema.Types.ObjectId, ref: 'City', required: true },
-    days: { type: [String], required: true },
+    wedays: { type: [String], required: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
 });
