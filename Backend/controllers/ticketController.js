@@ -12,7 +12,7 @@ const deleteTicketAndSeat = async (req, res) => {
         // حذف بلیط
         const ticket = await TicketModel.findByIdAndDelete(ticketId);
         if (!ticket) {
-            return res.status(404).json({ message: 'Ticket not found' });
+            return res.status(404).json({ message: 'بلیط پیدا نشد  ' });
         }
 
         // به‌روز رسانی وضعیت صندلی
@@ -26,7 +26,7 @@ const deleteTicketAndSeat = async (req, res) => {
             return res.status(404).json({ message: 'Seat status not found' });
         }
 
-        res.status(200).json({ message: 'Ticket and seat status updated successfully' });
+        res.status(200).json({ message: 'بلیط با موفقیت لغو شد' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

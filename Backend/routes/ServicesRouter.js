@@ -1,4 +1,5 @@
 const express = require("express");
+const Service=require('../models/ServicesModel')
 const {
     getServiceById,
     createService,
@@ -11,8 +12,29 @@ const RouteModel = require('../models/RouteManagementModel');
 const CityModel = require('../models/DestinationsModel');
 
 router.post("/registerService", createService);
-router.delete('/deleteService/:id', deleteService);
-router.patch('/updateService/:id', updateService);
+router.patch('/updateService/:id', async (req, res) => {
+    try {
+        const updatedService = await Service.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!updatedService) {
+            return res.status(404).send("Service not found");
+        }
+        res.status(200).send(updatedService);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+router.delete('/deleteService/:id', async (req, res) => {
+    try {
+        const deletedService = await Service.findByIdAndDelete(req.params.id);
+        if (!deletedService) {
+            return res.status(404).send("Service not found");
+        }
+        res.status(200).send("Service deleted");
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
 router.get('/:id', getServiceById);
 router.get('/services', async (req, res) => {
     try {

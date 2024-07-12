@@ -97,7 +97,7 @@
       <recent name="F:\Uni_project\travel\Backend\AAA\models" />
     </key>
   </component>
-  <component name="RunManager" selected="npm.beckend start">
+  <component name="RunManager" selected="npm.front start">
     <configuration name="beckend start" type="js.build_tools.npm" temporary="true">
       <package-json value="$PROJECT_DIR$/Backend/package.json" />
       <command value="run" />
@@ -196,6 +196,7 @@
       <workItem from="1719900555985" duration="4271000" />
       <workItem from="1719911775218" duration="11376000" />
       <workItem from="1719924785146" duration="9466000" />
+      <workItem from="1720753749778" duration="5199000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />
