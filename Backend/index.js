@@ -47,6 +47,8 @@ class Server {
         this.app.use('/coperative', coperativeRoutes);
         this.app.use('/destination', destinationRoutes);
         this.app.use('/driver', driverRoutes);
+        this.app.use('/driverreports', driverRoutes);
+
         this.app.use('/bus', busRoutes);
         this.app.use('/Route', routeRoutes);
         this.app.use('/busMovement', busMovement);
@@ -55,6 +57,7 @@ class Server {
         this.app.use('/admin', adminRoutes);
         this.app.use('/seats', seatsRoutes);
         this.app.use('/amanat', amanatRoutes);
+
     }
 
     startServer() {

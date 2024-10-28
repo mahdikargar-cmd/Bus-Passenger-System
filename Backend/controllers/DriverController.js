@@ -1,18 +1,18 @@
 const DriverModel = require('../models/DriversModel');
+const DriverReportModel = require('../models/DriverReportModel');
 
 class DriverController {
-
     async registerDrivers(req, res) {
         try {
-            const {name, codeMelli, numberPhone, gender, age, dateOfBirth} = req.body;
-            if (!name  || !codeMelli || !numberPhone || !gender || !age || !dateOfBirth) {
+            const { name, codeMelli, numberPhone, gender, age, dateOfBirth } = req.body;
+            if (!name || !codeMelli || !numberPhone || !gender || !age || !dateOfBirth) {
                 return res.status(400).json({
                     status: "fail",
                     message: "تمام مشخصات فرم را پر کنید"
                 });
             }
 
-            const exist = await DriverModel.findOne({codeMelli});
+            const exist = await DriverModel.findOne({ codeMelli });
             if (exist) {
                 return res.status(400).json({
                     status: "failed",
@@ -21,6 +21,10 @@ class DriverController {
             }
 
             const newDriver = await DriverModel.create({
+                name, codeMelli, numberPhone, gender, age, dateOfBirth
+            });
+
+            const newDriverReport = await DriverReportModel.create({
                 name, codeMelli, numberPhone, gender, age, dateOfBirth
             });
 
@@ -36,15 +40,14 @@ class DriverController {
                 status: "fail",
                 message: error.message
             });
-
         }
     }
 
     async updateDrivers(req, res) {
         try {
-            const {id} = req.params;
-            const {name, codeMelli, numberPhone, gender, age, dateOfBirth} = req.body;
-            if (!name  || !codeMelli || !numberPhone || !gender || !age || !dateOfBirth) {
+            const { id } = req.params;
+            const { name, codeMelli, numberPhone, gender, age, dateOfBirth } = req.body;
+            if (!name || !codeMelli || !numberPhone || !gender || !age || !dateOfBirth) {
                 return res.status(400).json({
                     status: "fail",
                     message: "تمام مشخصات فرم را پر کنید"
@@ -81,7 +84,7 @@ class DriverController {
 
     async deleteDrivers(req, res) {
         try {
-            const {id} = req.params;
+            const { id } = req.params;
             const deleteDriver = await DriverModel.findByIdAndDelete(id);
             if (!deleteDriver) {
                 return res.status(400).json({
