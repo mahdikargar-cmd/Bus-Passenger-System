@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body{
+direction: rtl;
+    font-family: 'Vazir', sans-serif;
+@apply dark:bg-dark-black bg-light-mode-bg
+}

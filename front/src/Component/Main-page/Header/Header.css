@@ -1,0 +1,17 @@
+.custom-icon{
+    @apply transition-all ease-in-out delay-150 hover:scale-110 hover:text-yellow-300 duration-300 hover:-translate-y-1
+}
+.custom-nav-ul{
+    @apply  hover:text-yellow-300 dark:hover:text-white
+}
+/* In your Header.css file */
+.dark-mode {
+    background-color: #000;
+    color: #fff;
+  }
+  
+  .light-mode {
+    background-color: #fff;
+    color: #000;
+  }
+  
