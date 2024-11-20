@@ -28,7 +28,7 @@ class Server {
     }
 
     connectToDatabase() {
-        mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/Travel", {
+        mongoose.connect( "mongodb+srv://mahdikargar456:8Og6RA14J8LNXMHW@travel.tvptc.mongodb.net/?retryWrites=true&w=majority&appName=Travel", {
             useNewUrlParser: true,
             useUnifiedTopology: true
         }).then(() => console.log('mongodb connected'))
