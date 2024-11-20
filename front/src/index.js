@@ -9,7 +9,7 @@ import {AuthProvider} from "./Component/contexts/AuthContext";
 
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement);
-
+//install vercel
 root.render(
     <BrowserRouter>
             <React.StrictMode>
