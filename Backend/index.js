@@ -41,7 +41,7 @@ class Server {
     configureMiddleware() {
         // تنظیم CORS برای دسترسی به فرانت‌اند روی رندر
         this.app.use(cors({
-            origin: "https://bus-passenger-system.onrender.com", // آدرس فرانت‌اند
+            origin: "https://safarinoo.onrender.com", // آدرس فرانت‌اند
             credentials: true, // در صورت نیاز به ارسال کوکی‌ها
         }));
 
