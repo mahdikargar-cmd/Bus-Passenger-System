@@ -13,3 +13,7 @@ services:
     startCommand: npm run start
     plan: free
     branches: main
+<<<<<<< Updated upstream
+=======
+  
+>>>>>>> Stashed changes
