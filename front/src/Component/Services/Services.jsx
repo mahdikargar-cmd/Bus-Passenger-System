@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Header } from "../Main-page/Header/Header";
-import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import api from "../../Services/Api";
 import {FaBus} from "react-icons/fa";
 import {CiClock2} from "react-icons/ci";

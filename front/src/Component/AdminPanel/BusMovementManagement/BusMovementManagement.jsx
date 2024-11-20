@@ -4,7 +4,9 @@ import Modal from "react-modal";
 import Select from 'react-select';
 import moment from 'moment-jalaali';
 import api from "../../../Services/Api";
-import DatePicker from "react-datepicker2";
+import DatePicker, {DateObject} from "react-multi-date-picker";
+import persian from "react-date-object/calendars/persian";
+import persian_fa from "react-date-object/locales/persian_fa";
 
 export const BusMovementManagement = () => {
     const { register, handleSubmit, reset, setValue, control, formState: { errors } } = useForm();
@@ -19,6 +21,7 @@ export const BusMovementManagement = () => {
     const [currentBusMovement, setCurrentBusMovement] = useState(null);
     const [moveDate, setMoveDate] = useState(null);
     const [moveTime, setMoveTime] = useState(null);
+    const [dateOfBirth, setDateOfBirth] = useState(null);
 
     useEffect(() => {
         fetchRoutes();
@@ -80,6 +83,9 @@ export const BusMovementManagement = () => {
         data.moveDate = moment(moveDate).format('YYYY-MM-DD');
         data.moveTime = moveTime;
 
+
+        data.dateOfBirth = new Date(dateOfBirth.unix * 1000).toISOString();
+
         console.log("Submitting data:", data);
 
         try {
@@ -111,6 +117,11 @@ export const BusMovementManagement = () => {
             setMoveTime(busMovement.moveTime);
             setIsEdit(true);
             setCurrentBusMovement(busMovement);
+            setDateOfBirth(new DateObject({
+                date: new Date(busMovement.dateOfBirth),
+                calendar: persian,
+                locale: persian_fa
+            }));
             setSelectedBus({
                 value: busMovement.busName,
                 label: buses.find(b => b._id === busMovement.busName)?.busName
@@ -124,6 +135,7 @@ export const BusMovementManagement = () => {
             setSelectedRoute(null);
             setMoveDate(null);
             setMoveTime(null);
+
         }
         setOpenModal(true);
     };
@@ -231,14 +243,14 @@ export const BusMovementManagement = () => {
                                     rules={{ required: true }}
                                     render={({ field }) => (
                                         <DatePicker
-                                            {...field}
-                                            timePicker={false}
-                                            value={moveDate}
-                                            onChange={(date) => {
-                                                field.onChange(date);
-                                                setMoveDate(date);
-                                            }}                                            isGregorian={false}
-                                            className="p-2 mr-2 rounded text-black mt-2"
+                                            calendar={persian}
+                                            locale={persian_fa}
+                                            value={dateOfBirth}
+                                            onChange={date => setDateOfBirth(date)}
+                                            format="YYYY/MM/DD"
+                                            inputClass="p-2 mr-2 rounded text-black mt-2"
+                                            className="rmdp-mobile"
+                                            calendarPosition="bottom-right"
                                         />
                                     )}
                                 />

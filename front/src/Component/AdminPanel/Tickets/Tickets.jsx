@@ -3,9 +3,6 @@ import React, {useState} from "react";
 import {BiEdit} from "react-icons/bi";
 import {AiFillDelete} from "react-icons/ai";
 import Modal from "react-modal";
-import {Calendar} from "react-multi-date-picker";
-import persian from "react-date-object/calendars/persian";
-import persian_fa from "react-date-object/locales/persian_fa";
 import {FaPrint} from "react-icons/fa";
 import {CgArrowsExchangeAlt} from "react-icons/cg";
 

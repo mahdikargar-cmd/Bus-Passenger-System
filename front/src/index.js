@@ -1,5 +1,4 @@
-import React, {StrictMode} from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
@@ -9,7 +8,6 @@ import {AuthProvider} from "./Component/contexts/AuthContext";
 
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement);
-//install vercel
 root.render(
     <BrowserRouter>
             <React.StrictMode>

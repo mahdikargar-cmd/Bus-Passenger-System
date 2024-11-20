@@ -1,42 +1,46 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { useForm } from "react-hook-form";
-import DatePicker from "react-datepicker2";
+import DatePicker from "react-multi-date-picker";
+import persian from "react-date-object/calendars/persian";
+import persian_fa from "react-date-object/locales/persian_fa";
+import { DateObject } from "react-multi-date-picker";
 import { BiEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
 import api from "../../../Services/Api";
-import moment from "moment-jalaali";
 
 export const Drivers = () => {
     const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm();
     const [openModal, setOpenModal] = useState(false);
     const [dateOfBirth, setDateOfBirth] = useState(null);
     const [driver, setDriver] = useState([]);
-    const [driverCount, setDriverCount] = useState(0); // تعداد راننده‌ها
+    const [driverCount, setDriverCount] = useState(0);
     const [isEdit, setIsEdit] = useState(false);
     const [currentDriver, setCurrentDriver] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
-        const fetchDrivers = async () => {
-            try {
-                const response = await api.get("driver");
-                setDriver(response.data);
-                setDriverCount(response.data.length);
-            } catch (error) {
-                console.error("Error fetching drivers:", error);
-            }
-        };
-
         fetchDrivers();
     }, []);
+
+    const fetchDrivers = async () => {
+        try {
+            const response = await api.get("driver");
+            setDriver(response.data);
+            setDriverCount(response.data.length);
+        } catch (error) {
+            console.error("Error fetching drivers:", error);
+        }
+    };
 
     const onSubmit = async (data) => {
         if (!dateOfBirth) {
             console.error("Date of birth is required.");
             return;
         }
-        // تبدیل dateOfBirth به فرمت جاوااسکریپت
-        data.dateOfBirth = dateOfBirth.toDate();
+
+        // Convert date to ISO format
+        data.dateOfBirth = new Date(dateOfBirth.unix * 1000).toISOString();
 
         try {
             if (isEdit && currentDriver) {
@@ -65,13 +69,18 @@ export const Drivers = () => {
             setValue("numberPhone", driver.numberPhone);
             setValue("gender", driver.gender);
             setValue("age", driver.age);
-            setDateOfBirth(driver.dateOfBirth ? moment(driver.dateOfBirth) : null);
+            setDateOfBirth(new DateObject({
+                date: new Date(driver.dateOfBirth),
+                calendar: persian,
+                locale: persian_fa
+            }));
             setIsEdit(true);
             setCurrentDriver(driver);
         } else {
             reset();
             setIsEdit(false);
             setCurrentDriver(null);
+            setDateOfBirth(null);
         }
         setOpenModal(true);
     };
@@ -82,126 +91,209 @@ export const Drivers = () => {
     };
 
     const handleDeleteDriver = async (id) => {
-        try {
-            await api.delete(`driver/deleteDriver/${id}`, {
-                headers: { 'Content-Type': 'application/json' }
-            });
-            setDriver(driver.filter(item => item._id !== id));
-            setDriverCount(driverCount - 1);
-        } catch (error) {
-            console.error("Error deleting driver:", error);
+        if (window.confirm("آیا از حذف این راننده اطمینان دارید؟")) {
+            try {
+                await api.delete(`driver/deleteDriver/${id}`, {
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                setDriver(driver.filter(item => item._id !== id));
+                setDriverCount(driverCount - 1);
+            } catch (error) {
+                console.error("Error deleting driver:", error);
+            }
         }
     };
 
     const formatDate = (date) => {
-        return moment(date).format('jYYYY/jMM/jDD');
+        const dateObj = new DateObject({
+            date: new Date(date),
+            calendar: persian,
+            locale: persian_fa
+        });
+        return dateObj.format("YYYY/MM/DD");
     };
+
+    const filteredDrivers = driver.filter(d =>
+        d.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        d.codeMelli.includes(searchTerm) ||
+        d.numberPhone.includes(searchTerm)
+    );
 
     return (
         <>
             <div className="grid grid-cols-12 mb-3">
                 <div className="col-span-6 pr-3 pl-3 pt-2 rounded flex justify-between bg-green-300 ml-7">
                     <p className="text-fuchsia-900">مدیریت رانندگان</p>
-                    <button onClick={() => isOpen(null)} className="text-fuchsia-900 p-1">افزودن</button>
+                    <button
+                        onClick={() => isOpen(null)}
+                        className="text-fuchsia-900 bg-white px-4 py-1 rounded hover:bg-green-200 transition-colors"
+                    >
+                        افزودن
+                    </button>
                 </div>
                 <div className="flex justify-between col-span-6 bg-green-300 p-2 rounded">
                     <p className="text-white">جستجو</p>
-                    <input type="search" className="rounded w-[400px]" />
+                    <input
+                        type="search"
+                        className="rounded w-[400px] px-3 py-1 focus:outline-none focus:ring-2 focus:ring-green-400"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="جستجو بر اساس نام، کد ملی یا شماره تماس..."
+                    />
                 </div>
             </div>
-            <div className="grid grid-cols-12 bg-slate-300 ">
-                {driver.length > 0 ? driver.map((driver, index) => (
-                    <div key={index} className="flex flex-nowrap  m-2 p-2 col-span-12">
-                        <div className="col-span-1 ml-10   ">شماره {index + 1}</div>
-                        <div className="col-span-1 ml-10  ">نام ونام خانوادگی : {driver.name}</div>
-                        <div className="col-span-2 ml-10  ">کدملی : {driver.codeMelli}</div>
-                        <div className="col-span-3 ml-10  ">شماره همراه : {driver.numberPhone}</div>
-                        <div className="col-span-2 ml-10  ">جنسیت : {driver.gender}</div>
-                        <div className="col-span-1 ml-10 ">سن : {driver.age}</div>
-                        <div className="col-span-1 ml-10 ">تاریخ تولد : {formatDate(driver.dateOfBirth)}</div>
-                        <div className="col-span-1 ml-14  font-semibold text-[22px]" onClick={() => isOpen(driver)}><BiEdit /></div>
-                        <div className="col-span-1 ml-14  font-semibold text-[22px]" onClick={() => handleDeleteDriver(driver._id)}><AiFillDelete /></div>
-                    </div>
-                )) : (<p>هیچ راننده ای وجود ندارد</p>)}
+
+            <div className="bg-slate-300 rounded-lg overflow-hidden">
+                {filteredDrivers.length > 0 ? (
+                    filteredDrivers.map((driver, index) => (
+                        <div key={index} className="flex items-center m-2 p-3 bg-white bg-opacity-50 rounded">
+                            <div className="w-12 text-center">{index + 1}</div>
+                            <div className="flex-1">نام: {driver.name}</div>
+                            <div className="flex-1">کدملی: {driver.codeMelli}</div>
+                            <div className="flex-1">تلفن: {driver.numberPhone}</div>
+                            <div className="flex-1">جنسیت: {driver.gender}</div>
+                            <div className="w-20">سن: {driver.age}</div>
+                            <div className="w-32">تولد: {formatDate(driver.dateOfBirth)}</div>
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => isOpen(driver)}
+                                    className="p-1 text-blue-600 hover:text-blue-800"
+                                >
+                                    <BiEdit size={20} />
+                                </button>
+                                <button
+                                    onClick={() => handleDeleteDriver(driver._id)}
+                                    className="p-1 text-red-600 hover:text-red-800"
+                                >
+                                    <AiFillDelete size={20} />
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <p className="text-center py-4">هیچ راننده‌ای یافت نشد</p>
+                )}
             </div>
 
             <Modal
                 isOpen={openModal}
                 onRequestClose={closeModal}
-                className="bg-slate-500 w-[700px] flex justify-center text-white p-2 mt-20 mr-[30%] h-[500px] rounded"
+                className="bg-white w-[700px] rounded-lg shadow-xl fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                overlayClassName="fixed inset-0 bg-black bg-opacity-50"
             >
-                <div>
-                    <h1 className="mt-4 text-[20px] font-semibold mb-5">
+                <div className="p-6">
+                    <h1 className="text-2xl font-bold mb-6 text-gray-800">
                         {isEdit ? "ویرایش مشخصات راننده" : "ثبت راننده جدید"}
                     </h1>
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <div className="grid grid-cols-12">
-                            <div className="col-span-6">
-                                <label className="ml-5 mr-7">نام و نام خانوادگی</label>
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                        <div className="grid grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-gray-700 mb-2">نام و نام خانوادگی</label>
                                 <input
-                                    className="p-2 rounded mr-7 text-black mt-2"
+                                    className="w-full p-2 border rounded focus:ring-2 focus:ring-green-400 focus:border-transparent"
                                     type="text"
                                     placeholder="نام و نام خانوادگی"
                                     {...register("name", { required: "این فیلد ضروری است" })}
                                 />
-                                {errors.name && <p className="text-red-500">{errors.name.message}</p>}
+                                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
                             </div>
-                            <div className="col-span-6 flex items-center flex-col">
-                                <label>کدملی</label>
+                            <div>
+                                <label className="block text-gray-700 mb-2">کد ملی</label>
                                 <input
-                                    className="p-2 mr-2 rounded text-black mt-2"
+                                    className="w-full p-2 border rounded focus:ring-2 focus:ring-green-400 focus:border-transparent"
                                     type="text"
-                                    placeholder="کدملی"
-                                    {...register("codeMelli", { required: "این فیلد ضروری است" })}
+                                    placeholder="کد ملی"
+                                    {...register("codeMelli", {
+                                        required: "این فیلد ضروری است",
+                                        pattern: {
+                                            value: /^\d{10}$/,
+                                            message: "کد ملی باید ۱۰ رقم باشد"
+                                        }
+                                    })}
                                 />
-                                {errors.codeMelli && <p className="text-red-500">{errors.codeMelli.message}</p>}
+                                {errors.codeMelli && <p className="text-red-500 text-sm mt-1">{errors.codeMelli.message}</p>}
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-12 mt-2">
-                            <div className="col-span-6 mr-2 flex-col mt-52 flex">
-                                <label>تاریخ تولد</label>
+                        <div className="grid grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-gray-700 mb-2">تاریخ تولد</label>
                                 <DatePicker
-                                    timePicker={false}
+                                    calendar={persian}
+                                    locale={persian_fa}
                                     value={dateOfBirth}
-                                    onChange={date => setDateOfBirth(date)}
-                                    isGregorian={false}
-                                    className="p-2 mr-2 rounded text-black mt-2"
+                                    onChange={setDateOfBirth}
+                                    format="YYYY/MM/DD"
+                                    inputClass="w-full p-2 border rounded focus:ring-2 focus:ring-green-400 focus:border-transparent"
+                                    calendarPosition="bottom-right"
                                 />
                             </div>
-                            <div className="col-span-6">
-                                <div className="flex flex-col items-center">
-                                    <label>شماره همراه</label>
-                                    <input
-                                        className="p-2 mr-2 rounded text-black mt-2"
-                                        type="tel"
-                                        placeholder="شماره همراه"
-                                        {...register("numberPhone", { required: "این فیلد ضروری است" })}
-                                    />
-                                    {errors.numberPhone && <p className="text-red-500">{errors.numberPhone.message}</p>}
-                                    <label>جنسیت</label>
-                                    <select
-                                        className="pr-20 pl-20 pt-2 pb-2 mr-2 rounded text-black mt-2"
-                                        {...register("gender", { required: "این فیلد ضروری است" })}
-                                    >
-                                        <option value="مرد">مرد</option>
-                                        <option value="زن">زن</option>
-                                    </select>
-                                    {errors.gender && <p className="text-red-500">{errors.gender.message}</p>}
-                                    <label>سن</label>
-                                    <input
-                                        className="p-2 mr-2 rounded text-black mt-2"
-                                        type="number"
-                                        placeholder="سن"
-                                        {...register("age", { required: "این فیلد ضروری است" })}
-                                    />
-                                    {errors.age && <p className="text-red-500">{errors.age.message}</p>}
-                                </div>
+                            <div>
+                                <label className="block text-gray-700 mb-2">شماره تماس</label>
+                                <input
+                                    className="w-full p-2 border rounded focus:ring-2 focus:ring-green-400 focus:border-transparent"
+                                    type="tel"
+                                    placeholder="شماره تماس"
+                                    {...register("numberPhone", {
+                                        required: "این فیلد ضروری است",
+                                        pattern: {
+                                            value: /^09\d{9}$/,
+                                            message: "فرمت شماره تماس صحیح نیست"
+                                        }
+                                    })}
+                                />
+                                {errors.numberPhone && <p className="text-red-500 text-sm mt-1">{errors.numberPhone.message}</p>}
                             </div>
                         </div>
-                        <div className="mt-7 flex justify-center">
-                            <button className="bg-green-300 text-fuchsia-900 p-2 rounded">
-                                {isEdit ? "ذخیره تغییرات" : "ذخیره"}
+
+                        <div className="grid grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-gray-700 mb-2">جنسیت</label>
+                                <select
+                                    className="w-full p-2 border rounded focus:ring-2 focus:ring-green-400 focus:border-transparent"
+                                    {...register("gender", { required: "این فیلد ضروری است" })}
+                                >
+                                    <option value="">انتخاب کنید</option>
+                                    <option value="مرد">مرد</option>
+                                    <option value="زن">زن</option>
+                                </select>
+                                {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender.message}</p>}
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 mb-2">سن</label>
+                                <input
+                                    className="w-full p-2 border rounded focus:ring-2 focus:ring-green-400 focus:border-transparent"
+                                    type="number"
+                                    placeholder="سن"
+                                    {...register("age", {
+                                        required: "این فیلد ضروری است",
+                                        min: {
+                                            value: 18,
+                                            message: "حداقل سن ۱۸ سال است"
+                                        },
+                                        max: {
+                                            value: 70,
+                                            message: "حداکثر سن ۷۰ سال است"
+                                        }
+                                    })}
+                                />
+                                {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age.message}</p>}
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end gap-3 pt-4">
+                            <button
+                                type="button"
+                                onClick={closeModal}
+                                className="px-4 py-2 text-gray-600 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
+                            >
+                                انصراف
+                            </button>
+                            <button
+                                type="submit"
+                                className="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600 transition-colors"
+                            >
+                                {isEdit ? "ذخیره تغییرات" : "ثبت"}
                             </button>
                         </div>
                     </form>

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { useForm } from "react-hook-form";
-import DatePicker from "react-datepicker2";
-import { BiEdit } from "react-icons/bi";
-import { AiFillDelete } from "react-icons/ai";
+import DatePicker, {DateObject} from "react-multi-date-picker";
+
 import api from "../../../Services/Api";
 import moment from "moment-jalaali";
+import persian from "react-date-object/calendars/persian";
+import persian_fa from "react-date-object/locales/persian_fa";
 
 export const DriverReport = () => {
     const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm();
@@ -65,8 +66,11 @@ export const DriverReport = () => {
             setValue("numberPhone", driver.numberPhone);
             setValue("gender", driver.gender);
             setValue("age", driver.age);
-            setDateOfBirth(driver.dateOfBirth ? moment(driver.dateOfBirth) : null);
-            setIsEdit(true);
+            setDateOfBirth(new DateObject({
+                date: new Date(driver.dateOfBirth),
+                calendar: persian,
+                locale: persian_fa
+            }));            setIsEdit(true);
             setCurrentDriver(driver);
         } else {
             reset();
@@ -145,11 +149,14 @@ export const DriverReport = () => {
                             <div className="col-span-6 mr-2 flex-col mt-52 flex">
                                 <label>تاریخ تولد</label>
                                 <DatePicker
-                                    timePicker={false}
+                                    calendar={persian}
+                                    locale={persian_fa}
                                     value={dateOfBirth}
                                     onChange={date => setDateOfBirth(date)}
-                                    isGregorian={false}
-                                    className="p-2 mr-2 rounded text-black mt-2"
+                                    format="YYYY/MM/DD"
+                                    inputClass="p-2 mr-2 rounded text-black mt-2"
+                                    className="rmdp-mobile"
+                                    calendarPosition="bottom-right"
                                 />
                             </div>
                             <div className="col-span-6">
