@@ -22,7 +22,6 @@
   "scripts": {
     "start": "node index.js"
   },
-
   "repository": {
     "type": "git",
     "url": "https://github.com/guruhariharaun/creating-registration-and-login-form-in-nodejs-and-mongodb"

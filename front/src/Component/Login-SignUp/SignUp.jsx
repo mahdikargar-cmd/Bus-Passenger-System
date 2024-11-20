@@ -5,14 +5,16 @@ import axios from "axios";
 import logo from "../../Assets/images/safarino-Photoroom.png";
 import {FaApple, FaGoogle} from "react-icons/fa";
 import {CgArrowLongRight} from "react-icons/cg";
+import axiosInstance from "../../api";
 
 export const SignUp = () => {
     const navigate = useNavigate();
     const {register, handleSubmit, formState: {errors}} = useForm();
+    const API_URL = process.env.REACT_APP_API_URL;
 
     const onSubmit = async (data) => {
         try {
-            const response = await axios.post('http://localhost:5000/users/register', {
+            const response = await axiosInstance.post(`${API_URL}/users/register`, {
                 name: data.firstName,
                 family: data.lastName,
                 phoneNumber: data.phoneNumber, // Ensure phoneNumber is included

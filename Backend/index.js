@@ -1,8 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
-require('dotenv').config();
+require('dotenv').config(); // پشتیبانی از متغیرهای محیطی
+console.log(process.env.TEST_VARIABLE);
+
 const bodyParser = require('body-parser');
 const cors = require('cors');
+
+// مسیرهای روتر
 const userRoutes = require('./AAA/routes/userRoutes');
 const coperativeRoutes = require('./routes/CoperativeRoutes');
 const destinationRoutes = require('./routes/DestinationRouter');
@@ -19,7 +23,8 @@ const amanatRoutes = require('./routes/AmanatRoutes');
 class Server {
     constructor() {
         this.app = express();
-        this.port = 5000;
+        this.port = process.env.PORT ; // استفاده از متغیر محیطی PORT یا 5000
+        this.dbUrl = process.env.MONGO_URL; // خواندن آدرس دیتابیس از فایل .env
 
         this.connectToDatabase();
         this.configureMiddleware();
@@ -28,15 +33,19 @@ class Server {
     }
 
     connectToDatabase() {
-        mongoose.connect( "mongodb+srv://mahdikargar456:bEI88iE33P3zblac@travel.tvptc.mongodb.net/Travel?retryWrites=true&w=majority&appName=Travel").then(() => console.log('mongodb connected'))
-            .catch(err => console.error('error in mongodb:', err));
+        mongoose.connect(this.dbUrl)
+            .then(() => console.log('MongoDB connected'))
+            .catch(err => console.error('Error in MongoDB connection:', err));
     }
 
     configureMiddleware() {
+        // تنظیم CORS برای دسترسی به فرانت‌اند روی رندر
         this.app.use(cors({
-            origin: 'http://localhost:3000'
+            origin: "https://bus-passenger-system.onrender.com", // آدرس فرانت‌اند
+            credentials: true, // در صورت نیاز به ارسال کوکی‌ها
         }));
-        this.app.use(bodyParser.json());
+
+        this.app.use(bodyParser.json()); // پشتیبانی از JSON
     }
 
     setupRoutes() {
@@ -45,7 +54,6 @@ class Server {
         this.app.use('/destination', destinationRoutes);
         this.app.use('/driver', driverRoutes);
         this.app.use('/driverreports', driverRoutes);
-
         this.app.use('/bus', busRoutes);
         this.app.use('/Route', routeRoutes);
         this.app.use('/busMovement', busMovement);
@@ -54,7 +62,6 @@ class Server {
         this.app.use('/admin', adminRoutes);
         this.app.use('/seats', seatsRoutes);
         this.app.use('/amanat', amanatRoutes);
-
     }
 
     startServer() {
