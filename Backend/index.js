@@ -28,10 +28,7 @@ class Server {
     }
 
     connectToDatabase() {
-        mongoose.connect( "mongodb+srv://mahdikargar456:bEI88iE33P3zblac@travel.tvptc.mongodb.net/Travel?retryWrites=true&w=majority&appName=Travel", {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        }).then(() => console.log('mongodb connected'))
+        mongoose.connect( "mongodb+srv://mahdikargar456:bEI88iE33P3zblac@travel.tvptc.mongodb.net/Travel?retryWrites=true&w=majority&appName=Travel").then(() => console.log('mongodb connected'))
             .catch(err => console.error('error in mongodb:', err));
     }
 
