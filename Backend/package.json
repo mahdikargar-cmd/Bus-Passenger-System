@@ -18,9 +18,11 @@
     "mongoose": "^5.6.10",
     "nodemon": "^3.1.0"
   },
-  "scripts": {
-    "start": "node index.js"
-  },
+"scripts": {
+   "start": "node index.js",
+   "build": "npm install"
+}
+,
   "repository": {
     "type": "git",
     "url": "https://github.com/guruhariharaun/creating-registration-and-login-form-in-nodejs-and-mongodb"
