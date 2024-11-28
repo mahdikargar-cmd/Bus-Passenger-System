@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Header } from "../Main-page/Header/Header";
 import { Footer } from "../Main-page/Footer/Footer";
-import { Ticket_inquiry } from "./TicketInquiry/Ticket_inquiry";
+import { TicketInquiry } from "./TicketInquiry/TicketInquiry";
 import { StatusTicket } from "./StatusTicket/StatusTicket";
 import {UserTicket} from "./userTicket/UserTicket";
 
@@ -32,7 +32,7 @@ export const UserPanel = () => {
     const renderComponent = () => {
         switch (activeComponent) {
             case "ticketInquiry":
-                return <Ticket_inquiry />;
+                return <TicketInquiry />;
             case "status":
                 return <StatusTicket />;
             case "userTicket":

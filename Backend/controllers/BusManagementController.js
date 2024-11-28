@@ -2,6 +2,11 @@ const BusModel = require('../models/BusManagementModel');
 
 class BusManagementController {
     async registerBus(req, res) {
+        if (!data.busName || !data.companyName || !data.routes || !data.busType || !data.capacity || !data.driverIds) {
+            alert("All required fields must be filled!");
+            return;
+        }
+
         try {
             const newBus = new BusModel(req.body);
             await newBus.save();

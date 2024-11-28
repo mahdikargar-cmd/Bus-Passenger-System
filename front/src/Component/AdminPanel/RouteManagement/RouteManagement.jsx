@@ -135,38 +135,37 @@ export const RouteManagement = () => {
 
     return (
         <>
-            <div className="grid grid-cols-12 mb-3">
-                <div className="col-span-6 pr-3 pl-3 pt-2 rounded flex justify-between bg-green-300 ml-7">
-                    <p className="text-fuchsia-900"> مدیریت مسیرها </p>
-                    <button className="text-fuchsia-900 p-1" onClick={() => openModalHandler(null)}>افزودن</button>
-                </div>
-                <div className="flex justify-between col-span-6 bg-green-300 p-2 rounded">
-                    <p className="text-white">جستجو</p>
-                    <input type="search" className="rounded w-[400px]" />
+            <div className="grid grid-cols-12">
+                <div className="col-span-12 flex justify-center">
+                    <button
+                        onClick={() => openModalHandler(null)}
+                        className="text-teal-50 hover:bg-green-700 transition-all duration-300 hover:w-[10%] bg-green-500 w-[20%] content-center rounded p-2 pr-3 pl-3"
+                    >
+                        افزودن
+                    </button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-12 mt-2 bg-slate-400">
+            <div className="grid grid-cols-12 mt-2 shadow rounded">
                 {routes.map((route, index) => {
-                    // پیدا کردن نام اتوبوس براساس شناسه
                     const busName = buses.find(bus => bus._id === route.busName)?.busName || route.busName;
-
                     const originName = cities.find(city => city._id === route.origin)?.Cities || route.origin;
                     const destinationName = cities.find(city => city._id === route.destination)?.Cities || route.destination;
 
                     return (
-                        <div className="flex justify-between m-2 p-2 col-span-12" key={route._id}>
-                            <div className="col-span-1 ml-10 text-white mr-1"> شماره: {index + 1} </div>
-                            <div className="col-span-1 ml-10 text-white"> نام اتوبوس: {busName} </div>
-                            <div className="col-span-1 ml-10 text-white"> مبدا: {originName} </div>
-                            <div className="col-span-1 ml-10 text-white"> مقصد: {destinationName} </div>
-                            <div className="col-span-1 ml-10 text-white"> روزهای حرکت: {route.wedays?.join(", ") || ''} </div>
-                            <div className="col-span-2 ml-10 text-white"> ثبت شده
-                                در: {new Date(route.createdAt).toLocaleString("fa-IR")} </div>
-                            <div className="col-span-1 ml-14 text-white font-semibold text-[22px]">
+                        <div className="flex justify-between m-2 text-gray-800 hover:bg-adminpanel-bg text-[14px] pt-4 pb-4 ps-1 pl-1 col-span-12 bg-white rounded-lg shadow-xl transition-all duration-300 transform hover:scale-[1.02]" key={route._id}>
+                            <div className="col-span-1 ml-10  mr-1"> <span className="font-bold text-admin-modal ml-1">شماره:</span>  {index + 1} </div>
+                            <div className="col-span-1 ml-10 "><span className="font-bold text-admin-modal ml-1"> نام اتوبوس:</span>  {busName} </div>
+                            <div className="col-span-1 ml-10 ">  <span className="font-bold text-admin-modal ml-1">مقصد:</span> {originName} </div>
+                            <div className="col-span-1 ml-10 ">  <span className="font-bold text-admin-modal ml-1">روزهای حرکت:</span> {destinationName} </div>
+                            <div className="col-span-1 ml-10 ">  <span className="font-bold text-admin-modal ml-1">شماره:</span> {route.wedays?.join(", ") || ''} </div>
+                            <div className="col-span-2 ml-10 ">
+                                <span className="font-bold text-green-700 ml-1">ثبت شده در : </span>
+                                {new Date(route.createdAt).toLocaleString("fa-IR")} </div>
+                            <div className="col-span-1 ml-14  font-semibold text-[22px]">
                                 <BiEdit onClick={() => openModalHandler(route)} />
                             </div>
-                            <div className="col-span-1 ml-14 text-white font-semibold text-[22px]"
+                            <div className="col-span-1 ml-14 font-semibold text-[22px]"
                                  onClick={() => deleteRoute(route._id)}>
                                 <AiFillDelete />
                             </div>
@@ -179,17 +178,17 @@ export const RouteManagement = () => {
             <Modal
                 isOpen={openModal}
                 onRequestClose={closeModalHandler}
-                className="bg-slate-500 w-[700px] flex justify-center text-white p-2 mt-20 mr-[30%] h-[500px] rounded"
+                className="bg-admin-modal  w-[700px] flex justify-center text-white p-4 mt-20 mr-[30%] h-[500px] rounded-lg shadow-xl"
             >
-                <div>
-                    <h1 className="mt-4 text-[20px] text-black font-semibold mb-5">
+                <div className=" text-black  p-6 rounded-lg w-full h-full overflow-auto">
+                    <h1 className="mt-4 text-[20px] font-semibold mb-5 text-center text-gray-800">
                         {isEdit ? "ویرایش مسیر" : "ثبت مسیر"}
                     </h1>
                     <form onSubmit={handleSubmit(onSubmit)}>
-                        <div className="grid grid-cols-12">
-                            <div className="flex justify-between items-center col-span-12">
-                                <div className="col-span-6">
-                                    <label>نام اتوبوس</label>
+                        <div className="grid  grid-cols-12 gap-6">
+                            <div className="flex  justify-between items-center col-span-12">
+                                <div className="col-span-6 ">
+                                    <label className="text-black">نام اتوبوس</label>
                                     <Controller
                                         name="busName"
                                         control={control}
@@ -204,13 +203,13 @@ export const RouteManagement = () => {
                                                     field.onChange(e);
                                                     handleBusChange(e);
                                                 }}
-                                                className="text-black"
+                                                className="text-black p-2 rounded border border-gray-300"
                                             />
                                         )}
                                     />
                                 </div>
-                                <div className="col-span-6 mr-6">
-                                    <label> انتخاب مبدا </label>
+                                <div className="col-span-6">
+                                    <label className="text-black">انتخاب مبدا</label>
                                     <Controller
                                         name="origin"
                                         control={control}
@@ -225,7 +224,7 @@ export const RouteManagement = () => {
                                                     field.onChange(e);
                                                     handleOriginChange(e);
                                                 }}
-                                                className="text-black"
+                                                className="text-black p-2 rounded border border-gray-300"
                                             />
                                         )}
                                     />
@@ -233,7 +232,7 @@ export const RouteManagement = () => {
                             </div>
                             <div className="flex justify-between items-center col-span-12">
                                 <div className="col-span-6">
-                                    <label> انتخاب مقصد</label>
+                                    <label className="text-black">انتخاب مقصد</label>
                                     <Controller
                                         name="destination"
                                         control={control}
@@ -248,13 +247,13 @@ export const RouteManagement = () => {
                                                     field.onChange(e);
                                                     handleDestinationChange(e);
                                                 }}
-                                                className="text-black"
+                                                className="text-black p-2 rounded border border-gray-300"
                                             />
                                         )}
                                     />
                                 </div>
-                                <div className="col-span-6 mr-6 flex justify-between mt-1 ">
-                                    <label className={'ml-7'}>روزهای حرکت :</label>
+                                <div className="col-span-6 mt-1">
+                                    <label className="text-black">روزهای حرکت</label>
                                     <Controller
                                         name="wedays"
                                         control={control}
@@ -267,26 +266,25 @@ export const RouteManagement = () => {
                                                 isMulti
                                                 value={field.value}
                                                 onChange={(e) => field.onChange(e)}
-                                                className="text-black pr-4 pl-4 rounded pt-1 pb-1"
+                                                className="text-black pr-4 pl-4 rounded pt-1 pb-1 border border-gray-300"
                                             />
                                         )}
                                     />
                                 </div>
                             </div>
                         </div>
-                        <div className="grid grid-cols-12 mt-10">
-                            <div
-                                className="col-span-6 flex justify-center bg-red-600 p-2 ml-2 rounded hover:bg-red-700 transition-all ease-out">
-                                <button type="button" onClick={closeModalHandler}>لغو</button>
+                        <div className="grid grid-cols-12 mt-10 gap-4">
+                            <div className="col-span-6 flex justify-center bg-red-600 p-2 rounded hover:bg-red-700 transition-all ease-out">
+                                <button type="button" onClick={closeModalHandler} className="text-white font-semibold">لغو</button>
                             </div>
-                            <div
-                                className="col-span-6 flex justify-center bg-green-600 hover:bg-green-700 transition-all ease-out mr-2 p-2 rounded">
-                                <button type="submit">تایید</button>
+                            <div className="col-span-6 flex justify-center bg-green-600 hover:bg-green-700 transition-all ease-out p-2 rounded">
+                                <button type="submit" className="text-white font-semibold">تایید</button>
                             </div>
                         </div>
                     </form>
                 </div>
             </Modal>
+
         </>
     );
 };

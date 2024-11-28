@@ -15,7 +15,7 @@ export const SignUp = () => {
             const response = await axios.post('http://localhost:5000/users/register', {
                 name: data.firstName,
                 family: data.lastName,
-                phoneNumber: data.phoneNumber, // Ensure phoneNumber is included
+                phoneNumber: data.phoneNumber,
             });
             console.log('Signup successful', response.data);
             navigate('/Login');
@@ -25,105 +25,101 @@ export const SignUp = () => {
     };
 
     return (
-        <form action="" onSubmit={handleSubmit(onSubmit)}>
-            <div className={'mt-10 dark:bg-dark-blue dark:text-white ml-48 ms-48 shadow-xl bg-white rounded-xl'}>
-                <div className={'grid grid-cols-12 m-4 p-2 '}>
-                    <div className={'col-span-6 flex items-center'}>
-                        <Link to={'/'}
-                              className={'p-2 ps-4 pl-4 rounded-full bg-white-blue text-white hover:bg-blue-700 transition duration-500  '}> صفحه
-                            اصلی
-                        </Link>
-                    </div>
-                    <div className={'col-span-6 flex justify-end'}>
-                        <img src={logo} className={'h-20'} alt=""/>
-                    </div>
+        <form className="max-w-5xl mx-auto px-4" onSubmit={handleSubmit(onSubmit)}>
+            <div className="mt-10 dark:bg-dark-blue dark:text-white bg-white rounded-xl shadow-xl">
+                {/* Header */}
+                <div className="flex justify-between items-center p-4">
+                    <Link
+                        to="/"
+                        className="p-2 transition-all md:flex justify-center md:hover:justify-center ease-out duration-[2000ms] md:w-[10%] sm:w-[20%] md:hover:w-[30%] rounded-full bg-white-blue text-white hover:bg-blue-700 ">
+                        صفحه اصلی
+                    </Link>
+                    <img src={logo} className="h-16 md:h-20" alt="Logo"/>
                 </div>
-                <div className={'grid grid-cols-12'}>
-                    <div className={'col-span-12 flex justify-center items-center text-[30px]'}>
-                        <p className={'font-serif hover:font-sans animate-pulse font-bold transition-all 2s  '}> ثبت نام
-                            در سفرینو</p>
-                    </div>
-                </div>
-                <div className={'grid grid-cols-12 mt-24 mb-5'}>
-
+                <div>
                     <div
-                        className={'col-span-6 shadow-xl border-2 flex-col  rounded-full ms-20 ml-20   p-1 hover:text-white hover:bg-blue-700 transition 2s duration-500 ease-out animate-bounce'}>
-                        <div className={'flex justify-evenly items-center  '}>
-                            <button>Sign in with Gmail Account</button>
-                            <FaGoogle/>
+                        className="text-center text-xl md:text-2xl font-bold font-serif hover:font-sans animate-pulse mb-6">
+                        ثبت نام در سفرینو
+                    </div>
+                </div>
+                {/* Main Content */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6 py-8">
+                    {/* Form Section */}
+                    <div>
+
+                        <div className="space-y-6">
+                            <div>
+                                <input
+                                    type="text"
+                                    className="w-full p-3 rounded-full border placeholder:text-gray-400"
+                                    placeholder="نام خود را وارد نمائید"
+                                    {...register("firstName", {required: true})}
+                                />
+                                {errors.firstName && <p className="text-red-500 text-sm mt-1">نام را وارد کنید</p>}
+                            </div>
+                            <div>
+                                <input
+                                    type="text"
+                                    className="w-full p-3 rounded-full border placeholder:text-gray-400"
+                                    placeholder="نام خانوادگی خود را وارد نمائید"
+                                    {...register("lastName", {required: true})}
+                                />
+                                {errors.lastName &&
+                                    <p className="text-red-500 text-sm mt-1">نام خانوادگی را وارد کنید</p>}
+                            </div>
+                            <div>
+                                <input
+                                    type="text"
+                                    className="w-full p-3 rounded-full border placeholder:text-gray-400"
+                                    placeholder="شماره موبایل"
+                                    {...register("phoneNumber", {required: true})}
+                                />
+                                {errors.phoneNumber &&
+                                    <p className="text-red-500 text-sm mt-1">شماره موبایل را بطور صحیح وارد نمائید</p>}
+                            </div>
+                            <div className="flex justify-center ">
+                                <button
+                                    type="submit"
+                                    className="flex items-center gap-2 px-6 py-2 rounded-full bg-dark-black text-white
+               hover:w-[90%] w-[40%] md:w-[30%] transition-all duration-[2000ms] ease-in-out">
+                                    <CgArrowLongRight className="text-xl animate-pulse"/>
+                                    ثبت نام
+                                </button>
+
+
+                            </div>
                         </div>
-
                     </div>
-                    <div className={'col-span-6 shadow-xl transition 2s ease-out p-1 ms-20 ml-20    rounded-full'}>
-                        <input type="text" className={'w-full placeholder:p-2 placeholder:text-black rounded-full p-1'}
-                               placeholder={'نام خود را وارد نمائید'}
-                               {...register("firstName", { required: true })}
-                        />
-                        {errors.firstName && <p className="text-red-500">نام را وارد کنید</p>}
-                    </div>
-                </div>
-                <div className={'grid grid-cols-12 mb-5'}>
 
-                    <div className={'col-span-6 shadow-xl border-2 flex-col  rounded-full ms-20 ml-20   p-1 hover:text-white hover:bg-blue-700 transition 2s duration-500 ease-out animate-bounce'}>
-                        <div className={'flex justify-evenly items-center  '}>
-                            <button>Sign in Apple Secure ID</button>
-                            <FaApple/>
+                    {/* Social Login Section */}
+                    <div className="flex flex-col justify-center space-y-6">
+                        <div
+                            className="p-4 border rounded-lg hover:bg-blue-700 animate-bounce hover:text-white transition duration-500">
+                            <div className="flex items-center gap-8 justify-around">
+                                <button className="flex-1 text-left ">Sign in with Gmail Account</button>
+                                <FaGoogle/>
+                            </div>
+                        </div>
+                        <div
+                            className="p-4 border rounded-lg hover:bg-blue-700 animate-bounce hover:text-white transition duration-500">
+                            <div className="flex items-center  gap-8 justify-around">
+                                <button className="flex-1 text-left ">Sign in Apple Secure ID</button>
+                                <FaApple/>
+                            </div>
                         </div>
                     </div>
-                    <div className={'col-span-6 shadow-xl transition 2s ease-out p-1 ms-20 ml-20    rounded-full'}>
-                        <input type="text" className={'w-full placeholder:p-2 placeholder:text-black rounded-full p-1'}
-                               placeholder={'نام خانوادگی خود را وارد نمائید'}
-                               {...register("lastName",{required:true})}
-                        />
-                        {errors.lastName && <p className="text-red-500">نام خانوادگی را وارد کنید</p>}
-                    </div>
-                </div>
-                <div className={'grid grid-cols-12 mb-5'}>
-
-                    <div
-                        className={'col-span-6 '}>
-
-
-                    </div>
-                    <div className={'col-span-6 shadow-xl transition 2s ease-out p-1 ms-20 ml-20    rounded-full'}>
-                        <input type="text" className={'w-full placeholder:p-2 placeholder:text-black rounded-full p-1'}
-                               placeholder={'شماره موبایل'}
-                               {...register("phoneNumber", {required: true})}
-                        />
-                        {errors.phoneNumber && <p>شماره موبایل را بطور صحیح وارد نمائید</p>}
-                    </div>
                 </div>
 
-                <div className={'grid grid-cols-12 '}>
+                {/* Login Link */}
+                <div className="text-center py-6 flex justify-center">
+                    <Link  to="/Login"
+                        className="  px-6 py-2  flex md:flex justify-center md:hover:justify-center w-[20%] hover:w-[30%] md:hover:w-[60%] transition-all ease-out duration-[2000ms] rounded-full  bg-white-blue text-white  hover:bg-blue-700">
+                        ورود
+                    </Link>
 
-                    <div className={'col-span-6 '}>
-
-                    </div>
-                    <div
-                        className={'col-span-6 shadow-xl border-2 flex-col  rounded-full ms-20 ml-20 mb-20  p-1 hover:text-white hover:bg-dark-black '}>
-                        <div className={'flex justify-evenly items-center font-serif text-[20px]  '}>
-                            <CgArrowLongRight className={'text-[30px] hover:animate-pulse'}/>
-                            <button type="submit">ثبت نام</button>
-                        </div>
-
-                    </div>
-                </div>
-
-
-
-
-
-                <div className={'grid grid-cols-12 pb-32'}>
-                    <div className={'col-span-12 flex justify-center items-center'}>
-                        <Link to={'/Login'}
-                              className={'p-2 ps-20 pl-20 rounded-full bg-white-blue text-white hover:bg-blue-700 transition duration-500'}>ورود</Link>
-                    </div>
                 </div>
             </div>
-
         </form>
-
-
     );
 };
 

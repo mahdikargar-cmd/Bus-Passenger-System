@@ -89,7 +89,7 @@ export default function Cooperative() {
                 <div className="col-span-12 flex justify-center">
                     <button
                         onClick={() => openModal()}
-                        className="text-teal-50 bg-green-500 w-[20%] content-center rounded p-2 pr-3 pl-3"
+                        className="text-teal-50 hover:bg-green-700 transition-all duration-300 hover:w-[10%]  bg-green-500 w-[20%] content-center rounded p-2 pr-3 pl-3"
                     >
                         افزودن
                     </button>
@@ -101,18 +101,21 @@ export default function Cooperative() {
                         <ul>
                             {cooperatives.map((cooperative) => (
                                 <li key={cooperative._id}
-                                    className="bg-slate-300 p-4 rounded mb-2 shadow flex justify-between items-center">
-                                    <div>
-                                        <h3 className="text-lg font-semibold">
-                                            نام تعاونی: {cooperative.CoperativeName}
+                                    className="flex justify-between m-2 text-gray-800 hover:bg-adminpanel-bg text-[14px] pt-2 pb-2 ps-1 pl-1 col-span-12 bg-white rounded-lg shadow-xl transition-all duration-300 transform hover:scale-[1.02]">
+                                    <div className={'flex items-center  gap-8 font-bold text-[16px] ps-4'}>
+                                        <h3 className=" font-semibold">
+                                            <span className="font-bold text-admin-modal ml-1">نام تعاونی:
+                                            </span>   {cooperative.CoperativeName}
                                         </h3>
-                                        <p>مدیر تعاونی: {cooperative.CoperativeManagement}
+                                        <p>
+                                            <span className="font-bold text-admin-modal ml-1">مدیر تعاونی:</span>
+                                            {cooperative.CoperativeManagement}
                                         </p>
                                     </div>
                                     <div>
                                         <button
                                             onClick={() => openModal(cooperative)}
-                                            className="bg-yellow-500 ml-3 text-white rounded p-2 mr-2"
+                                            className="bg-white-blue hover:bg-hover-blue  ml-3 text-white rounded p-2 mr-2"
                                         >
                                             ویرایش
                                         </button>
@@ -136,10 +139,10 @@ export default function Cooperative() {
                 isOpen={isModalOpen}
                 onRequestClose={closeModal}
                 ariaHideApp={false}
-                className="bg-slate-500 w-[700px] flex justify-center text-white p-2 mt-20 mr-[30%] h-[500px] rounded"
+                className="bg-admin-modal w-[700px] flex justify-center text-white p-2 mt-20 mr-[30%] h-[500px] rounded"
             >
                 <div>
-                    <h1 className="mt-4 text-[20px] font-semibold">
+                    <h1 className="mt-8 mb-10 flex justify-center text-[20px] font-semibold">
                         {isEdit ? "ویرایش تعاونی" : "ثبت تعاونی"}
                     </h1>
                     <form onSubmit={handleSubmit(onSubmit)}>

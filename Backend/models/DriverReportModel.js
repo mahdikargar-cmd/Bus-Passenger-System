@@ -17,10 +17,7 @@ const DriverReportSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    age: {
-        type: String,
-        required: true
-    },
+
     dateOfBirth: {
         type: Date,
         required: true

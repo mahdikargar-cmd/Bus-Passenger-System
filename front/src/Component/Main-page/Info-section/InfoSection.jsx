@@ -1,10 +1,10 @@
 
-import {FaRoad, FaUserAlt} from "react-icons/fa";
+import {FaRoad} from "react-icons/fa";
 import {IoIosBus} from "react-icons/io";
 import {MdBusinessCenter} from "react-icons/md";
 import {FcBusinessman} from "react-icons/fc";
 
-export const Info_section = () => {
+export const InfoSection = () => {
     return (
         <>
 

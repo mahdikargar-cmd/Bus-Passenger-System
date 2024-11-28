@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import Avatar from "../../Assets/images/avatar.jpg";
+import Avatar from "../../Assets/images/me.jpg";
 import {AiFillCaretDown} from "react-icons/ai";
 import Cooperative from "./CooperativeManagement/Cooperative";
 import Destination from "./Destination/Destination";
@@ -11,9 +11,13 @@ import {RouteManagement} from "./RouteManagement/RouteManagement";
 import {BusMovementManagement} from "./BusMovementManagement/BusMovementManagement";
 import Amanat from "./Amanat/Amanat";
 import {DriverReport} from "./DriverReport/DriverReport";
+import ComplaintsManagement from "./ComplaintsManagement/ComplaintsManagement";
+import {useNavigate} from "react-router-dom";
 
 const AdminPanel = () => {
     const [activeComponent, setActiveComponent] = useState("Cooperative");
+    const [showMenu, setShowMenu] = useState(false); // نمایش منوی کشویی
+    const navigate = useNavigate(); // استفاده از navigate برای هدایت به صفحه اصلی
 
     const info = [
         {
@@ -34,19 +38,19 @@ const AdminPanel = () => {
             link: "/adminp",
             component: "Drivers",
         },
-        {
+        /*{
             text: "مدیریت سرویس ها",
             id: 3,
             link: "/services",
             component: "Services",
 
-        },
-        {
-            text: "احرازهویت مسافران (حضوری)",
-            id: 4,
-            link: "tewrwe",
-            component: "Tickets",
-        },
+        },*/
+        /*  {
+              text: "احرازهویت مسافران (حضوری)",
+              id: 4,
+              link: "tewrwe",
+              component: "Tickets",
+          },*/
         {
             text: "مدیریت وسایل نقلیه",
             id: 5,
@@ -66,38 +70,40 @@ const AdminPanel = () => {
             link: "tewrwe",
             component: "RouteManagement",
         },
-        {
-            text: "مدیریت قیمت گذاری ",
-            id: 6,
-            link: "tewrwe",
-            component: "PricingManagement",
-        },
-        {
-            text: "مدیریت امانات",
-            id: 7,
-            link: "tewrwe",
-            component: "Amanat",
-        },
+        /*  {
+              text: "مدیریت قیمت گذاری ",
+              id: 6,
+              link: "tewrwe",
+              component: "PricingManagement",
+          },
+          {
+              text: "مدیریت امانات",
+              id: 7,
+              link: "tewrwe",
+              component: "Amanat",
+          },*/
         {
             text: "مدیریت انتقادات وشکایات",
             id: 8,
-            link: "tewrwe",
+            link: "/ComplaintsManagement",
             component: "ComplaintsManagement",
         },
-        {
-            text: "مدیریت باربری",
-            id: 9,
-            link: "tewrwe",
-            component: "FreightManagement",
-        },
-        {
-            text: "گزارش رانندگان ",
-            id: 9,
-            link: "tewrwe",
-            component: "DriverReport",
-        }
+        /*    {
+                text: "مدیریت باربری",
+                id: 9,
+                link: "tewrwe",
+                component: "FreightManagement",
+            },
+            {
+                text: "گزارش رانندگان ",
+                id: 9,
+                link: "tewrwe",
+                component: "DriverReport",
+            }*/
     ];
+    const exit = () => {
 
+    }
     const renderComponent = () => {
         switch (activeComponent) {
             case "Cooperative":
@@ -120,20 +126,29 @@ const AdminPanel = () => {
                 return <Amanat/>
             case "DriverReport":
                 return <DriverReport/>
+            case "ComplaintsManagement":
+                return <ComplaintsManagement/>
             default:
                 return null;
         }
     };
+    const handleLogout = () => {
+        // به صفحه اصلی هدایت می‌کند
+        navigate("/");
+    };
 
+    const toggleMenu = () => {
+        setShowMenu(!showMenu);
+    };
     return (
         <div>
             <div className={"bg-adminpanel-bg max-h-[100vh] overflow-y-auto pb-9"}>
                 {/* start search box */}
                 <div className={"grid grid-cols-12  bg-adminpanel-ui p-4"}>
                     <div className={"col-span-5 flex items-center"}>
-                        <img src={Avatar} className="h-10 ml-6 rounded-full"/>
+                        <img src={Avatar} alt={'عکس'} className="h-10 w-10 ml-6 rounded-full"/>
                         <h1 className="ml-3">admin</h1>
-                        <AiFillCaretDown/>
+                        <AiFillCaretDown onClick={toggleMenu} /> {/* کلیک روی آیکون */}
                     </div>
                     <div className="col-span-7 flex justify-end ml-4 items-center">
                         <label htmlFor="Search" className="ml-3 ">
@@ -168,6 +183,20 @@ const AdminPanel = () => {
                 </div>
 
                 {/*end menu */}
+                {/* نمایش منوی کشویی برای دکمه خروج */}
+                {showMenu && (
+                    <div className="absolute hover:bg-red-500 flex justify-center hover:text-white  top-16 right-16 bg-white shadow-lg rounded mt-2  w-28">
+                        <ul>
+                            <li>
+                                <button
+                                    className="w-full text-left p-2 "
+                                    onClick={handleLogout}>
+                                    خروج
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -4,8 +4,8 @@ const DriverReportModel = require('../models/DriverReportModel');
 class DriverController {
     async registerDrivers(req, res) {
         try {
-            const { name, codeMelli, numberPhone, gender, age, dateOfBirth } = req.body;
-            if (!name || !codeMelli || !numberPhone || !gender || !age || !dateOfBirth) {
+            const { name, codeMelli, numberPhone, gender,  dateOfBirth } = req.body;
+            if (!name || !codeMelli || !numberPhone || !gender || !dateOfBirth) {
                 return res.status(400).json({
                     status: "fail",
                     message: "تمام مشخصات فرم را پر کنید"
@@ -21,11 +21,11 @@ class DriverController {
             }
 
             const newDriver = await DriverModel.create({
-                name, codeMelli, numberPhone, gender, age, dateOfBirth
+                name, codeMelli, numberPhone, gender,  dateOfBirth
             });
 
             const newDriverReport = await DriverReportModel.create({
-                name, codeMelli, numberPhone, gender, age, dateOfBirth
+                name, codeMelli, numberPhone, gender,  dateOfBirth
             });
 
             res.status(201).json({
@@ -46,8 +46,8 @@ class DriverController {
     async updateDrivers(req, res) {
         try {
             const { id } = req.params;
-            const { name, codeMelli, numberPhone, gender, age, dateOfBirth } = req.body;
-            if (!name || !codeMelli || !numberPhone || !gender || !age || !dateOfBirth) {
+            const { name, codeMelli, numberPhone, gender,  dateOfBirth } = req.body;
+            if (!name || !codeMelli || !numberPhone || !gender || !dateOfBirth) {
                 return res.status(400).json({
                     status: "fail",
                     message: "تمام مشخصات فرم را پر کنید"
@@ -56,7 +56,7 @@ class DriverController {
 
             const updateDriver = await DriverModel.findByIdAndUpdate(
                 id,
-                { name, codeMelli, numberPhone, gender, age, dateOfBirth },
+                { name, codeMelli, numberPhone, gender,  dateOfBirth },
                 { new: true, runValidators: true }
             );
 

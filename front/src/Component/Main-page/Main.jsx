@@ -1,6 +1,6 @@
 import { Header } from "./Header/Header";
-import { Info_section } from "./Info-section/Info_section";
-import { Acardeon_menu } from "./Acardeon-menu/Acardeon_menu";
+import { InfoSection } from "./Info-section/InfoSection";
+import { AcardeonMenu } from "./Acardeon-menu/AcardeonMenu";
 import { Footer } from "./Footer/Footer";
 import bg_blue from '../../Assets/images/Decore.svg';
 
@@ -35,14 +35,14 @@ export const Main = () => {
                     <h2 className="text-3xl font-semibold mb-8 text-gray-900 dark:text-white">
                         ما بهترین خدمات را ارائه می دهیم
                     </h2>
-                    <Info_section />
+                    <InfoSection />
                 </div>
 
 
 
                 {/* Accordion Menu */}
                 <div className="bg-white dark:bg-gray-800 py-10">
-                    <Acardeon_menu />
+                    <AcardeonMenu />
                 </div>
 
                 {/* Footer */}

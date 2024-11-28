@@ -3,8 +3,8 @@ import {Main} from './Component/Main-page/Main';
 import './index.css';
 import {SignUp} from './Component/Login-SignUp/SignUp';
 import {Login} from './Component/Login-SignUp/Login';
-import {Ticket_inquiry} from './Component/UserPanel/TicketInquiry/Ticket_inquiry';
-import AdminPanel from './Component/AdminPanel/Adminpanel';
+import {TicketInquiry} from './Component/UserPanel/TicketInquiry/TicketInquiry';
+import AdminPanel from './Component/AdminPanel/AdminPanel';
 import {Services} from './Component/Services/Services';
 import ServiceDetail from './Component/ServiceDetail/ServiceDetail';
 import {Confirm} from "./Component/Confirm-Information/Confirm";
@@ -14,6 +14,7 @@ import PrintTicket from "./Component/PrintTicket/PrintTicket";
 import {AdminLogin} from "./Component/AdminPanel/AdminLogin/AdminLogin";
 import {UserPanel} from "./Component/UserPanel/UserPanel";
 import NotFound from './Component/404/NotFound';
+import ComplaintsManagement from "./Component/AdminPanel/ComplaintsManagement/ComplaintsManagement";
 
 function App() {
     return (
@@ -22,7 +23,7 @@ function App() {
                 <Route path='/' element={<Main/>}/>
                 <Route path='/SignUp' element={<SignUp/>}/>
                 <Route path='/Login' element={<Login/>}/>
-                <Route path='/TicketInquiry' element={<Ticket_inquiry/>}/>
+                <Route path='/TicketInquiry' element={<TicketInquiry/>}/>
                 <Route path='/adminPanel' element={<AdminPanel/>}/>
                 <Route path='/userPanel' element={<UserPanel/>}/>
                 <Route path='/cooperativeManagement' element={<AdminPanel/>}/>
@@ -34,7 +35,9 @@ function App() {
                 <Route path="/print-ticket" element={<PrintTicket/>}/>
                 <Route path='/admin' element={<AdminLogin/>}/>
                 <Route path="/services/:serviceId" element={<ServiceDetail/>} />
-<Route path='/notfound' element={<NotFound/>}/>
+                <Route path='/ComplaintsManagement' element={<ComplaintsManagement/>}/>
+
+                <Route path='/notfound' element={<NotFound/>}/>
 
             </Routes>
         </div>

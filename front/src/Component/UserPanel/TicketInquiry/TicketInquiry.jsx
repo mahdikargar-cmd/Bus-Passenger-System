@@ -3,7 +3,7 @@ import axios from 'axios';
 import api from "../../../Services/Api";
 import moment from "moment-jalaali";
 
-export const Ticket_inquiry = () => {
+export const TicketInquiry = () => {
     const [ticketNumber, setTicketNumber] = useState('');
     const [tickets, setTickets] = useState([]);
     const [message, setMessage] = useState('');
@@ -136,4 +136,4 @@ export const Ticket_inquiry = () => {
     );
 };
 
-export default Ticket_inquiry;
+export default TicketInquiry;

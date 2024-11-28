@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { CiEdit } from "react-icons/ci";
-import { MdDelete } from "react-icons/md";
+import React, {useEffect, useState} from 'react';
+import {CiEdit} from "react-icons/ci";
+import {MdDelete} from "react-icons/md";
 import Modal from "react-modal";
-import { useForm } from "react-hook-form";
+import {useForm} from "react-hook-form";
 import api from "../../../Services/Api";
 
 Modal.setAppElement('#root');
 
 export default function Destination() {
     const [destinations, setDestinations] = useState([]);
-    const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm();
+    const {register, handleSubmit, reset, setValue, formState: {errors}} = useForm();
     const [openModal, setOpenModal] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [currentDestination, setCurrentDestination] = useState(null);
@@ -18,8 +18,8 @@ export default function Destination() {
         const fetchDestinations = async () => {
             try {
                 const response = await api.get("destination");
-                console.log(response.data); // Add this line
-                setDestinations(response.data); // Assuming response.data contains the array of destinations
+                console.log(response.data);
+                setDestinations(response.data);
             } catch (error) {
                 console.error("Error fetching destinations:", error);
             }
@@ -35,16 +35,19 @@ export default function Destination() {
             console.log("Current Destination:", currentDestination);
 
             if (isEdit && currentDestination) {
-                await api.patch(`destination/updateDestination/${currentDestination._id}`, { cityName: data.cityName }, {
+                await api.patch(`destination/updateDestination/${currentDestination._id}`, {cityName: data.cityName}, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 });
-                setDestinations(destinations.map(item => item._id === currentDestination._id ? { ...item, Cities: data.cityName } : item));
+                setDestinations(destinations.map(item => item._id === currentDestination._id ? {
+                    ...item,
+                    Cities: data.cityName
+                } : item));
             } else {
                 const response = await api.post("destination/registerDestination", {
                     Cities: data.cityName
-                 }, {
+                }, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -93,7 +96,7 @@ export default function Destination() {
             <div className="col-span-12 flex justify-center">
                 <button
                     onClick={() => isOpen(null)}
-                    className="text-teal-50 bg-green-500 w-[20%] content-center rounded p-2 pr-3 pl-3"
+                    className="text-teal-50  bg-green-500 w-[20%] content-center rounded p-2 pr-3 pl-3"
                 >
                     افزودن
                 </button>
@@ -101,20 +104,24 @@ export default function Destination() {
 
             <div className={'grid grid-cols-12 p-2 '}>
                 {destinations && destinations.length > 0 ? destinations.map((destination, index) => (
-                    <div key={index} className={'flex justify-between bg-slate-400 col-span-4 m-2 p-5 rounded text-teal-50 font-semibold transition-all'}>
+                    <div key={index}
+                         className="flex justify-between m-2 text-gray-800 hover:bg-adminpanel-bg text-[18px] font-serif  font-bold pt-4 pb-4 ps-4 pl-1 col-span-2 bg-white rounded-lg shadow-xl transition-all duration-300 transform hover:scale-[1.02]">
                         <p className={'hover:text-red-500'}>{destination?.Cities}</p>
                         <div className={'flex'}>
-                            <div className={'ml-2 text-[24px] hover:text-yellow-300 transition-all'} onClick={() => isOpen(destination)}><CiEdit /></div>
-                            <div className={'text-[24px] hover:text-red-500 transition-all'} onClick={() => handleDelete(destination._id)}><MdDelete /></div>
+                            <div className={'ml-2 text-[24px] hover:text-white-blue transition-all'}
+                                 onClick={() => isOpen(destination)}><CiEdit/></div>
+                            <div className={'text-[24px] hover:text-red-500 transition-all'}
+                                 onClick={() => handleDelete(destination._id)}><MdDelete/></div>
                         </div>
                     </div>
                 )) : <p>هیچ مقصدی یافت نشد</p>}
             </div>
 
+
             <Modal
                 isOpen={openModal}
                 onRequestClose={closeModal}
-                className="bg-slate-500 w-[700px] flex justify-center text-white p-2 mt-20 mr-[30%] h-[500px] rounded"
+                className="bg-slate-500 w-[300px] xl:w-[700px] flex justify-center  text-white p-4 mr-20 mt-20 md:mr-[30%] md:h-[500px] rounded"
             >
                 <div>
                     <h1 className="mt-4 text-[20px] font-semibold mb-5">
@@ -127,21 +134,24 @@ export default function Destination() {
                                 className="p-2 mr-2 rounded text-black mt-2"
                                 type="text"
                                 placeholder="نام شهر را وارد کنید"
-                                {...register("cityName", { required: "نام شهر الزامی است" })} // Register input for react-hook-form
+                                {...register("cityName", {required: "نام شهر الزامی است"})} // Register input for react-hook-form
                             />
                             {errors.cityName && <p className="text-red-500">{errors.cityName.message}</p>}
                         </div>
                         <div className="grid grid-cols-12 mt-10">
-                            <div className="col-span-6 flex justify-center bg-red-600 p-2 ml-2 rounded hover:bg-red-700 transition-all ease-out">
+                            <div
+                                className="col-span-6 flex justify-center bg-red-600 p-2 ml-2 rounded hover:bg-red-700 transition-all ease-out">
                                 <button type="button" onClick={closeModal}>لغو</button>
                             </div>
-                            <div className="col-span-6 flex justify-center bg-green-600 hover:bg-green-700 transition-all ease-out mr-2 p-2 rounded">
+                            <div
+                                className="col-span-6 flex justify-center bg-green-600 hover:bg-green-700 transition-all ease-out mr-2 p-2 rounded">
                                 <button type="submit">{isEdit ? "ذخیره" : "تایید"}</button>
                             </div>
                         </div>
                     </form>
                 </div>
             </Modal>
+
         </div>
     );
 }

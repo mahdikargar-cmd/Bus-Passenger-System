@@ -1,7 +1,7 @@
 
 import Acardeon from "./Acardeon";
 import acardeon from "../../../Utils/Acardeon";
-export const Acardeon_menu = () => {
+export const AcardeonMenu = () => {
 
     return (
         <>
