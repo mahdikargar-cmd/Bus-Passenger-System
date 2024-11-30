@@ -15,6 +15,7 @@ import {AdminLogin} from "./Component/AdminPanel/AdminLogin/AdminLogin";
 import {UserPanel} from "./Component/UserPanel/UserPanel";
 import NotFound from './Component/404/NotFound';
 import ComplaintsManagement from "./Component/AdminPanel/ComplaintsManagement/ComplaintsManagement";
+import ProtectedRoute from "./Component/AdminPanel/AdminLogin/ProtectedRoute";
 
 function App() {
     return (
@@ -38,7 +39,7 @@ function App() {
                 <Route path='/ComplaintsManagement' element={<ComplaintsManagement/>}/>
 
                 <Route path='/notfound' element={<NotFound/>}/>
-
+                <Route path='/adminPanel' element={<ProtectedRoute element={AdminPanel} />} />
             </Routes>
         </div>
     );

@@ -13,6 +13,7 @@ import Amanat from "./Amanat/Amanat";
 import {DriverReport} from "./DriverReport/DriverReport";
 import ComplaintsManagement from "./ComplaintsManagement/ComplaintsManagement";
 import {useNavigate} from "react-router-dom";
+import {useAuth} from "../contexts/AuthContext";
 
 const AdminPanel = () => {
     const [activeComponent, setActiveComponent] = useState("Cooperative");
@@ -101,9 +102,7 @@ const AdminPanel = () => {
                 component: "DriverReport",
             }*/
     ];
-    const exit = () => {
 
-    }
     const renderComponent = () => {
         switch (activeComponent) {
             case "Cooperative":
@@ -133,14 +132,17 @@ const AdminPanel = () => {
         }
     };
     const handleLogout = () => {
-        // به صفحه اصلی هدایت می‌کند
-        navigate("/");
+        logout(); // خروج کاربر
+        navigate("/"); // هدایت به صفحه ورود
     };
 
     const toggleMenu = () => {
         setShowMenu(!showMenu);
     };
+    const { logout } = useAuth();
+
     return (
+
         <div>
             <div className={"bg-adminpanel-bg max-h-[100vh] overflow-y-auto pb-9"}>
                 {/* start search box */}
