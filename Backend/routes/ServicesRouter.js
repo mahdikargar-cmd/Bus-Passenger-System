@@ -1,5 +1,5 @@
 const express = require("express");
-const Service=require('../models/ServicesModel')
+const mongoose = require('mongoose'); // Add mongoose import
 const {
     getServiceById,
     createService,
@@ -7,38 +7,22 @@ const {
     deleteService
 } = require("../controllers/ServicesController");
 const ServicesModel = require("../models/ServicesModel");
-const router = express.Router();
-const RouteModel = require('../models/RouteManagementModel');
+const RouteModel = require('../models/BusMovementManagementModel');
 const CityModel = require('../models/DestinationsModel');
+const moment = require('moment-jalaali');
+const router = express.Router();
 
 router.post("/registerService", createService);
-router.patch('/updateService/:id', async (req, res) => {
-    try {
-        const updatedService = await Service.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!updatedService) {
-            return res.status(404).send("Service not found");
-        }
-        res.status(200).send(updatedService);
-    } catch (err) {
-        res.status(500).send(err);
-    }
-});
 
-router.delete('/deleteService/:id', async (req, res) => {
-    try {
-        const deletedService = await Service.findByIdAndDelete(req.params.id);
-        if (!deletedService) {
-            return res.status(404).send("Service not found");
-        }
-        res.status(200).send("Service deleted");
-    } catch (err) {
-        res.status(500).send(err);
-    }
-});
+router.patch('/updateService/:id', updateService); // Use the imported update function
+
+router.delete('/deleteService/:id', deleteService); // Use the imported delete function
+
 router.get('/:id', getServiceById);
+
 router.get('/services', async (req, res) => {
     try {
-        const { origin, destination } = req.query;
+        const { origin, destination, date } = req.query;
         let filter = {};
 
         if (origin && destination) {
@@ -50,6 +34,14 @@ router.get('/services', async (req, res) => {
                     filter.SelectedRoute = route._id;
                 }
             }
+        }
+
+        if (date) {
+            const convertedDate = moment(date, 'jYYYY-jMM-jDD').toDate();
+            filter.movementDate = {
+                $gte: convertedDate,
+                $lt: moment(convertedDate).add(1, 'day').toDate()
+            };
         }
 
         const services = await ServicesModel.find(filter)
@@ -64,10 +56,19 @@ router.get('/services', async (req, res) => {
         res.status(500).send('Server Error');
     }
 });
+
 router.get('/', async (req, res) => {
     try {
-        const ServiceModel = await ServicesModel.find();
-        res.status(200).json(ServiceModel);
+        const services = await ServicesModel.find()
+            .populate('ChairCapacity', 'capacity') // فقط مقدار capacity را بیاور
+            .populate('CompanyName', 'CoperativeName')
+            .populate('busName', 'busName')
+            .populate('BusType', 'busType')
+            .populate('SelectedRoute', 'origin destination')
+            .populate('movementDate', 'moveDate')
+            .populate('movementTime', 'moveTime')
+            .populate('ServicesOption', 'facilities');
+        res.status(200).json(services);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

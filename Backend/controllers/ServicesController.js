@@ -1,10 +1,9 @@
 const ServicesModel = require('../models/ServicesModel');
+const mongoose = require('mongoose');
 
-// Create a new service
 const createService = async (req, res) => {
-    const { CompanyName, busName, BusType, SelectedRoute, movementDate, movementTime, ChairCapacity, ticketPrice, ServicesOption } = req.body;
     try {
-        const newService = new ServicesModel({
+        const {
             CompanyName,
             busName,
             BusType,
@@ -14,19 +13,63 @@ const createService = async (req, res) => {
             ChairCapacity,
             ticketPrice,
             ServicesOption
+        } = req.body;
+
+        // Validate required fields
+        const requiredFields = ['CompanyName', 'busName', 'BusType', 'SelectedRoute',
+            'movementDate', 'movementTime', 'ChairCapacity', 'ticketPrice'];
+
+        const missingFields = requiredFields.filter(field => !req.body[field]);
+
+        if (missingFields.length > 0) {
+            return res.status(400).json({
+                message: 'Missing required fields',
+                fields: missingFields
+            });
+        }
+
+        const newService = new ServicesModel({
+            CompanyName,
+            busName,
+            BusType,
+            SelectedRoute,
+            movementDate,
+            movementTime,
+            ChairCapacity,
+            ticketPrice: Number(ticketPrice),
+            ServicesOption: ServicesOption || []
         });
+
         const savedService = await newService.save();
-        res.status(201).json(savedService);
+
+        // Populate the saved service with referenced data
+        const populatedService = await ServicesModel.findById(savedService._id)
+            .populate('CompanyName')
+            .populate('busName')
+            .populate('SelectedRoute')
+            .populate('ServicesOption');
+
+        res.status(201).json(populatedService);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        console.error('Error creating service:', error);
+
+        if (error.name === 'ValidationError') {
+            const errors = Object.values(error.errors).map(err => err.message);
+            return res.status(400).json({ message: 'Validation Error', errors });
+        }
+
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
-
-// Update a service
 const updateService = async (req, res) => {
     const { id } = req.params;
     const { CompanyName, busName, BusType, SelectedRoute, movementDate, movementTime, ChairCapacity, ticketPrice, ServicesOption } = req.body;
+
     try {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: 'Invalid service ID' });
+        }
+
         const updatedService = await ServicesModel.findByIdAndUpdate(
             id,
             {
@@ -37,22 +80,26 @@ const updateService = async (req, res) => {
                 movementDate,
                 movementTime,
                 ChairCapacity,
-                ticketPrice,
-                ServicesOption,
-                updatedAt: Date.now()
+                ticketPrice: Number(ticketPrice),
+                ServicesOption: ServicesOption || [],
             },
-            { new: true }
+            {
+                new: true,
+                runValidators: true
+            }
         );
+
         if (!updatedService) {
             return res.status(404).json({ message: 'Service not found' });
         }
+
         res.status(200).json(updatedService);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        console.error('Error updating service:', error);
+        res.status(500).json({ message: error.message });
     }
 };
 
-// Delete a service
 const deleteService = async (req, res) => {
     const { id } = req.params;
     try {

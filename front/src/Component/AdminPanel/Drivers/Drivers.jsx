@@ -125,36 +125,36 @@ export const Drivers = () => {
                 <div className="col-span-12 flex justify-center">
                     <button
                         onClick={() => isOpen(null)}
-                        className="text-teal-50 hover:bg-green-700 transition-all duration-300 hover:w-[10%] bg-green-500 w-[20%] content-center rounded p-2 pr-3 pl-3"
-                    >
+                        className="text-teal-50 hover:bg-green-700 transition-all duration-300 lg:hover:w-[10%] bg-green-500 lg:w-[20%] content-center rounded p-2 pr-3 pl-3"
+                        >
                         افزودن
                     </button>
                 </div>
             </div>
-            <div className="grid grid-cols-12 mt-4 gap-4">
-                <div className="col-span-12">
+            <div className="grid grid-cols-12 sm:grid-cols-4 lg:grid-cols-12 mt-4 gap-4">
+                <div className="col-span-12 max-w-md:flex max-w-md:justify-center">
                     {filteredDrivers.length > 0 ? (
                         <ul>
                             {filteredDrivers.map((driver, index) => (
                                 <li key={driver._id}
-                                    className="flex justify-between items-center m-2 text-gray-800 hover:bg-adminpanel-bg text-[14px] pt-4 pb-4 ps-1 pl-1 col-span-12 bg-white rounded-lg shadow-xl transition-all duration-300 transform hover:scale-[1.02]">
-                                    <div className="col-span-2">
+                                    className="lg:flex max-w-md:text-right  justify-between items-center m-2 text-gray-800 hover:bg-adminpanel-bg text-[14px] pt-4 pb-4 ps-1 pl-1 col-span-12 bg-white rounded-lg shadow-xl transition-all duration-300 transform hover:scale-[1.02]">
+                                    <div className="col-span-12 lg:col-span-2">
                                         <h3 className="">نام: {driver.name}</h3>
                                     </div>
-                                    <div className="col-span-2">
+                                    <div className="col-span-12 lg:col-span-2">
                                         <p>کد ملی: {driver.codeMelli}</p>
                                     </div>
-                                    <div className="col-span-2">
+                                    <div className="col-span-12 lg:col-span-2">
                                         <p>موبایل: {driver.numberPhone}</p>
                                     </div>
-                                    <div className="col-span-1">
+                                    <div className="col-span-12 lg:col-span-1">
                                         <p>جنسیت: {driver.gender}</p>
                                     </div>
-                                    <div className="col-span-2">
+                                    <div className="col-span-12 lg:col-span-2">
                                         <p>تولد: {formatDate(driver.dateOfBirth)}</p>
                                     </div>
 
-                                    <div className="col-span-2 flex gap-3">
+                                    <div className="col-span-12  lg:col-span-2 flex gap-3">
                                         <button
                                             onClick={() => isOpen(driver)}
                                             className="bg-white-blue flex justify-evenly items-center hover:bg-hover-blue ml-3 text-white rounded p-2 mr-2">

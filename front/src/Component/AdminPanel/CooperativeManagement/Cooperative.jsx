@@ -85,43 +85,51 @@ export default function Cooperative() {
 
     return (
         <>
-            <div className="grid grid-cols-12">
+            <div className="grid grid-cols-12 gap-4">
+                {/* دکمه افزودن */}
                 <div className="col-span-12 flex justify-center">
                     <button
                         onClick={() => openModal()}
-                        className="text-teal-50 hover:bg-green-700 transition-all duration-300 hover:w-[10%]  bg-green-500 w-[20%] content-center rounded p-2 pr-3 pl-3"
+                        className="text-teal-50 hover:bg-green-700 transition-all duration-300 hover:w-[30%] md:hover:w-[20%] bg-green-500 w-[50%] md:w-[20%] content-center rounded p-2"
                     >
                         افزودن
                     </button>
                 </div>
             </div>
+
+            {/* لیست تعاونی‌ها */}
             <div className="grid grid-cols-12 mt-4">
                 <div className="col-span-12">
                     {cooperatives.length > 0 ? (
                         <ul>
                             {cooperatives.map((cooperative) => (
-                                <li key={cooperative._id}
-                                    className="flex justify-between m-2 text-gray-800 hover:bg-adminpanel-bg text-[14px] pt-2 pb-2 ps-1 pl-1 col-span-12 bg-white rounded-lg shadow-xl transition-all duration-300 transform hover:scale-[1.02]">
-                                    <div className={'flex items-center  gap-8 font-bold text-[16px] ps-4'}>
-                                        <h3 className=" font-semibold">
-                                            <span className="font-bold text-admin-modal ml-1">نام تعاونی:
-                                            </span>   {cooperative.CoperativeName}
+                                <li
+                                    key={cooperative._id}
+                                    className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 m-2 text-gray-800 hover:bg-adminpanel-bg text-[14px] p-4 bg-white rounded-lg shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
+                                >
+                                    {/* اطلاعات تعاونی */}
+                                    <div className="flex flex-col md:flex-row items-start md:items-center gap-4 text-[16px] font-bold">
+                                        <h3>
+                                            <span className="font-bold text-admin-modal ml-1">نام تعاونی:</span>
+                                            {cooperative.CoperativeName}
                                         </h3>
                                         <p>
                                             <span className="font-bold text-admin-modal ml-1">مدیر تعاونی:</span>
                                             {cooperative.CoperativeManagement}
                                         </p>
                                     </div>
-                                    <div>
+
+                                    {/* دکمه‌های عملیات */}
+                                    <div className="flex gap-4">
                                         <button
                                             onClick={() => openModal(cooperative)}
-                                            className="bg-white-blue hover:bg-hover-blue  ml-3 text-white rounded p-2 mr-2"
+                                            className="bg-white-blue hover:bg-hover-blue text-white rounded p-2"
                                         >
                                             ویرایش
                                         </button>
                                         <button
                                             onClick={() => handleDelete(cooperative.CoperativeName)}
-                                            className="bg-red-500 text-white rounded p-2"
+                                            className="bg-red-500 hover:bg-red-600 text-white rounded p-2"
                                         >
                                             حذف
                                         </button>
@@ -130,58 +138,64 @@ export default function Cooperative() {
                             ))}
                         </ul>
                     ) : (
-                        <p>هیچ تعاونی‌ای موجود نیست.</p>
+                        <p className="text-center">هیچ تعاونی‌ای موجود نیست.</p>
                     )}
                 </div>
             </div>
 
+            {/* مودال ثبت/ویرایش */}
             <Modal
                 isOpen={isModalOpen}
                 onRequestClose={closeModal}
                 ariaHideApp={false}
-                className="bg-admin-modal w-[700px] flex justify-center text-white p-2 mt-20 mr-[30%] h-[500px] rounded"
+                className="bg-admin-modal w-[90%] md:w-[700px] flex justify-center text-white p-6 mt-20 mx-auto rounded-lg shadow-xl"
             >
-                <div>
-                    <h1 className="mt-8 mb-10 flex justify-center text-[20px] font-semibold">
+                <div className="w-full">
+                    <h1 className="mt-4 mb-6 text-center text-[20px] font-semibold">
                         {isEdit ? "ویرایش تعاونی" : "ثبت تعاونی"}
                     </h1>
-                    <form onSubmit={handleSubmit(onSubmit)}>
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                         <div>
-                            <label>نام تعاونی</label>
+                            <label className="block text-sm font-medium mb-2">نام تعاونی</label>
                             <input
-                                {...register("CoperativeName", {required: "این فیلد اجباری است"})}
-                                className="p-2 mr-2 rounded text-black mt-2"
+                                {...register("CoperativeName", { required: "این فیلد اجباری است" })}
+                                className="w-full p-2 rounded text-black"
                                 type="text"
                                 placeholder="نام تعاونی"
                             />
-                            {errors.CoperativeName && <p className="text-red-500">{errors.CoperativeName.message}</p>}
+                            {errors.CoperativeName && <p className="text-red-500 mt-1">{errors.CoperativeName.message}</p>}
                         </div>
                         <div>
-                            <label>نام مسئول</label>
+                            <label className="block text-sm font-medium mb-2">نام مسئول</label>
                             <input
-                                {...register("CoperativeManagement", {required: "این فیلد اجباری است"})}
-                                className="p-2 mr-1 text-black rounded mt-6"
+                                {...register("CoperativeManagement", { required: "این فیلد اجباری است" })}
+                                className="w-full p-2 rounded text-black"
                                 type="text"
                                 placeholder="نام مسئول تعاونی"
                             />
-                            {errors.CoperativeManagement &&
-                                <p className="text-red-500">{errors.CoperativeManagement.message}</p>}
+                            {errors.CoperativeManagement && (
+                                <p className="text-red-500 mt-1">{errors.CoperativeManagement.message}</p>
+                            )}
                         </div>
-                        <div className="grid grid-cols-12 mt-10">
-                            <div
-                                className="col-span-6 flex justify-center bg-red-600 p-2 ml-2 rounded hover:bg-red-700 transition-all ease-out"
+                        <div className="grid grid-cols-2 gap-4">
+                            <button
+                                type="button"
+                                onClick={closeModal}
+                                className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition-all"
                             >
-                                <button type="button" onClick={closeModal}>لغو</button>
-                            </div>
-                            <div
-                                className="col-span-6 flex justify-center bg-green-600 hover:bg-green-700 transition-all ease-out mr-2 p-2 rounded"
+                                لغو
+                            </button>
+                            <button
+                                type="submit"
+                                className="bg-green-500 text-white p-2 rounded hover:bg-green-600 transition-all"
                             >
-                                <button type="submit">{isEdit ? "ذخیره" : "تایید"}</button>
-                            </div>
+                                {isEdit ? "ذخیره" : "تایید"}
+                            </button>
                         </div>
                     </form>
                 </div>
             </Modal>
         </>
+
     );
 }

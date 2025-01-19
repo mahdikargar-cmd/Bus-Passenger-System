@@ -8,7 +8,9 @@ const coperativeRoutes = require('./routes/CoperativeRoutes');
 const destinationRoutes = require('./routes/DestinationRouter');
 const driverRoutes = require('./routes/DriverRoutes');
 const busRoutes = require('./routes/BusRoutes');
+/*
 const routeRoutes = require('./routes/RouteManagementRouter');
+*/
 const busMovement = require('./routes/BusMovementManagementRouter');
 const servicesRoutes = require('./routes/ServicesRouter');
 const ticketRoutes = require('./routes/ticketsRoute');
@@ -47,7 +49,9 @@ class Server {
         this.app.use('/driverreports', driverRoutes);
 
         this.app.use('/bus', busRoutes);
+/*
         this.app.use('/Route', routeRoutes);
+*/
         this.app.use('/busMovement', busMovement);
         this.app.use('/services', servicesRoutes);
         this.app.use('/tickets', ticketRoutes);

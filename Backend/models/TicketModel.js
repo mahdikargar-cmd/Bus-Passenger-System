@@ -12,7 +12,7 @@ const ticketSchema = new mongoose.Schema({
     serviceDetails: {
         ServicesOption: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ServiceOption' }],
         CompanyName: { type: mongoose.Schema.Types.ObjectId, ref: 'Company' },
-        busName: { type: mongoose.Schema.Types.ObjectId, ref: 'Bus' },
+        busName: { type: mongoose.Schema.Types.ObjectId, ref: 'BusManagement' },
         BusType: { type: String, required: true },
         SelectedRoute: { type: mongoose.Schema.Types.ObjectId, ref: 'Route' },
         movementDate: { type: Date, required: true },

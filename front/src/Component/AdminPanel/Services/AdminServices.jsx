@@ -1,59 +1,35 @@
-import React, { useState, useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
+import React, {useState, useEffect} from "react";
+import {useForm, Controller} from "react-hook-form";
 import Modal from "react-modal";
 import Select from 'react-select';
 import api from "../../../Services/Api";
 import "./admin.css";
-import moment from "moment-jalaali";
+import moment from 'moment-jalaali';
+import {BiEdit} from "react-icons/bi";
+import {AiFillDelete} from "react-icons/ai";
 
 export const AdminServices = () => {
-    const { register, handleSubmit,reset , control, formState: { errors } } = useForm();
-    const [buses, setBuses] = useState([]);
-    const [cooperatives, setCooperatives] = useState([]);
+    const {register, handleSubmit, reset, control, formState: {errors}} = useForm();
+    const [BusManagement, setBusManagement] = useState([]);
+    const [coperative, setCoperative] = useState([]);
     const [routes, setRoutes] = useState([]);
     const [cities, setCities] = useState([]);
-    const [busMovements, setBusMovements] = useState([]);
     const [capacities, setCapacities] = useState([]);
-    const [servicesOptions, setServicesOptions] = useState([]);
-    const [moveDates, setMoveDates] = useState([]);
-    const [moveTimes, setMoveTimes] = useState([]);
     const [services, setServices] = useState([]);
-
-    const [selectedServices, setSelectedServices] = useState([]);
-    const [selectedCooperative, setSelectedCooperative] = useState(null);
     const [selectedBus, setSelectedBus] = useState(null);
     const [selectedRoute, setSelectedRoute] = useState(null);
+    const [selectedChairCapacity, setSelectedChairCapacity] = useState(null);
     const [openModal, setOpenModal] = useState(false);
-    const [moveTime, setMoveTime] = useState(null);
     const [editingServiceId, setEditingServiceId] = useState(null);
-
 
     useEffect(() => {
         fetchRoutes();
         fetchBuses();
         fetchCities();
-        fetchBusMovements();
+        handleBusChange();
         fetchServicesOptions();
+        fetchCooperatives();
     }, []);
-
-    useEffect(() => {
-        if (selectedBus) {
-            const bus = buses.find(bus => bus._id === selectedBus.value);
-            if (bus) {
-                setCapacities([{ value: bus.capacity, label: bus.capacity.toString() }]);
-                setServicesOptions(bus.facilities.map(facility => ({ value: facility._id, label: facility })));
-            }
-        }
-    }, [selectedBus]);
-
-    useEffect(() => {
-        if (busMovements.length > 0) {
-            const dates = busMovements.map(movement => ({ value: movement.moveDate, label: moment(movement.moveDate).format('jYYYY-jMM-jDD') }));
-            const times = busMovements.map(movement => ({ value: movement.moveTime, label: movement.moveTime }));
-            setMoveDates(dates);
-            setMoveTimes(times);
-        }
-    }, [busMovements]);
 
     const fetchCities = async () => {
         try {
@@ -61,6 +37,15 @@ export const AdminServices = () => {
             setCities(response.data);
         } catch (error) {
             console.error("Error fetching cities", error);
+        }
+    };
+
+    const fetchCooperatives = async () => {
+        try {
+            const response = await api.get("coperative");
+            setCoperative(response.data);
+        } catch (error) {
+            console.error("Error fetching cooperatives", error);
         }
     };
 
@@ -75,229 +60,246 @@ export const AdminServices = () => {
 
     const fetchRoutes = async () => {
         try {
-            const response = await api.get("Route");
+            const response = await api.get("busMovement");
             setRoutes(response.data);
         } catch (error) {
             console.error("Error fetching routes", error);
         }
     };
+    const handleBusChange = (selectedOption) => {
+        if (!selectedOption) {
+            setSelectedBus(null);
+            setSelectedChairCapacity(null);
+            return;
+        }
+
+        setSelectedBus(selectedOption);
+
+        // Find the selected bus from BusManagement array
+        const selectedBusData = BusManagement.find(bus => bus._id === selectedOption.value);
+
+        if (selectedBusData) {
+            setSelectedChairCapacity(selectedBusData.capacity);
+        }
+    };
 
     const fetchBuses = async () => {
         try {
-            const response = await api.get("bus");
-            setBuses(response.data);
-            setCooperatives(response.data);
+            const response = await api.get("bus"); //BusManagement
+            setBusManagement(response.data);
+            setCapacities(response.data.map(bus => ({value: bus._id, label: bus.capacity})));
         } catch (error) {
-            console.error("Error fetching buses", error);
+            console.error("Error fetching BusManagement", error);
         }
     };
-    const fetchCoperative = async () => {
+    const handleEdit = async (serviceId) => {
         try {
-            const response = await api.get("Coperative");
-            setBuses(response.data);
-            setCooperatives(response.data);
+            const response = await api.get(`services/${serviceId}`);
+            const serviceData = response.data;
+
+            // Set the form data
+            reset({
+                companyName: { value: serviceData.CompanyName?._id, label: serviceData.CompanyName?.CoperativeName },
+                busName: { value: serviceData.busName?._id, label: serviceData.busName?.busName },
+                busType: { value: serviceData.BusType?._id, label: serviceData.BusType?.busType },
+                route: { value: serviceData.SelectedRoute?._id, label: `${serviceData.SelectedRoute?.origin} به ${serviceData.SelectedRoute?.destination}` },
+                moveDate: { value: serviceData.movementDate?._id, label: serviceData.movementDate?.moveDate },
+                moveTime: { value: serviceData.movementTime?._id, label: serviceData.movementTime?.moveTime },
+                ticketPrice: serviceData.ticketPrice,
+                ServicesOption: serviceData.ServicesOption?.map(option => ({
+                    value: option._id,
+                    label: option.facilities
+                })) || []
+            });
+
+            setSelectedBus({ value: serviceData.busName?._id, label: serviceData.busName?.busName });
+            setSelectedChairCapacity(serviceData.ChairCapacity);
+            setEditingServiceId(serviceId);
+            openModalHandler();
         } catch (error) {
-            console.error("Error fetching buses", error);
+            console.error('Error fetching service details:', error);
         }
-    };
-
-    const fetchBusMovements = async () => {
-        try {
-            const response = await api.get("busMovement");
-            setBusMovements(response.data);
-        } catch (error) {
-            console.error("Error fetching bus movements", error);
-        }
-    };
-
-    const openModalHandler = () => {
-        setOpenModal(true);
-    };
-
-    const closeModalHandler = () => {
-        setOpenModal(false);
-    };
-    const handleEdit = (service) => {
-        setEditingServiceId(service._id);
-        setSelectedCooperative({ value: service.CompanyName, label: getCompanyNameById(service.CompanyName) });
-        setSelectedBus({ value: service.busName, label: getBusNameById(service.busName) });
-        setSelectedRoute({ value: service.SelectedRoute, label: getRouteNameById(service.SelectedRoute) });
-        setMoveTime({ value: service.moveTime, label: service.moveTime });
-        setSelectedServices(service.ServicesOption.map(option => ({
-            value: option,
-            label: getServiceOptionsByIds([option])
-        })));
-        reset({
-            CompanyName: { value: service.CompanyName, label: getCompanyNameById(service.CompanyName) },
-            busName: { value: service.busName, label: getBusNameById(service.busName) },
-            busType: service.BusType,
-            route: { value: service.SelectedRoute, label: getRouteNameById(service.SelectedRoute) },
-            moveDate: { value: service.movementDate, label: formatDate(service.movementDate) },
-            moveTime: { value: service.moveTime, label: service.moveTime },
-            ChairCapacity: service.ChairCapacity,
-            ticketPrice: service.ticketPrice,
-            ServicesOption: service.ServicesOption
-        });
-        openModalHandler();
     };
 
     const handleDelete = async (serviceId) => {
-        try {
-            await api.delete(`services/deleteService/${serviceId}`);
-            fetchBusMovements();
-        } catch (error) {
-            console.error("Error deleting service", error);
+        if (window.confirm('آیا از حذف این سرویس اطمینان دارید؟')) {
+            try {
+                await api.delete(`services/deleteService/${serviceId}`);
+                fetchServicesOptions(); // Refresh the list
+            } catch (error) {
+                console.error('Error deleting service:', error);
+            }
         }
+    };
+    const openModalHandler = () => {
+        setOpenModal(true);
+    };
+    const closeModalHandler = () => {
+        setOpenModal(false);
     };
     const onSubmit = async (data) => {
-        const transformedData = {
-            CompanyName: data.CompanyName.value,
-            busName: data.busName.value,
-            BusType: data.busType.value,
-            SelectedRoute: data.route.value,
-            movementDate: new Date(data.moveDate.value),
-            movementTime: data.moveTime.value,
-            ChairCapacity: parseInt(data.ChairCapacity.value, 10),
-            ticketPrice: data.ticketPrice,
-            ServicesOption: data.ServicesOption.value
-        };
-
         try {
-            const response = await api.post(
-                "services/registerService",
-                transformedData,
-                {
-                    headers: { "Content-Type": "application/json" }
-                }
-            );
+            if (!selectedBus || !selectedChairCapacity) {
+                console.error("Bus and capacity are required");
+                return;
+            }
+            const newService = {
+                CompanyName: data.companyName.value,
+                busName: data.busName.value,
+                BusType: data.busType.value,
+                ChairCapacity: selectedBus.value, // Use the bus ID for ChairCapacity
+                SelectedRoute: data.route.value,
+                movementDate: data.moveDate.value,
+                movementTime: data.moveTime.value,
+                ticketPrice: parseFloat(data.ticketPrice),
+                ServicesOption: data.ServicesOption.map(option => option.value)
+            };
 
-            console.log(response.data);
-            closeModalHandler();
-            fetchBusMovements();
+            const response = editingServiceId
+                ? await api.patch(`services/updateService/${editingServiceId}`, newService)
+                : await api.post("services/registerService", newService);
+
+            if (response.status === 201 || response.status === 200) {
+                fetchServicesOptions();
+                closeModalHandler();
+                reset(); // Reset form after successful submission
+            }
         } catch (error) {
-            console.error("Error adding service", error);
+            console.error("Error saving service:", error);
+            // Add error handling UI feedback here
         }
     };
-
-    const getCompanyNameById = (id) => {
-        const company = buses.find(company => company._id === id);
-        return company ? company.companyName : 'Unknown';
-    };
-
-    const getBusNameById = (id) => {
-        const bus = buses.find(bus => bus._id === id);
-        return bus ? bus.busName : 'Unknown';
-    };
-
-    const getRouteNameById = (id) => {
-        const route = routes.find(route => route._id === id);
-        const origin = cities.find(c => c._id === route.origin)?.Cities;
-        const destination = cities.find(c => c._id === route.destination)?.Cities;
-        return route ? `${origin} به ${destination} ` : 'Unknown';
-    };
-
-    const getServiceOptionsByIds = (ids) => {
-        return ids.map(id => {
-            const service = buses.find(service => service._id === id);  
-            return service ? service.facilities : 'Unknown';
-        }).join(', ');
-    };
-
-    const formatDate = (date) => {
-        return moment(date).format('jYYYY-jMM-jDD');
-    };
-
     return (
         <>
-            <div className="grid grid-cols-12 mb-3">
-                <div className="col-span-6 pr-3 pl-3 pt-2 rounded flex justify-between bg-green-300">
-                    <p className="text-fuchsia-900">مدیریت سرویس‌ها</p>
-                    <button className="text-fuchsia-900 bg-green-200 p-2 rounded" onClick={openModalHandler}>افزودن سرویس جدید</button>
+            <div className="container mx-auto px-4">
+                {/* Add Button */}
+                <div className="grid grid-cols-12 gap-4">
+                    <div className="col-span-12 flex justify-center my-4">
+                        <button
+                            onClick={() => openModalHandler(null)}
+                            className="text-teal-50 hover:bg-green-700 transition-all duration-300 bg-green-500 w-full md:w-2/3 lg:w-1/5 rounded p-2"
+                        >
+                            افزودن
+                        </button>
+                    </div>
                 </div>
-            </div>
-            <table>
-                <thead>
-                <tr>
-                    <th>نام تعاونی</th>
-                    <th>نام اتوبوس</th>
-                    <th>نوع اتوبوس</th>
-                    <th>مسیر</th>
-                    <th>تاریخ حرکت</th>
-                    <th>ساعت حرکت</th>
-                    <th>ظرفیت صندلی</th>
-                    <th>قیمت بلیط</th>
-                    <th>عملیات</th>
-                </tr>
-                </thead>
-                <tbody>
-                {services.map((service, index) => (
-                    <tr key={index}>
-                        <td>{getCompanyNameById(service.CompanyName)}</td>
-                        <td>{getBusNameById(service.busName)}</td>
-                        <td>{service.BusType}</td>
-                        <td>{getRouteNameById(service.SelectedRoute)}</td>
-                        <td>{formatDate(service.movementDate)}</td>
-                        <td>{service.movementTime}</td>
-                        <td>{service.ChairCapacity}</td>
-                        <td>{service.ticketPrice}</td>
-                        <td>
-                            <button onClick={() => handleEdit(service)}>ویرایش</button>
-                            <button onClick={() => handleDelete(service._id)}>حذف</button>
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-            <Modal isOpen={openModal} onRequestClose={closeModalHandler}>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="grid grid-cols-12 p-10">
-                        <div className="flex justify-between items-center col-span-12 mb-5">
-                            <div className="col-span-4">
-                                <label>نام تعاونی</label>
+
+                {/* Services List */}
+                <div className="space-y-4">
+                    {services.map((service, index) => (
+                        <div
+                            className="flex flex-col p-4 bg-white rounded-lg shadow-xl transition-all duration-300 hover:scale-[1.02] hover:bg-adminpanel-bg"
+                            key={service._id}
+                        >
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <div className="text-sm md:text-md font-medium">
+                                    <span className="font-bold text-admin-modal ml-1">شماره:</span> {index + 1}
+                                </div>
+                                <div className="text-sm md:text-md font-medium">
+                                    <span className="font-bold text-admin-modal ml-1">نام تعاونی:</span>{' '}
+                                    {service.CompanyName?.CoperativeName || 'بدون تعاونی'}
+                                </div>
+                                <div className="text-sm md:text-md font-medium">
+                                    <span className="font-bold text-admin-modal ml-1">نام اتوبوس:</span>{' '}
+                                    {service.busName?.busName || 'نامشخص'}
+                                </div>
+                                <div className="text-sm md:text-md font-medium">
+                                    <span className="font-bold text-admin-modal ml-1">نوع اتوبوس:</span>{' '}
+                                    {service.BusType?.busType || 'نامشخص'}
+                                </div>
+                                <div className="text-sm md:text-md font-medium">
+                                    <span className="font-bold text-admin-modal ml-1">مسیر:</span>{' '}
+                                    {service.SelectedRoute
+                                        ? `${service.SelectedRoute.origin} به ${service.SelectedRoute.destination}`
+                                        : 'نامشخص'}
+                                </div>
+                                <div className="text-sm md:text-md font-medium">
+                                    <span className="font-bold text-admin-modal ml-1">تاریخ حرکت:</span>{' '}
+                                    {moment(service.movementDate?.moveDate, 'YYYY/MM/DD').format('jYYYY/jMM/jDD') || 'نامشخص'}
+                                </div>
+                                <div className="text-sm md:text-md font-medium">
+                                    <span className="font-bold text-admin-modal ml-1">ساعت حرکت:</span>{' '}
+                                    {moment(service.movementTime?.moveTime, 'HH:mm').format('HH:mm') || 'نامشخص'}
+                                </div>
+                                <div className="text-sm md:text-md font-medium">
+                                    <span className="font-bold text-admin-modal ml-1">ظرفیت صندلی:</span>{' '}
+                                    {service.ChairCapacity?.capacity || 'نامشخص'}
+                                </div>
+                                <div className="text-sm md:text-md font-medium">
+                                    <span className="font-bold text-admin-modal ml-1">قیمت بلیط:</span>{' '}
+                                    {service.ticketPrice?.toLocaleString() || 'نامشخص'} ریال
+                                </div>
+                                {/* Service Options */}
+                                <div className="text-sm md:text-md font-medium col-span-full">
+                                    <span className="font-bold text-admin-modal ml-1">امکانات:</span>{' '}
+                                    {service.ServicesOption?.map(option => option.facilities).join(', ') || 'بدون امکانات'}
+                                </div>
+                                <div className="flex justify-end items-center space-x-2 mt-2 md:mt-0">
+                                    <BiEdit
+                                        className="cursor-pointer ml-2 hover:text-blue-600 transition-all duration-300"
+                                        onClick={() => handleEdit(service._id)}
+                                    />
+                                    <AiFillDelete
+                                        className="cursor-pointer hover:text-red-600 transition-all duration-300"
+                                        onClick={() => handleDelete(service._id)}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Modal Form */}
+                <Modal isOpen={openModal} onRequestClose={closeModalHandler}>
+                    <form onSubmit={handleSubmit(onSubmit)} className="p-4 md:p-6 lg:p-10">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {/* Company Name */}
+                            <div className="space-y-2">
+                                <label className="block">نام تعاونی</label>
                                 <Controller
-                                    name="CompanyName"
+                                    name="companyName"
                                     control={control}
-                                    defaultValue={selectedCooperative}
                                     rules={{ required: true }}
                                     render={({ field }) => (
                                         <Select
                                             {...field}
-                                            options={cooperatives.map(item => ({ value: item._id, label: item.companyName }))}
-                                            value={selectedCooperative}
-                                            onChange={(e) => {
-                                                field.onChange(e);
-                                                setSelectedCooperative(e);
-                                            }}
-                                            className="text-black"
+                                            options={coperative.map(company => ({
+                                                value: company._id,
+                                                label: company.CoperativeName
+                                            }))}
+                                            className="text-black w-full"
+                                            placeholder="انتخاب تعاونی"
                                         />
                                     )}
                                 />
                                 {errors.CompanyName && <p className="text-red-600">نام تعاونی الزامی است.</p>}
                             </div>
-                            <div className="col-span-4">
-                                <label>نام اتوبوس</label>
+
+                            {/* Bus Name */}
+                            <div className="space-y-2">
+                                <label className="block">نام اتوبوس</label>
                                 <Controller
                                     name="busName"
                                     control={control}
-                                    defaultValue={selectedBus}
                                     rules={{ required: true }}
                                     render={({ field }) => (
                                         <Select
                                             {...field}
-                                            options={buses.map(bus => ({ value: bus._id, label: bus.busName }))}
-                                            value={selectedBus}
-                                            onChange={(e) => {
-                                                field.onChange(e);
-                                                setSelectedBus(e);
+                                            options={BusManagement.map(bus => ({ value: bus._id, label: bus.busName }))}
+                                            className="text-black w-full"
+                                            onChange={option => {
+                                                field.onChange(option);
+                                                handleBusChange(option);
                                             }}
-                                            className="text-black"
                                         />
                                     )}
                                 />
                                 {errors.busName && <p className="text-red-600">نام اتوبوس الزامی است.</p>}
                             </div>
-                            <div className="col-span-4">
-                                <label>نوع اتوبوس</label>
+
+                            {/* Bus Type */}
+                            <div className="space-y-2">
+                                <label className="block">نوع اتوبوس</label>
                                 <Controller
                                     name="busType"
                                     control={control}
@@ -306,20 +308,20 @@ export const AdminServices = () => {
                                     render={({ field }) => (
                                         <Select
                                             {...field}
-                                            options={[
-                                                { value: "VIP", label: "VIP" },
-                                                { value: "معمولی", label: "معمولی" }
-                                            ]}
-                                            className="text-black"
+                                            options={BusManagement.map(ss => ({
+                                                value: ss._id,
+                                                label: ss.busType
+                                            }))}
+                                            className="text-black w-full"
                                         />
                                     )}
                                 />
                                 {errors.busType && <p className="text-red-600">نوع اتوبوس الزامی است.</p>}
                             </div>
-                        </div>
-                        <div className="flex justify-between items-center col-span-12 mb-5">
-                            <div className="col-span-4">
-                                <label>مسیر</label>
+
+                            {/* Route */}
+                            <div className="space-y-2">
+                                <label className="block">مسیر</label>
                                 <Controller
                                     name="route"
                                     control={control}
@@ -333,105 +335,104 @@ export const AdminServices = () => {
                                                 const destination = cities.find(c => c._id === route.destination)?.Cities;
                                                 return { value: route._id, label: `${origin} به ${destination}` };
                                             })}
-                                            value={selectedRoute}
-                                            onChange={(e) => {
-                                                field.onChange(e);
-                                                setSelectedRoute(e);
-                                            }}
-                                            className="text-black"
+                                            className="text-black w-full"
                                         />
                                     )}
                                 />
                                 {errors.route && <p className="text-red-600">مسیر الزامی است.</p>}
                             </div>
-                            <div className="col-span-4">
-                                <label>تاریخ حرکت</label>
+
+                            {/* Move Date */}
+                            <div className="space-y-2">
+                                <label className="block">تاریخ حرکت</label>
                                 <Controller
                                     name="moveDate"
                                     control={control}
-                                    defaultValue=""
-                                    rules={{ required: true }}
                                     render={({ field }) => (
                                         <Select
                                             {...field}
-                                            options={moveDates}
-                                            className="text-black"
+                                            options={routes.map(moveDate => ({
+                                                value: moveDate._id,
+                                                label: moment(moveDate.moveDate).format('jYYYY/jMM/jDD')
+                                            }))}
+                                            className="text-black w-full"
+                                            placeholder="انتخاب تاریخ حرکت"
                                         />
                                     )}
                                 />
                                 {errors.moveDate && <p className="text-red-600">تاریخ حرکت الزامی است.</p>}
                             </div>
-                            <div className="col-span-4">
-                                <label>ساعت حرکت</label>
+
+                            {/* Move Time */}
+                            <div className="space-y-2">
+                                <label className="block">ساعت حرکت</label>
                                 <Controller
                                     name="moveTime"
                                     control={control}
-                                    defaultValue=""
-                                    rules={{ required: true }}
                                     render={({ field }) => (
                                         <Select
                                             {...field}
-                                            options={moveTimes}
-                                            className="text-black"
+                                            options={routes.map(hours => ({
+                                                value: hours._id,
+                                                label: hours.moveTime
+                                            }))}
+                                            className="text-black w-full"
+                                            placeholder="انتخاب زمان حرکت"
                                         />
                                     )}
                                 />
                                 {errors.moveTime && <p className="text-red-600">ساعت حرکت الزامی است.</p>}
                             </div>
-                        </div>
-                        <div className="flex justify-between items-center col-span-12 mb-5">
-                            <div className="col-span-4">
-                                <label>ظرفیت صندلی</label>
+
+                            {/* Chair Capacity */}
+                            <div className="space-y-2">
+                                <label className="block">ظرفیت صندلی</label>
+                                <input
+                                    type="text"
+                                    value={selectedChairCapacity}
+                                    disabled
+                                    className="p-2 border rounded w-full"
+                                />
+                            </div>
+
+                            {/* Ticket Price */}
+                            <div className="space-y-2">
+                                <label className="block">قیمت بلیط</label>
                                 <Controller
-                                    name="ChairCapacity"
+                                    name="ticketPrice"
                                     control={control}
-                                    defaultValue=""
-                                    rules={{ required: true }}
                                     render={({ field }) => (
-                                        <Select
+                                        <input
                                             {...field}
-                                            options={capacities}
-                                            className="text-black"
+                                            type="number"
+                                            className="p-2 border rounded w-full"
+                                            placeholder="قیمت بلیط"
                                         />
                                     )}
-                                />
-                                {errors.ChairCapacity && <p className="text-red-600">ظرفیت صندلی الزامی است.</p>}
-                            </div>
-                            <div className="col-span-4">
-                                <label>قیمت بلیط</label>
-                                <input
-                                    type="number"
-                                    {...register("ticketPrice", { required: true })}
-                                    className="p-2 border rounded"
                                 />
                                 {errors.ticketPrice && <p className="text-red-600">قیمت بلیط الزامی است.</p>}
                             </div>
-                            <div className="col-span-4">
-                                <label>امکانات سرویس</label>
-                                <Controller
-                                    name="ServicesOption"
-                                    control={control}
-                                    defaultValue={selectedServices}
-                                    render={({ field }) => (
-                                        <Select
-                                            {...field}
-                                            isMulti
-                                            options={servicesOptions}
-                                            value={selectedServices}
-                                            onChange={(e) => {
-                                                field.onChange(e);
-                                                setSelectedServices(e);
-                                            }}
-                                            className="text-black"
-                                        />
-                                    )}
-                                />
-                            </div>
                         </div>
-                        <button type="submit">{editingServiceId ? 'ویرایش سرویس' : 'افزودن سرویس'}</button>
-                    </div>
-                </form>
-            </Modal>
+                        <div className="flex justify-center space-x-2 mt-4">
+                            <button
+                                type="submit"
+                                className="bg-blue-500 text-white py-2 px-4 rounded w-1/4"
+                            >
+                                ذخیره
+                            </button>
+                            <button
+                                type="button"
+                                onClick={closeModalHandler}
+                                className="bg-red-500 text-white py-2 px-4 rounded w-1/4"
+                            >
+                                بستن
+                            </button>
+                        </div>
+                    </form>
+                </Modal>
+            </div>
         </>
     );
-};
+
+
+    };

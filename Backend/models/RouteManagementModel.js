@@ -1,3 +1,4 @@
+/*
 const mongoose = require('mongoose');
 
 const RouteSchema = new mongoose.Schema({
@@ -5,9 +6,12 @@ const RouteSchema = new mongoose.Schema({
     origin: { type: mongoose.Schema.Types.ObjectId, ref: 'City', required: true },
     destination: { type: mongoose.Schema.Types.ObjectId, ref: 'City', required: true },
     wedays: { type: [String], required: true },
+    moveDate: { type: Date, required: true },  // تاریخ حرکت اتوبوس
+    moveTime: { type: String, required: true }, // ساعت حرکت اتوبوس
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
 });
+
 
 RouteSchema.pre('save', function (next) {
     this.updatedAt = Date.now();
@@ -17,3 +21,4 @@ RouteSchema.pre('save', function (next) {
 const RouteModel = mongoose.model('Route', RouteSchema);
 
 module.exports = RouteModel;
+*/

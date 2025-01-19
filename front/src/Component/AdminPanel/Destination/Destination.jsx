@@ -92,66 +92,92 @@ export default function Destination() {
     };
 
     return (
-        <div>
+        <div className="p-4">
+            {/* دکمه افزودن */}
             <div className="col-span-12 flex justify-center">
                 <button
                     onClick={() => isOpen(null)}
-                    className="text-teal-50  bg-green-500 w-[20%] content-center rounded p-2 pr-3 pl-3"
+                    className="text-teal-50 bg-green-500 w-[50%] sm:w-[30%] lg:w-[20%] content-center rounded p-2 transition-all hover:bg-green-600"
                 >
                     افزودن
                 </button>
             </div>
 
-            <div className={'grid grid-cols-12 p-2 '}>
-                {destinations && destinations.length > 0 ? destinations.map((destination, index) => (
-                    <div key={index}
-                         className="flex justify-between m-2 text-gray-800 hover:bg-adminpanel-bg text-[18px] font-serif  font-bold pt-4 pb-4 ps-4 pl-1 col-span-2 bg-white rounded-lg shadow-xl transition-all duration-300 transform hover:scale-[1.02]">
-                        <p className={'hover:text-red-500'}>{destination?.Cities}</p>
-                        <div className={'flex'}>
-                            <div className={'ml-2 text-[24px] hover:text-white-blue transition-all'}
-                                 onClick={() => isOpen(destination)}><CiEdit/></div>
-                            <div className={'text-[24px] hover:text-red-500 transition-all'}
-                                 onClick={() => handleDelete(destination._id)}><MdDelete/></div>
+            {/* لیست مقاصد */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
+                {destinations && destinations.length > 0 ? (
+                    destinations.map((destination, index) => (
+                        <div
+                            key={index}
+                            className="flex justify-between items-center p-4 text-gray-800 hover:bg-gray-100 text-[16px] sm:text-[18px] font-serif font-bold bg-white rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105"
+                        >
+                            {/* نام مقصد */}
+                            <p className="hover:text-red-500">{destination?.Cities}</p>
+
+                            {/* دکمه‌های عملیات */}
+                            <div className="flex gap-4">
+                                <div
+                                    className="text-[24px] hover:text-blue-500 transition-all cursor-pointer"
+                                    onClick={() => isOpen(destination)}
+                                >
+                                    <CiEdit />
+                                </div>
+                                <div
+                                    className="text-[24px] hover:text-red-500 transition-all cursor-pointer"
+                                    onClick={() => handleDelete(destination._id)}
+                                >
+                                    <MdDelete />
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                )) : <p>هیچ مقصدی یافت نشد</p>}
+                    ))
+                ) : (
+                    <p className="text-center col-span-12">هیچ مقصدی یافت نشد</p>
+                )}
             </div>
 
-
+            {/* مودال ثبت/ویرایش */}
             <Modal
                 isOpen={openModal}
                 onRequestClose={closeModal}
-                className="bg-slate-500 w-[300px] xl:w-[700px] flex justify-center  text-white p-4 mr-20 mt-20 md:mr-[30%] md:h-[500px] rounded"
+                className="bg-slate-500 w-[90%] md:w-[700px] flex justify-center text-white p-6 mx-auto mt-20 rounded-lg shadow-xl"
             >
-                <div>
-                    <h1 className="mt-4 text-[20px] font-semibold mb-5">
+                <div className="w-full">
+                    <h1 className="mt-4 text-[20px] font-semibold mb-5 text-center">
                         {isEdit ? "ویرایش مسیر" : "ثبت مسیر"}
                     </h1>
-                    <form onSubmit={handleSubmit(onSubmit)}>
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                         <div>
-                            <label>نام شهر</label>
+                            <label className="block text-sm font-medium mb-2">نام شهر</label>
                             <input
-                                className="p-2 mr-2 rounded text-black mt-2"
+                                className="w-full p-2 rounded text-black border border-gray-300"
                                 type="text"
                                 placeholder="نام شهر را وارد کنید"
-                                {...register("cityName", {required: "نام شهر الزامی است"})} // Register input for react-hook-form
+                                {...register("cityName", { required: "نام شهر الزامی است" })}
                             />
-                            {errors.cityName && <p className="text-red-500">{errors.cityName.message}</p>}
+                            {errors.cityName && (
+                                <p className="text-red-500 mt-1">{errors.cityName.message}</p>
+                            )}
                         </div>
-                        <div className="grid grid-cols-12 mt-10">
-                            <div
-                                className="col-span-6 flex justify-center bg-red-600 p-2 ml-2 rounded hover:bg-red-700 transition-all ease-out">
-                                <button type="button" onClick={closeModal}>لغو</button>
-                            </div>
-                            <div
-                                className="col-span-6 flex justify-center bg-green-600 hover:bg-green-700 transition-all ease-out mr-2 p-2 rounded">
-                                <button type="submit">{isEdit ? "ذخیره" : "تایید"}</button>
-                            </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <button
+                                type="button"
+                                onClick={closeModal}
+                                className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition-all"
+                            >
+                                لغو
+                            </button>
+                            <button
+                                type="submit"
+                                className="bg-green-500 text-white p-2 rounded hover:bg-green-600 transition-all"
+                            >
+                                {isEdit ? "ذخیره" : "تایید"}
+                            </button>
                         </div>
                     </form>
                 </div>
             </Modal>
-
         </div>
+
     );
 }

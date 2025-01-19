@@ -1,31 +1,55 @@
 const mongoose = require('mongoose');
 
 const ServicesSchema = new mongoose.Schema({
-    CompanyName: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', required: true, index: true },
-    busName: { type: mongoose.Schema.Types.ObjectId, ref: 'Bus', required: true, index: true },
-    BusType: { type: String, required: true },
-    SelectedRoute: { type: mongoose.Schema.Types.ObjectId, ref: 'Route', required: true, index: true },
-    movementDate: { type: Date, required: true },
-    movementTime: { type: String, required: true },
-    ChairCapacity: { type: Number, required: true },
-    ticketPrice: { type: String, required: true },
-    ServicesOption: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ServicesOption', required: true }],
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now }
+    CompanyName: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Coperative',
+        required: [true, 'Cooperative name is required']
+    },
+    busName: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'BusManagement',
+        required: [true, 'Bus name is required']
+    },
+    BusType: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'BusManagement',
+        required: [true, 'Bus type is required']
+    },
+    SelectedRoute: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'busMovement',
+        required: [true, 'Route is required']
+    },
+    movementDate: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'busMovement',
+        required: [true, 'Movement date is required']
+    },
+    movementTime: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'busMovement',
+        required: [true, 'Movement time is required']
+    },
+    ChairCapacity: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'BusManagement',
+        required: [true, 'Chair capacity is required']
+    },
+    ticketPrice: {
+        type: Number,
+        required: [true, 'Ticket price is required'],
+        min: [0, 'Price must be non-negative']
+    },
+    ServicesOption: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'BusManagement'
+    }]
+}, {
+    timestamps: true
 });
 
-// Middleware to create seat statuses based on ChairCapacity
-ServicesSchema.pre('save', async function (next) {
-    if (this.isNew) {
-        const SeatStatus = require('./SeatStatusModel');
-        const seatStatuses = [];
-        for (let i = 0; i < this.ChairCapacity; i++) {
-            seatStatuses.push({ serviceId: this._id, seatNumber: i + 1 });
-        }
-        await SeatStatus.insertMany(seatStatuses);
-    }
-    next();
-});
+ServicesSchema.index({ movementDate: 1, SelectedRoute: 1 });
 
 const ServicesModel = mongoose.model("Services", ServicesSchema);
 

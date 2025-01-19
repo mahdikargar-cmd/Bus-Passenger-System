@@ -3,15 +3,21 @@ const busMovementModel = require('../models/BusMovementManagementModel');
 class BusMovementController {
     async registerBusMovement(req, res) {
         try {
-            console.log("Registering bus movement:", req.body); // Log to inspect received data
-            const newBusMovement = new busMovementModel(req.body);
+            const { busName, origin, destination, wedays, moveDate, moveTime } = req.body;
+
+            if (!busName || !origin || !destination || !wedays || !moveDate || !moveTime) {
+                return res.status(400).json({ message: "لطفاً تمام فیلدهای الزامی را پر کنید." });
+            }
+
+            const newBusMovement = new busMovementModel({ busName, origin, destination, wedays, moveDate, moveTime });
             await newBusMovement.save();
             res.status(201).json(newBusMovement);
         } catch (error) {
-            console.error("Error registering bus movement:", error);
-            res.status(400).json({ message: error.message });
+            console.error("Error registering bus movement:", error.message);
+            res.status(500).json({ message: "خطا در ثبت اطلاعات مسیر." });
         }
     }
+
 
     async deleteBusMovement(req, res) {
         try {

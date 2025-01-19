@@ -1,3 +1,4 @@
+/*
 const express = require("express");
 const RouteManagementController = require("../controllers/RouteManagementController");
 const RouteModel = require("../models/RouteManagementModel");
@@ -18,3 +19,4 @@ router.get('/', async (req, res) => {
 });
 
 module.exports = router;
+*/

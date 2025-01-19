@@ -36,49 +36,53 @@ export const AdminLogin = () => {
     };
 
     return (
-        <>
-            <div className={"lg:mt-28 lg:mr-[33%] grid grid-cols-12 "}>
+        <div className={'flex justify-center'}>
+            <div className="lg:mt-28 lg:w-[600px]  flex justify-center items-center h-screen lg:h-auto">
                 <div
                     className={
-                        "col-span-12 lg:mt-0 rounded bg-white-blue h-[100vh] lg:h-[500px] lg:col-span-7 p-4 lg:p-16 flex flex-col items-center"
+                        "w-full max-w-md lg:max-w-4xl rounded bg-admin-modal    h-auto lg:h-[500px] p-6 lg:p-16 flex flex-col items-center"
                     }
                 >
-                    <h1 className={"text-white font-semibold text-[20px] mb-10"}>صفحه ورود به پنل </h1>
-                    <form action="" onSubmit={handleSubmit(onSubmit)}>
-                        <div>
-                            <label htmlFor="" className={"text-white "}>
+                    <h1 className="text-white font-semibold text-[20px] mb-10 text-center">
+                        صفحه ورود به پنل
+                    </h1>
+                    <form action="" onSubmit={handleSubmit(onSubmit)} className="w-full">
+                        <div className="mb-5">
+                            <label htmlFor="" className="text-white block mb-2">
                                 نام کاربری
                             </label>
                             <input
                                 type="text"
-                                placeholder={" نام  کاربری"}
+                                placeholder={"نام کاربری"}
                                 name="user"
-                                className={"flex placeholder:pr-2 p-1 mt-2 rounded-sm"}
+                                className="w-full p-2 mt-2 rounded-sm placeholder:pr-2"
                                 {...register("user", { required: true })}
                             />
-                            {errors.user && <p>نام کاربری را وارد کنید</p>}
+                            {errors.user && <p className="text-red-500 text-sm mt-1">نام کاربری را وارد کنید</p>}
                         </div>
-                        <div className={'mt-5 mb-3'}>
-                            <label htmlFor="" className={"text-white "}>
+                        <div className="mb-5">
+                            <label htmlFor="" className="text-white block mb-2">
                                 رمز عبور
                             </label>
                             <input
                                 type="password"
-                                placeholder={" رمز  عبور"}
+                                placeholder={"رمز عبور"}
                                 name="password"
-                                className={"flex placeholder:pr-2 p-1 rounded-sm"}
+                                className="w-full p-2 mt-2 rounded-sm placeholder:pr-2"
                                 {...register("password", { required: true })}
                             />
-                            {errors.password && <p>رمز عبور را وارد کنید</p>}
+                            {errors.password && <p className="text-red-500 text-sm mt-1">رمز عبور را وارد کنید</p>}
                         </div>
-
-                        <button className={"bg-orange-500 w-full mt-3 pt-1 pb-1 rounded"}>
+                        <button
+                            className="bg-orange-500 w-full py-2 mt-3 rounded text-white font-semibold hover:bg-orange-600 transition-all"
+                        >
                             تایید
                         </button>
                     </form>
-                    {errorMessage && <p>{errorMessage}</p>}
+                    {errorMessage && <p className="text-red-500 text-sm mt-3">{errorMessage}</p>}
                 </div>
             </div>
-        </>
+        </div>
+
     );
 };

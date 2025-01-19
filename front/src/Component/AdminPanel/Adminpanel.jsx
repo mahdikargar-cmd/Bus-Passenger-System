@@ -7,7 +7,6 @@ import {Drivers} from "./Drivers/Drivers";
 import {Tickets} from "./Tickets/Tickets";
 import {ManagementOfBuses} from "./ManagementOfBuses/ManagementOfBuses";
 import {AdminServices} from "./Services/AdminServices";
-import {RouteManagement} from "./RouteManagement/RouteManagement";
 import {BusMovementManagement} from "./BusMovementManagement/BusMovementManagement";
 import Amanat from "./Amanat/Amanat";
 import {DriverReport} from "./DriverReport/DriverReport";
@@ -28,7 +27,7 @@ const AdminPanel = () => {
             component: "Cooperative",
         },
         {
-            text: "مدیریت مقصد",
+            text: "مدیریت شهرها",
             id: 2,
             link: "tewrwe",
             component: "Destination",
@@ -39,13 +38,7 @@ const AdminPanel = () => {
             link: "/adminp",
             component: "Drivers",
         },
-        /*{
-            text: "مدیریت سرویس ها",
-            id: 3,
-            link: "/services",
-            component: "Services",
 
-        },*/
         /*  {
               text: "احرازهویت مسافران (حضوری)",
               id: 4,
@@ -60,17 +53,17 @@ const AdminPanel = () => {
         },
 
         {
-            text: "مدیریت زمان حرکت اتوبوس",
+            text: "مدیریت  حرکت اتوبوس",
             id: 11,
             link: "tewrwe",
             component: "BusMovementManagement",
         },
-        {
+   /*     {
             text: "مدیریت مسیراتوبوس ",
             id: 12,
             link: "tewrwe",
             component: "RouteManagement",
-        },
+        },*/
         /*  {
               text: "مدیریت قیمت گذاری ",
               id: 6,
@@ -89,6 +82,13 @@ const AdminPanel = () => {
             link: "/ComplaintsManagement",
             component: "ComplaintsManagement",
         },
+            {
+               text: "مدیریت سرویس ها",
+               id: 3,
+               link: "/services",
+               component: "Services",
+
+           },
         /*    {
                 text: "مدیریت باربری",
                 id: 9,
@@ -117,8 +117,6 @@ const AdminPanel = () => {
                 return <ManagementOfBuses/>
             case "Services":
                 return <AdminServices/>
-            case "RouteManagement":
-                return <RouteManagement/>
             case "BusMovementManagement":
                 return <BusMovementManagement/>
             case "Amanat":
@@ -132,8 +130,8 @@ const AdminPanel = () => {
         }
     };
     const handleLogout = () => {
-        logout(); // خروج کاربر
-        navigate("/"); // هدایت به صفحه ورود
+        logout();
+        navigate("/");
     };
 
     const toggleMenu = () => {
@@ -144,31 +142,33 @@ const AdminPanel = () => {
     return (
 
         <div>
-            <div className={"bg-adminpanel-bg max-h-[100vh] overflow-y-auto pb-9"}>
+            <div className={"bg-adminpanel-bg max-h-screen overflow-y-auto pb-9"}>
                 {/* start search box */}
-                <div className={"grid grid-cols-12  bg-adminpanel-ui p-4"}>
-                    <div className={"col-span-5 flex items-center"}>
-                        <img src={Avatar} alt={'عکس'} className="h-10 w-10 ml-6 rounded-full"/>
-                        <h1 className="ml-3">admin</h1>
-                        <AiFillCaretDown onClick={toggleMenu} /> {/* کلیک روی آیکون */}
+                <div className={"grid grid-cols-12 bg-adminpanel-ui p-4"}>
+                    <div className={"col-span-12 md:col-span-5 flex items-center"}>
+                        <img src={Avatar} alt={'عکس'} className="h-10 w-10 ml-6 rounded-full" />
+                       <div className={'flex justify-between items-center cursor-pointer'} onClick={toggleMenu}>
+                           <h1  className="ml-3 ">admin</h1>
+                           <AiFillCaretDown  /> {/* کلیک روی آیکون */}
+                       </div>
                     </div>
-                    <div className="col-span-7 flex justify-end ml-4 items-center">
+                    <div className="col-span-12 md:col-span-7 flex justify-end mt-4 md:mt-0 items-center">
                         <label htmlFor="Search" className="ml-3 ">
                             جستجو
                         </label>
                         <input
                             type="search"
-                            className="p-2 rounded bg-adminpanel-bg  w-[1000px]"
+                            className="p-2 rounded bg-adminpanel-bg w-full md:w-[400px] lg:w-[600px] xl:w-[1000px]"
                             id="Search"
                         />
                     </div>
                 </div>
-                {/*end search */}
+                {/* end search */}
 
-                {/*start menu */}
+                {/* start menu */}
                 <div className="mt-6 grid grid-cols-12 p-2 max-h-[80vh] overflow-y-auto">
                     <div
-                        className="col-span-2 rounded bg-adminpanel-ui p-2 pb-4 max-h-[100vh] overflow-y-auto    flex flex-col">
+                        className="col-span-12 md:col-span-3 lg:col-span-2 rounded bg-adminpanel-ui p-2 pb-4 max-h-[100vh] overflow-y-auto flex flex-col">
                         {info.map((ti) => (
                             <button
                                 key={ti.id}
@@ -179,19 +179,19 @@ const AdminPanel = () => {
                             </button>
                         ))}
                     </div>
-                    <div className="col-span-10 rounded bg-adminpanel-ui p-2 mr-3 flex flex-col">
+                    <div className="col-span-12 md:col-span-9 lg:col-span-10 rounded bg-adminpanel-ui p-2 mr-3 flex flex-col">
                         {renderComponent()}
                     </div>
                 </div>
+                {/* end menu */}
 
-                {/*end menu */}
                 {/* نمایش منوی کشویی برای دکمه خروج */}
                 {showMenu && (
-                    <div className="absolute hover:bg-red-500 flex justify-center hover:text-white  top-16 right-16 bg-white shadow-lg rounded mt-2  w-28">
+                    <div className="absolute hover:bg-red-500 flex justify-center hover:text-white top-16 right-4 md:right-16 bg-white shadow-lg rounded mt-2 w-28">
                         <ul>
                             <li>
                                 <button
-                                    className="w-full text-left p-2 "
+                                    className="w-full text-left p-2"
                                     onClick={handleLogout}>
                                     خروج
                                 </button>
@@ -201,6 +201,7 @@ const AdminPanel = () => {
                 )}
             </div>
         </div>
+
     );
 };
 

@@ -195,16 +195,17 @@ export const ManagementOfBuses = () => {
                 <div className="col-span-12 flex justify-center">
                     <button
                         onClick={() => openModalHandler(null)}
-                        className="text-teal-50 hover:bg-green-700 transition-all duration-300 hover:w-[10%] bg-green-500 w-[20%] content-center rounded p-2 pr-3 pl-3"
+                        className="text-teal-50 hover:bg-green-700 transition-all duration-300 bg-green-500 w-full sm:w-[80%] md:w-[60%] lg:w-[30%] xl:w-[20%] content-center rounded p-2 pr-3 pl-3"
                     >
                         افزودن
                     </button>
                 </div>
             </div>
-                <div className="grid grid-cols-12 mt-2">
+
+            <div className="grid grid-cols-12 mt-2">
                     {buses.map((bus, index) => (
                         <div
-                            className="flex justify-between m-2 text-gray-800 hover:bg-adminpanel-bg text-[14px] pt-4 pb-4 ps-1 pl-1 col-span-12 bg-white rounded-lg shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
+                            className="flex max-md:flex-col justify-between m-2 text-gray-800 hover:bg-adminpanel-bg text-[14px] pt-4 pb-4 ps-1 pl-1 col-span-12 bg-white rounded-lg shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
                             key={bus._id}
                         >
                             <div className="col-span-2 text-md font-medium ps-1">
@@ -227,7 +228,7 @@ export const ManagementOfBuses = () => {
                                     ? bus.routes.map(destination =>
                                         destinations.find(route => route._id === destination)?.Cities
                                     ).join(", ")
-                                    : bus.companyName || "بدون شهر"}
+                                    :  "بدون شهر"}
                             </div>
                             <div className="col-span-1 flex justify-between text-md font-medium">
                                 <span className="font-bold text-admin-modal ml-1">نوع اتوبوس:</span> {bus.busType}

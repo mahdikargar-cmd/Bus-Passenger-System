@@ -59,6 +59,8 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;javascript.nodejs.core.library.configured.version&quot;: &quot;21.0.0&quot;,
+    &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;22.10.7&quot;,
     &quot;last_opened_file_path&quot;: &quot;F:/Uni_project/travel/front/src/Component&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -219,6 +221,19 @@
       <workItem from="1732713903875" duration="4651000" />
       <workItem from="1732731154114" duration="16284000" />
       <workItem from="1732776185936" duration="14202000" />
+      <workItem from="1732977143325" duration="956000" />
+      <workItem from="1733029419229" duration="2155000" />
+      <workItem from="1733072152728" duration="7000" />
+      <workItem from="1733072174631" duration="1732000" />
+      <workItem from="1733516566428" duration="6277000" />
+      <workItem from="1733584597640" duration="13203000" />
+      <workItem from="1733669614604" duration="9792000" />
+      <workItem from="1733727946167" duration="4761000" />
+      <workItem from="1733733373686" duration="246000" />
+      <workItem from="1733813310567" duration="928000" />
+      <workItem from="1734358082109" duration="616000" />
+      <workItem from="1737265877406" duration="6958000" />
+      <workItem from="1737282647568" duration="13542000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />

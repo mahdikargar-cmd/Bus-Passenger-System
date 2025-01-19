@@ -2,15 +2,16 @@ import React, { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import Modal from "react-modal";
 import Select from 'react-select';
-import moment from 'moment-jalaali';
 import { BiEdit } from 'react-icons/bi';
 import { AiFillDelete } from 'react-icons/ai';
 import api from "../../../Services/Api";
 import DatePicker, {DateObject} from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
+import TimePicker from "react-time-picker";
+import 'react-time-picker/dist/TimePicker.css';
+import 'react-clock/dist/Clock.css';
 
-// Define days of the week for the multi-select
 const Dates = [
     { value: 'شنبه', label: 'شنبه' },
     { value: 'یکشنبه', label: 'یکشنبه' },
@@ -22,7 +23,7 @@ const Dates = [
 ];
 
 export const BusMovementManagement = () => {
-    const { register, handleSubmit, reset, setValue, control, formState: { errors } } = useForm();
+    const {  handleSubmit, reset, setValue, control, formState: { errors } } = useForm();
     const [buses, setBuses] = useState([]);
     const [routes, setRoutes] = useState([]);
     const [cities, setCities] = useState([]);
@@ -32,7 +33,8 @@ export const BusMovementManagement = () => {
     const [openModal, setOpenModal] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [currentRoute, setCurrentRoute] = useState(null);
-
+    const [dateOfBirth, setDateOfBirth] = useState(null);
+    const [moveTime, setMoveTime] = useState("00:00"); // زمان پیش‌فرض
     useEffect(() => {
         fetchRoutes();
         fetchBuses();
@@ -50,12 +52,14 @@ export const BusMovementManagement = () => {
 
     const fetchRoutes = async () => {
         try {
-            const response = await api.get("Route");
+            const response = await api.get("busMovement");
+            console.log(response.data); // بررسی داده‌های بازگشتی
             setRoutes(response.data);
         } catch (error) {
             console.error("Error fetching routes", error);
         }
     };
+
 
     const fetchBuses = async () => {
         try {
@@ -68,7 +72,7 @@ export const BusMovementManagement = () => {
 
     const deleteRoute = async (id) => {
         try {
-            await api.delete(`Route/deleteRoute/${id}`);
+            await api.delete(`busMovement/deleteBusMovement/${id}`);
             await fetchRoutes();
         } catch (error) {
             console.error("Error deleting route", error);
@@ -76,34 +80,31 @@ export const BusMovementManagement = () => {
     };
 
     const onSubmit = async (data) => {
-        // Prepare route data
+        if (!dateOfBirth) {
+            console.error("تاریخ حرکت الزامی است.");
+            return;
+        }
+        data.moveDate = new Date(dateOfBirth.unix * 1000).toISOString();
+        data.moveTime = moveTime;
         data.busName = selectedBus?.value;
         data.origin = selectedOrigin?.value;
         data.destination = selectedDestination?.value;
         data.wedays = data.wedays.map(day => day.value);
 
+        console.log("Data being sent to the server:", data);
+
         try {
             if (isEdit && currentRoute) {
-                // Update existing route
-                await api.patch(`Route/updateRoute/${currentRoute._id}`, data, {
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                // Update routes in state
-                setRoutes(routes.map(item =>
-                    item._id === currentRoute._id ? { ...item, ...data } : item
-                ));
+                await api.patch(`busMovement/updateBusMovement/${currentRoute._id}`, data);
             } else {
-                // Create new route
-                const response = await api.post("Route/registerRoute", data, {
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                setRoutes([...routes, response.data]);
+                await api.post("busMovement/registerBusMovement", data);
             }
             closeModalHandler();
         } catch (error) {
-            console.error("Error adding/updating route", error);
+            console.error("خطا در ذخیره‌سازی اطلاعات:", error.response?.data || error.message);
         }
     };
+
 
     const openModalHandler = (route) => {
         if (route) {
@@ -116,6 +117,11 @@ export const BusMovementManagement = () => {
                 value: route.busName,
                 label: buses.find(b => b._id === route.busName)?.busName
             });
+            setDateOfBirth(new DateObject({
+                date: new Date(route.moveDate), // تبدیل به تاریخ جاوااسکریپت
+                calendar: persian,
+                locale: persian_fa
+            }));
 
             setSelectedOrigin({
                 value: route.origin,
@@ -131,7 +137,12 @@ export const BusMovementManagement = () => {
 
             setIsEdit(true);
             setCurrentRoute(route);
-        } else {
+            console.log("dateOfBirth:", route.moveDate);
+
+        }
+
+
+        else {
             // Add mode
             reset();
             setIsEdit(false);
@@ -158,50 +169,62 @@ export const BusMovementManagement = () => {
     const handleDestinationChange = (selectedOption) => {
         setSelectedDestination(selectedOption);
     };
+    const formatDate = (date) => {
+        const dateObj = new DateObject({
+            date: new Date(date), // تبدیل تاریخ از فرمت اصلی به فرمت قابل خواندن
+            calendar: persian,
+            locale: persian_fa
+        });
+        return dateObj.format("YYYY/MM/DD"); // فرمت تاریخ نهایی
+    };
 
     return (
         <>
             <div className="grid grid-cols-12">
-                <div className="col-span-12 flex justify-center">
+                <div className="col-span-12 flex justify-center mt-4">
                     <button
                         onClick={() => openModalHandler(null)}
-                        className="text-teal-50 hover:bg-green-700 transition-all duration-300 hover:w-[10%] bg-green-500 w-[20%] content-center rounded p-2 pr-3 pl-3"
+                        className="text-teal-50 hover:bg-green-700 transition-all duration-300 hover:w-[50%] lg:hover:w-[10%] bg-green-500 w-[80%] lg:w-[20%] content-center rounded p-2"
                     >
                         افزودن
                     </button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-12 mt-2">
+            <div className="grid grid-cols-12 mt-2 gap-4">
                 {routes.map((route, index) => {
                     const busName = buses.find(bus => bus._id === route.busName)?.busName || route.busName;
                     const originName = cities.find(city => city._id === route.origin)?.Cities || route.origin;
                     const destinationName = cities.find(city => city._id === route.destination)?.Cities || route.destination;
 
                     return (
-                        <div
-                            className="flex justify-between m-2 text-gray-800 hover:bg-adminpanel-bg text-[14px] pt-4 pb-4 ps-1 pl-1 col-span-12 bg-white rounded-lg shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
-                            key={route._id}
-                        >
-                            <div className="col-span-2 text-md font-medium ps-1">
+                        <div className="flex flex-col lg:flex-row justify-between m-2 text-gray-800 hover:bg-adminpanel-bg text-[14px] p-2 col-span-12 bg-white rounded-lg shadow-xl transition-all duration-300 transform hover:scale-[1.02]" key={route._id}>
+                            <div className="lg:w-1/6 text-md font-medium ps-1">
                                 <span className="font-bold text-admin-modal ml-1">شماره:</span> {index + 1}
                             </div>
-                            <div className="col-span-1 text-md font-medium">
+                            <div className="lg:w-1/6 text-md font-medium">
                                 <span className="font-bold text-admin-modal ml-1">نام اتوبوس:</span> {busName}
                             </div>
-                            <div className="col-span-1 text-md font-medium">
+                            <div className="lg:w-1/6 text-md font-medium">
                                 <span className="font-bold text-admin-modal ml-1">مبدا:</span> {originName}
                             </div>
-                            <div className="col-span-1 text-md font-medium">
+                            <div className="lg:w-1/6 text-md font-medium">
                                 <span className="font-bold text-admin-modal ml-1">مقصد:</span> {destinationName}
                             </div>
-                            <div className="col-span-1 text-md font-medium">
+                            <div className="lg:w-1/6 text-md font-medium">
                                 <span className="font-bold text-admin-modal ml-1">روزهای حرکت:</span> {route.wedays?.join(", ") || ''}
                             </div>
-                            <div className="col-span-2 text-md font-medium">
+                            <div className="lg:w-1/6 text-md font-medium">
+                                <p>تولد: {route.moveDate ? formatDate(route.moveDate) : "تاریخ موجود نیست"}</p>
+                            </div>
+                            <div className="lg:w-1/6 text-md font-medium">
+                                <span className="font-bold text-admin-modal ml-1">ساعت حرکت:</span> {route.moveTime || "مشخص نشده"}
+                            </div>
+
+                            <div className="lg:w-1/6 text-md font-medium">
                                 <span className="font-bold text-green-700">ثبت شده در:</span> {new Date(route.createdAt).toLocaleString("fa-IR")}
                             </div>
-                            <div className="col-span-1 text-gray-800 font-semibold text-[22px] flex items-center space-x-2">
+                            <div className="flex justify-end lg:w-1/6 text-gray-800 font-semibold text-[22px] space-x-2 mt-4 lg:mt-0">
                                 <BiEdit
                                     onClick={() => openModalHandler(route)}
                                     className="cursor-pointer ml-2 hover:text-white-blue transition-all duration-300"
@@ -212,21 +235,21 @@ export const BusMovementManagement = () => {
                                 />
                             </div>
                         </div>
-                    )
+                    );
                 })}
             </div>
 
             <Modal
                 isOpen={openModal}
                 onRequestClose={closeModalHandler}
-                className="bg-slate-500 w-[700px] flex justify-center text-white p-2 mt-20 mr-[30%] h-[650px] rounded-lg shadow-xl transition-all duration-500"
+                className="bg-slate-500 w-[95%] lg:w-[700px] mx-auto flex justify-center text-white p-4 mt-20 h-auto lg:h-[650px] rounded-lg shadow-xl transition-all duration-500"
             >
-                <div>
+                <div className="w-full">
                     <h1 className="mt-4 text-[20px] font-semibold mb-5 text-center">
                         {isEdit ? "ویرایش مسیر" : "ثبت مسیر"}
                     </h1>
                     <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-12 gap-4">
-                        <div className="col-span-6">
+                        <div className="col-span-12 lg:col-span-6">
                             <label className="block text-sm font-medium mb-2">نام اتوبوس</label>
                             <Controller
                                 name="busName"
@@ -248,7 +271,7 @@ export const BusMovementManagement = () => {
                                 )}
                             />
                         </div>
-                        <div className="col-span-6">
+                        <div className="col-span-12 lg:col-span-6">
                             <label className="block text-sm font-medium mb-2">انتخاب مبدا</label>
                             <Controller
                                 name="origin"
@@ -270,7 +293,7 @@ export const BusMovementManagement = () => {
                                 )}
                             />
                         </div>
-                        <div className="col-span-6">
+                        <div className="col-span-12 lg:col-span-6">
                             <label className="block text-sm font-medium mb-2">انتخاب مقصد</label>
                             <Controller
                                 name="destination"
@@ -292,7 +315,7 @@ export const BusMovementManagement = () => {
                                 )}
                             />
                         </div>
-                        <div className="col-span-6">
+                        <div className="col-span-12 lg:col-span-6">
                             <label className="block text-sm font-medium mb-2">روزهای حرکت</label>
                             <Controller
                                 name="wedays"
@@ -312,6 +335,30 @@ export const BusMovementManagement = () => {
                                 )}
                             />
                         </div>
+                        <div className="col-span-12">
+                            <div className={'col-span-6'}>
+                                <label className="block text-sm font-medium mb-2">تاریخ حرکت</label>
+                                <DatePicker
+                                    value={dateOfBirth}
+                                    onChange={setDateOfBirth}
+                                    calendar={persian}
+                                    locale={persian_fa}
+                                    className="w-full p-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    placeholder="تاریخ حرکت "
+                                />
+                                {!dateOfBirth && <p className="text-red-500 text-sm mt-1">لطفاً تاریخ تولد را انتخاب کنید.</p>}
+                            </div>
+                        </div>
+                        <div className="col-span-6">
+                            <label className="block  text-sm font-medium mb-2">ساعت حرکت</label>
+                            <TimePicker
+                                onChange={setMoveTime}
+                                value={moveTime}
+                                disableClock={true} // غیر فعال کردن ساعت گرافیکی
+                                className="w-full p-2 rounded bg-white text-black focus:outline-none"
+                            />
+                        </div>
+
                         <div className="flex justify-between mt-8 col-span-12">
                             <button
                                 type="button"
@@ -331,5 +378,6 @@ export const BusMovementManagement = () => {
                 </div>
             </Modal>
         </>
+
     );
 };
