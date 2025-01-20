@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const ServiceDetail = () => {
     const navigate = useNavigate();
@@ -20,40 +20,36 @@ const ServiceDetail = () => {
     const serviceId = window.location.pathname.split('/').pop();
 
     useEffect(() => {
-        if (serviceId) {
-            Promise.all([
-                fetchServiceDetails(),
-                fetchSeatStatuses()
-            ]).catch(console.error);
-        }
-    }, [serviceId]);
+        loadInitialData();
+    }, [navigate]);
 
-    const fetchServiceDetails = async () => {
+    const loadInitialData = () => {
         try {
-            const url = `/api/services/${serviceId}`;
-            console.log("Fetching Service Details URL:", url);  // نمایش URL برای بررسی
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('Service fetch failed');
-            const data = await response.json();
-            console.log("Service Data:", data);  // نمایش دیتا دریافتی
-            setService(data);
-        } catch (error) {
-            console.error("Error fetching service details:", error);
-        } finally {
+            const storedService = localStorage.getItem('selectedService');
+            if (!storedService) {
+                navigate('/services');
+                return;
+            }
+
+            const parsedService = JSON.parse(storedService);
+            setService(parsedService);
+
+            const totalSeats = parsedService?.ChairCapacity?.capacity || 44;
+            initializeSeatStatuses(totalSeats);
+
             setLoading(false);
+        } catch (error) {
+            console.error('Error loading initial data:', error);
+            navigate('/services');
         }
     };
 
-    const fetchSeatStatuses = async () => {
-        try {
-            const response = await fetch(`seats/${serviceId}`);
-            if (!response.ok) throw new Error('Seat status fetch failed');
-            const data = await response.json();
-            console.log("Seat Statuses:", data);  // نمایش وضعیت صندلی‌ها
-            setSeatStatuses(data);
-        } catch (error) {
-            console.error("Error fetching seat statuses:", error);
-        }
+    const initializeSeatStatuses = (totalSeats) => {
+        const initialSeatStatuses = Array(totalSeats).fill().map((_, index) => ({
+            seatNumber: index + 1,
+            isOccupied: false
+        }));
+        setSeatStatuses(initialSeatStatuses);
     };
 
     const handleInputChange = (e) => {
@@ -62,23 +58,45 @@ const ServiceDetail = () => {
             ...prev,
             [name]: value
         }));
-        if (formErrors[name]) {
+        clearError(name);
+    };
+
+    const clearError = (fieldName) => {
+        if (formErrors[fieldName]) {
             setFormErrors(prev => ({
                 ...prev,
-                [name]: ''
+                [fieldName]: ''
             }));
         }
     };
 
     const validateForm = () => {
         const errors = {};
-        const requiredFields = ['firstName', 'lastName', 'phone', 'nationalCode', 'birthDate', 'gender'];
+        const requiredFields = [
+            { name: 'firstName', label: 'نام' },
+            { name: 'lastName', label: 'نام خانوادگی' },
+            { name: 'phone', label: 'شماره تلفن' },
+            { name: 'nationalCode', label: 'کد ملی' },
+            { name: 'birthDate', label: 'تاریخ تولد' },
+            { name: 'gender', label: 'جنسیت' }
+        ];
 
+        // Check required fields
         requiredFields.forEach(field => {
-            if (!formData[field]) {
-                errors[field] = 'این فیلد الزامی است';
+            if (!formData[field.name]?.trim()) {
+                errors[field.name] = `${field.label} الزامی است`;
             }
         });
+
+        // Validate phone number
+        if (formData.phone && !/^09[0-9]{9}$/.test(formData.phone)) {
+            errors.phone = 'شماره موبایل معتبر نیست';
+        }
+
+        // Validate national code
+        if (formData.nationalCode && !/^[0-9]{10}$/.test(formData.nationalCode)) {
+            errors.nationalCode = 'کد ملی باید ۱۰ رقم باشد';
+        }
 
         setFormErrors(errors);
         return Object.keys(errors).length === 0;
@@ -86,50 +104,92 @@ const ServiceDetail = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!validateForm() || !selectedSeat) return;
 
-        const ticketNumber = Math.floor(10000000 + Math.random() * 90000000).toString();
-        const ticketData = {
-            ...formData,
-            seatNumber: selectedSeat,
-            serviceDetails: {
-                CompanyName: service.CompanyName?._id,
-                busName: service.busName?._id,
-                BusType: service.BusType?.busType,
-                SelectedRoute: service.SelectedRoute?._id,
-                movementDate: service.movementDate?.moveDate,
-                movementTime: service.movementTime?.moveTime,
-                ChairCapacity: service.ChairCapacity?.capacity,
-                ticketPrice: service.ticketPrice,
-                ServicesOption: service.ServicesOption || [],
-                serviceId
-            },
-            ticketNumber
-        };
+        if (!validateForm()) {
+            alert('لطفا تمام فیلدها را به درستی پر کنید');
+            return;
+        }
 
+        if (!selectedSeat) {
+            alert('لطفا یک صندلی انتخاب کنید');
+            return;
+        }
 
         try {
-            // Update seat status
-            const response = await fetch(`seats/${serviceId}/${selectedSeat}`, {
+            const ticketNumber = generateTicketNumber();
+            const bookingData = createBookingData(ticketNumber);
+
+            await updateSeatStatus(ticketNumber);
+            saveBookingData(bookingData);
+
+            navigate('/confirm');
+        } catch (error) {
+            console.error('Error during booking:', error);
+            alert('خطا در ثبت اطلاعات. لطفا دوباره تلاش کنید.');
+        }
+    };
+
+    const generateTicketNumber = () => {
+        return Math.floor(10000000 + Math.random() * 90000000).toString();
+    };
+
+    const createBookingData = (ticketNumber) => {
+        return {
+            passengerInfo: {
+                ...formData,
+                ticketNumber
+            },
+            seatInfo: {
+                seatNumber: selectedSeat,
+                isOccupied: true,
+                ticketNumber
+            },
+            serviceInfo: {
+                ...service,
+                serviceId
+            },
+            ticketNumber,
+            bookingDate: new Date().toISOString(),
+            totalPrice: service.ticketPrice || 0,
+            status: 'pending' // pending, confirmed, cancelled
+        };
+    };
+
+    const updateSeatStatus = async (serviceId, seatNumber, isOccupied, ticketNumber) => {
+        try {
+            const response = await fetch(`http://localhost:5000/seats/${serviceId}/${seatNumber}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    isOccupied: true,
-                    ticketNumber
-                })
+                    isOccupied,
+                    ticketNumber,
+                }),
             });
 
-            if (!response.ok) throw new Error('Failed to update seat status');
-
-            // Save to localStorage and navigate
-            localStorage.setItem('ticketData', JSON.stringify(ticketData));
-            navigate('/confirm');
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Seat status updated successfully:", data);
+            } else {
+                console.error("Failed to update seat status:", await response.json());
+            }
         } catch (error) {
-            console.error('Error updating seat status:', error);
-            alert('خطا در ثبت اطلاعات. لطفا دوباره تلاش کنید.');
+            console.error("Error updating seat status:", error);
         }
+    };
+
+// فراخوانی تابع با مقادیر تستی
+    updateSeatStatus("645cf4ce946dce181d4716ee", 7, true, "TICKET12345");
+
+    const saveBookingData = (bookingData) => {
+        // Save current booking data
+        localStorage.setItem('bookingData', JSON.stringify(bookingData));
+
+        // Save to booking history
+        const bookingHistory = JSON.parse(localStorage.getItem('bookingHistory') || '[]');
+        bookingHistory.push(bookingData);
+        localStorage.setItem('bookingHistory', JSON.stringify(bookingHistory));
     };
 
     const getSeatClassName = (seatNumber) => {
@@ -137,7 +197,16 @@ const ServiceDetail = () => {
         if (seatStatus?.isOccupied) {
             return 'bg-red-500 cursor-not-allowed';
         }
-        return selectedSeat === seatNumber ? 'bg-green-500 cursor-pointer' : 'bg-blue-500 hover:bg-blue-600 cursor-pointer';
+        return selectedSeat === seatNumber
+            ? 'bg-green-500 cursor-pointer'
+            : 'bg-blue-500 hover:bg-blue-600 cursor-pointer';
+    };
+
+    const handleSeatSelection = (seatNumber) => {
+        const seatStatus = seatStatuses.find(seat => seat.seatNumber === seatNumber);
+        if (!seatStatus?.isOccupied) {
+            setSelectedSeat(seatNumber);
+        }
     };
 
     if (loading) {
@@ -147,7 +216,6 @@ const ServiceDetail = () => {
             </div>
         );
     }
-
     const totalSeats = service?.ChairCapacity?.capacity || 44;
 
     return (
@@ -158,90 +226,101 @@ const ServiceDetail = () => {
                         {/* Passenger Information Form */}
                         <div className="bg-white rounded-lg shadow-lg p-6">
                             <h2 className="text-xl font-bold mb-6 text-gray-800">اطلاعات مسافر</h2>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">نام</label>
                                     <input
                                         type="text"
                                         name="firstName"
-                                        className="w-full p-3 border rounded-lg"
+                                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         placeholder="نام"
                                         value={formData.firstName}
                                         onChange={handleInputChange}
                                     />
                                     {formErrors.firstName && (
-                                        <span className="text-red-500 text-sm">{formErrors.firstName}</span>
+                                        <span className="text-red-500 text-sm mt-1">{formErrors.firstName}</span>
                                     )}
                                 </div>
+
                                 <div>
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">نام خانوادگی</label>
                                     <input
                                         type="text"
                                         name="lastName"
-                                        className="w-full p-3 border rounded-lg"
+                                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         placeholder="نام خانوادگی"
                                         value={formData.lastName}
                                         onChange={handleInputChange}
                                     />
                                     {formErrors.lastName && (
-                                        <span className="text-red-500 text-sm">{formErrors.lastName}</span>
+                                        <span className="text-red-500 text-sm mt-1">{formErrors.lastName}</span>
                                     )}
                                 </div>
+
                                 <div>
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">شماره موبایل</label>
                                     <input
                                         type="tel"
                                         name="phone"
-                                        className="w-full p-3 border rounded-lg"
-                                        placeholder="شماره تلفن"
+                                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="۰۹۱۲۳۴۵۶۷۸۹"
                                         value={formData.phone}
                                         onChange={handleInputChange}
                                     />
                                     {formErrors.phone && (
-                                        <span className="text-red-500 text-sm">{formErrors.phone}</span>
+                                        <span className="text-red-500 text-sm mt-1">{formErrors.phone}</span>
                                     )}
                                 </div>
+
                                 <div>
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">کد ملی</label>
                                     <input
                                         type="text"
                                         name="nationalCode"
-                                        className="w-full p-3 border rounded-lg"
-                                        placeholder="کدملی"
+                                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="کد ملی"
                                         value={formData.nationalCode}
                                         onChange={handleInputChange}
                                     />
                                     {formErrors.nationalCode && (
-                                        <span className="text-red-500 text-sm">{formErrors.nationalCode}</span>
+                                        <span className="text-red-500 text-sm mt-1">{formErrors.nationalCode}</span>
                                     )}
                                 </div>
+
                                 <div>
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">تاریخ تولد</label>
                                     <input
                                         type="text"
                                         name="birthDate"
-                                        className="w-full p-3 border rounded-lg"
-                                        placeholder="تاریخ تولد"
+                                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="۱۳۷۰/۰۱/۰۱"
                                         value={formData.birthDate}
                                         onChange={handleInputChange}
                                     />
                                     {formErrors.birthDate && (
-                                        <span className="text-red-500 text-sm">{formErrors.birthDate}</span>
+                                        <span className="text-red-500 text-sm mt-1">{formErrors.birthDate}</span>
                                     )}
                                 </div>
+
                                 <div>
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">جنسیت</label>
                                     <select
                                         name="gender"
-                                        className="w-full p-3 border rounded-lg"
+                                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         value={formData.gender}
                                         onChange={handleInputChange}
                                     >
-                                        <option value="">جنسیت</option>
+                                        <option value="">انتخاب کنید</option>
                                         <option value="مرد">مرد</option>
                                         <option value="زن">زن</option>
                                     </select>
                                     {formErrors.gender && (
-                                        <span className="text-red-500 text-sm">{formErrors.gender}</span>
+                                        <span className="text-red-500 text-sm mt-1">{formErrors.gender}</span>
                                     )}
                                 </div>
                             </div>
                         </div>
-
+                        {/* Seat Selection */}
                         {/* Seat Selection */}
                         <div className="bg-white rounded-lg shadow-lg p-6">
                             <h2 className="text-xl font-bold mb-6 text-gray-800">انتخاب صندلی</h2>
@@ -277,13 +356,13 @@ const ServiceDetail = () => {
                                     ))}
                                 </div>
 
-                                <Link to={'/confirm'}
+                                <button
                                     className={`w-full p-3 rounded-lg text-white font-bold ${selectedSeat ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-300 cursor-not-allowed'}`}
                                     type="submit"
-
+                                    disabled={!selectedSeat}
                                 >
                                     مرحله بعد
-                                </Link>
+                                </button>
                             </div>
                         </div>
                     </div>

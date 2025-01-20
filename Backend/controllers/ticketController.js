@@ -49,11 +49,38 @@ const getTicketsByNumber = async (req, res) => {
 
 const createTicket = async (req, res) => {
     try {
-        const ticket = new TicketModel(req.body);
+        const {
+            passengerInfo,
+            seatInfo,
+            serviceInfo,
+            ticketNumber,
+            bookingDate,
+            totalPrice,
+            paymentStatus,
+            paymentDate,
+        } = req.body;
+
+        // بررسی مقدار فیلدهای ضروری
+        if (!passengerInfo || !seatInfo || !serviceInfo || !ticketNumber || !bookingDate || !totalPrice) {
+            return res.status(400).json({ message: 'برخی از فیلدهای ضروری خالی است' });
+        }
+
+        const ticket = new TicketModel({
+            passengerInfo,
+            seatInfo,
+            serviceInfo,
+            ticketNumber,
+            bookingDate,
+            totalPrice,
+            paymentStatus: paymentStatus || 'pending', // مقدار پیش‌فرض
+            paymentDate,
+        });
+
         await ticket.save();
-        res.status(201).json(ticket);
+        res.status(201).json({ message: 'بلیط با موفقیت ذخیره شد', ticket });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('خطا در ذخیره بلیط:', error);
+        res.status(500).json({ message: 'خطا در ذخیره اطلاعات بلیط', error });
     }
 };
 

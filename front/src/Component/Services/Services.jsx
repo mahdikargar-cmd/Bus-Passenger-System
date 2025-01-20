@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useLocation, Link} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Header } from "../Main-page/Header/Header";
 import api from "../../Services/Api";
 import { FaBus } from "react-icons/fa";
@@ -7,8 +7,8 @@ import { CiClock2 } from "react-icons/ci";
 import moment from "moment-jalaali";
 import Search from "../Main-page/Search-section/Search";
 
-
 export const Services = () => {
+    const navigate = useNavigate();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const originId = queryParams.get('origin');
@@ -29,8 +29,6 @@ export const Services = () => {
                     ? api.get(`services?origin=${originId}&destination=${destinationId}`)
                     : Promise.resolve({ data: [] })
             ]);
-
-            console.log('Services Response:', servicesResponse.data); // Debugging
 
             setBuses(busResponse.data || []);
             setCooperatives(busResponse.data || []);
@@ -60,7 +58,6 @@ export const Services = () => {
     const formatTime = (time) => {
         if (!time) return 'نامشخص';
         try {
-
             if (time && typeof time === 'object' && time.moveTime) {
                 time = time.moveTime;
             }
@@ -71,16 +68,22 @@ export const Services = () => {
         }
     };
 
-    const getCompanyNameById = useCallback((companyId) => {
-        if (!companyId) return 'نامشخص';
+    const handleServiceView = (service) => {
+        const serviceData = {
+            _id: service._id,
+            CompanyName: service.CompanyName,
+            BusType: service.BusType,
+            SelectedRoute: service.SelectedRoute,
+            movementDate: service.movementDate,
+            movementTime: service.movementTime,
+            ChairCapacity: service.ChairCapacity,
+            ticketPrice: service.ticketPrice,
+            ServicesOption: service.ServicesOption || []
+        };
 
-        if (typeof companyId === 'object' && companyId.CoperativeName) {
-            return companyId.CoperativeName;
-        }
-
-        const company = cooperatives.find(company => company._id === companyId);
-        return company ? company.companyName : 'نامشخص';
-    }, [cooperatives]);
+        localStorage.setItem('selectedService', JSON.stringify(serviceData));
+        navigate(`/services/se/${service._id}`);
+    };
 
     if (loading) {
         return (
@@ -137,7 +140,7 @@ export const Services = () => {
                                                 <span>
                                                     {typeof item.CompanyName === 'object'
                                                         ? item.CompanyName?.CoperativeName || 'نامشخص'
-                                                        : getCompanyNameById(item.CompanyName)}
+                                                        : item.CompanyName || 'نامشخص'}
                                                 </span>
                                             </div>
 
@@ -182,27 +185,13 @@ export const Services = () => {
                                                         : item.ChairCapacity || 'نامشخص'}
                                                 </span>
                                             </div>
-                                            <div className="flex  items-center gap-2">
-
-                                                <Link to={`/services/se/${item._id}`}  className={'bg-white-blue p-2 rounded-full text-white pl-4 ps-4'}>
-                                                    <span>مشاهده </span>
-                                                </Link>
-                                            </div>
-                                        </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
                                             <div className="flex items-center gap-2">
-                                                <div className="text-sm md:text-md font-medium">
-                                                    <span className="font-bold text-admin-modal ml-1">قیمت بلیط:</span>{' '}
-                                                    {item.ticketPrice?.toLocaleString() || 'نامشخص'} ریال
-                                                </div>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <div className="text-sm md:text-md font-medium">
-                                                    <div className="text-sm md:text-md font-medium col-span-full">
-                                                        <span className="font-bold text-admin-modal ml-1">امکانات:</span>{' '}
-                                                        {item.ServicesOption?.map(option => option.facilities).join(', ') || 'بدون امکانات'}
-                                                    </div>
-                                                </div>
+                                                <button
+                                                    onClick={() => handleServiceView(item)}
+                                                    className="bg-white-blue p-2 rounded-full text-white pl-4 ps-4"
+                                                >
+                                                    مشاهده
+                                                </button>
                                             </div>
                                         </div>
                                     </div>

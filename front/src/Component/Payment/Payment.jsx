@@ -1,29 +1,32 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../Services/Api';
 
 export const Payment = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
         const handlePaymentSuccess = async () => {
+/*
             const ticketData = JSON.parse(localStorage.getItem('ticketData'));
+*/
 
-            if (!ticketData) {
+       /*     if (!ticketData) {
                 console.error('No ticket data found in localStorage');
                 return;
-            }
+            }*/
 
             // اضافه کردن userId به ticketData
+/*
             ticketData.userId = '60b8d6b4f1e8c64b5cfae1b1'; // این مقدار باید از داده‌های لاگین شده کاربر دریافت شود
-
-            try {
+*/
+        /*    navigate('/print-ticket');*/
+      /*      try {
                 const response = await api.post('/tickets/addTicket', ticketData);
                 console.log('Ticket saved:', response.data);
-                navigate('/print-ticket');
+
             } catch (error) {
                 console.error('Error saving ticket', error);
-            }
+            }*/
         };
 
         handlePaymentSuccess();
