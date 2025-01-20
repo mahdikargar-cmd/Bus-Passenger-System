@@ -31,12 +31,12 @@ const ServiceDetail = () => {
     const fetchServiceDetails = async () => {
         try {
             const url = `/api/services/${serviceId}`;
-            console.log("Fetching URL:", url);  // بررسی URL
+            console.log("Fetching Service Details URL:", url);  // نمایش URL برای بررسی
             const response = await fetch(url);
             if (!response.ok) throw new Error('Service fetch failed');
             const data = await response.json();
+            console.log("Service Data:", data);  // نمایش دیتا دریافتی
             setService(data);
-            console.log("data:", data);
         } catch (error) {
             console.error("Error fetching service details:", error);
         } finally {
@@ -44,12 +44,12 @@ const ServiceDetail = () => {
         }
     };
 
-
     const fetchSeatStatuses = async () => {
         try {
-            const response = await fetch(`/api/seats/${serviceId}`);
+            const response = await fetch(`seats/${serviceId}`);
             if (!response.ok) throw new Error('Seat status fetch failed');
             const data = await response.json();
+            console.log("Seat Statuses:", data);  // نمایش وضعیت صندلی‌ها
             setSeatStatuses(data);
         } catch (error) {
             console.error("Error fetching seat statuses:", error);
@@ -110,7 +110,7 @@ const ServiceDetail = () => {
 
         try {
             // Update seat status
-            const response = await fetch(`/api/seats/${serviceId}/${selectedSeat}`, {
+            const response = await fetch(`seats/${serviceId}/${selectedSeat}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
