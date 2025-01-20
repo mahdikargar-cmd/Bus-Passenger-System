@@ -3,13 +3,12 @@ import { InfoSection } from "./Info-section/InfoSection";
 import { AcardeonMenu } from "./Acardeon-menu/AcardeonMenu";
 import { Footer } from "./Footer/Footer";
 import bg_blue from '../../Assets/images/Decore.svg';
+import {Link} from "react-router-dom";
 
 export const Main = () => {
     return (
         <>
             <div className="bg-[#f6f6f9] dark:bg-dark-black min-h-screen">
-                {/* Header */}
-                <Header />
 
                 {/* Hero Section */}
                 <div
@@ -24,9 +23,11 @@ export const Main = () => {
                         <p className="text-gray-600 dark:text-gray-400 mt-4">
                             با بهترین خدمات ما، اتوبوس ها و بلیط های ارزان را رزرو کنید.
                         </p>
-                        <button className="mt-6 bg-blue-600 text-white py-3 px-6 rounded-full hover:bg-blue-700 transition">
-                            خرید بلیط
-                        </button>
+                       <div className={'mt-10'}>
+                           <Link to={'/services'} className=" bg-blue-600 text-white py-3 px-6 rounded-full hover:bg-blue-700 transition">
+                               خرید بلیط
+                           </Link>
+                       </div>
                     </div>
                 </div>
 

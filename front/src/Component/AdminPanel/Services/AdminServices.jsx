@@ -209,9 +209,10 @@ export const AdminServices = () => {
                                 </div>
                                 <div className="text-sm md:text-md font-medium">
                                     <span className="font-bold text-admin-modal ml-1">مسیر:</span>{' '}
-                                    {service.SelectedRoute
-                                        ? `${service.SelectedRoute.origin} به ${service.SelectedRoute.destination}`
-                                        : 'نامشخص'}
+                                    {service.SelectedRoute && service.SelectedRoute.origin && service.SelectedRoute.destination ?
+                                        `${service.SelectedRoute.origin.Cities} به ${service.SelectedRoute.destination.Cities}` :
+                                        'نامشخص'
+                                    }
                                 </div>
                                 <div className="text-sm md:text-md font-medium">
                                     <span className="font-bold text-admin-modal ml-1">تاریخ حرکت:</span>{' '}

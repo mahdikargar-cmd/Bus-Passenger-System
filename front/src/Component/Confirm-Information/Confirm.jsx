@@ -1,7 +1,7 @@
-import {useNavigate} from 'react-router-dom';
-import {useEffect, useState} from 'react';
-import {Header} from "../Main-page/Header/Header";
-import {Footer} from "../Main-page/Footer/Footer";
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Header } from "../Main-page/Header/Header";
+import { Footer } from "../Main-page/Footer/Footer";
 import api from "../../Services/Api";
 import moment from "moment-jalaali";
 
@@ -11,18 +11,41 @@ export const Confirm = () => {
     const [routes, setRoutes] = useState([]);
     const [cities, setCities] = useState([]);
     const navigate = useNavigate();
-    const [ticketData, setTicketData] = useState(null);
+    const [ticketData, setTicketData] = useState({
+        firstName: '',
+        lastName: '',
+        phone: '',
+        nationalCode: '',
+        birthDate: '',
+        gender: '',
+        seatNumber: '',
+        serviceDetails: {
+            CompanyName: '',
+            busName: '',
+            BusType: '',
+            SelectedRoute: '',
+            movementDate: '',
+            movementTime: '',
+            ChairCapacity: '',
+            ticketPrice: '',
+            ServicesOption: []
+        }
+    });
+
     useEffect(() => {
         fetchRoutes();
         fetchBuses();
         fetchCities();
     }, []);
+
     useEffect(() => {
         const data = localStorage.getItem('ticketData');
         if (data) {
             setTicketData(JSON.parse(data));
         }
+        console.log("Data from localStorage:", data);
     }, []);
+
     const fetchCities = async () => {
         try {
             const response = await api.get("destination");
@@ -31,7 +54,6 @@ export const Confirm = () => {
             console.error("Error fetching cities", error);
         }
     };
-
 
     const fetchRoutes = async () => {
         try {
@@ -52,14 +74,24 @@ export const Confirm = () => {
         }
     };
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setTicketData((prevData) => {
+            const updatedData = { ...prevData, [name]: value };
+            localStorage.setItem('ticketData', JSON.stringify(updatedData)); // ذخیره خودکار در LocalStorage
+            return updatedData;
+        });
+    };
 
     const handleConfirm = () => {
+        localStorage.setItem('ticketData', JSON.stringify(ticketData)); // ذخیره نهایی اطلاعات
         navigate('/payment'); // هدایت به صفحه پرداخت
     };
 
     if (!ticketData) {
         return <div>Loading...</div>;
     }
+
     const getCompanyNameById = (id) => {
         const company = buses.find(company => company._id === id);
         return company ? company.companyName : 'Unknown';
@@ -85,27 +117,31 @@ export const Confirm = () => {
     };
 
     const getServiceOptionsByIds = (ids) => {
+        if (!Array.isArray(ids)) {
+            return 'Unknown'; // یا هر مقدار پیش‌فرض دیگر
+        }
         return ids.map(id => {
             const service = buses.find(service => service._id === id);
             return service ? service.facilities : 'Unknown';
         });
     };
+
     return (
         <div>
-            <Header/>
-            <div className="confirm-container bg-white m-8 rounded dark:bg-dark-blue">
+            <Header />
+            <div className="mt-24 confirm-container bg-white m-8 rounded dark:bg-dark-blue">
                 <div className={'flex justify-center mt-5 pt-5'}>
                     <h1 className={'flex justify-center bg-green-300 w-[100px]'}>تایید اطلاعات</h1>
                 </div>
                 <div className="ticket-info font-serif text-[20px] grid grid-cols-12 p-5 dark:text-white">
                     <div className={'col-span-6'}>
-                        <p>نام: {ticketData.firstName}</p>
-                        <p>نام خانوادگی: {ticketData.lastName}</p>
-                        <p>شماره تلفن: {ticketData.phone}</p>
-                        <p>کدملی: {ticketData.nationalCode}</p>
-                        <p>تاریخ تولد: {ticketData.birthDate}</p>
-                        <p>جنسیت: {ticketData.gender}</p>
-                        <p>شماره صندلی: {ticketData.seatNumber}</p>
+                        <p>نام: <input type="text" name="firstName" value={ticketData.firstName} onChange={handleInputChange} /></p>
+                        <p>نام خانوادگی: <input type="text" name="lastName" value={ticketData.lastName} onChange={handleInputChange} /></p>
+                        <p>شماره تلفن: <input type="text" name="phone" value={ticketData.phone} onChange={handleInputChange} /></p>
+                        <p>کدملی: <input type="text" name="nationalCode" value={ticketData.nationalCode} onChange={handleInputChange} /></p>
+                        <p>تاریخ تولد: <input type="text" name="birthDate" value={ticketData.birthDate} onChange={handleInputChange} /></p>
+                        <p>جنسیت: <input type="text" name="gender" value={ticketData.gender} onChange={handleInputChange} /></p>
+                        <p>شماره صندلی: <input type="text" name="seatNumber" value={ticketData.seatNumber} onChange={handleInputChange} /></p>
                         <h2>جزئیات سرویس</h2>
                         <p>نام شرکت: {getCompanyNameById(ticketData.serviceDetails.CompanyName)}</p>
                     </div>
@@ -120,12 +156,11 @@ export const Confirm = () => {
                         <p>گزینه‌های سرویس: {getServiceOptionsByIds(ticketData.serviceDetails.ServicesOption)}</p>
                     </div>
                 </div>
-<div className={'flex justify-center '}>
-    <button className={'bg-green-400 p-2 rounded mb-5'} onClick={handleConfirm}>تایید و پرداخت</button>
-
-</div>
+                <div className={'flex justify-center '}>
+                    <button className={'bg-green-400 p-2 rounded mb-5'} onClick={handleConfirm}>تایید و پرداخت</button>
+                </div>
             </div>
-            <Footer/>
+            <Footer />
         </div>
     );
 };

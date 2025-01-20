@@ -67,7 +67,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.tools&quot;,
     &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\WebStorm 2023.2.3\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -233,7 +233,13 @@
       <workItem from="1733813310567" duration="928000" />
       <workItem from="1734358082109" duration="616000" />
       <workItem from="1737265877406" duration="6958000" />
-      <workItem from="1737282647568" duration="13542000" />
+      <workItem from="1737282647568" duration="15086000" />
+      <workItem from="1737306235601" duration="407000" />
+      <workItem from="1737306660249" duration="3067000" />
+      <workItem from="1737348099737" duration="1947000" />
+      <workItem from="1737360827596" duration="1854000" />
+      <workItem from="1737362885103" duration="2582000" />
+      <workItem from="1737365626175" duration="6229000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />

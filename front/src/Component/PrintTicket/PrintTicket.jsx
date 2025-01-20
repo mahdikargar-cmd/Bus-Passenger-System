@@ -76,12 +76,17 @@ const PrintTicket = () => {
 
     const getRouteNameById = (id) => {
         const route = routes.find((route) => route._id === id);
+        if (!route) return 'Unknown'; // بررسی وجود route
+
         const origin = cities.find((c) => c._id === route.origin)?.Cities;
         const destination = cities.find((c) => c._id === route.destination)?.Cities;
-        return route ? `${origin} به ${destination} ` : 'Unknown';
+        return `${origin || 'Unknown'} به ${destination || 'Unknown'}`;
     };
 
     const getServiceOptionsByIds = (ids) => {
+        if (!Array.isArray(ids)) {
+            return 'Unknown'; // مقدار پیش‌فرض در صورت نامعتبر بودن `ids`
+        }
         return ids.map((id) => {
             const service = buses.find((service) => service._id === id);
             return service ? service.facilities : 'Unknown';
@@ -91,7 +96,7 @@ const PrintTicket = () => {
     return (
         <div>
             <Header />
-            <div className="print-ticket-container bg-white m-8 rounded dark:bg-dark-blue">
+            <div className="mt-24 print-ticket-container bg-white m-8 rounded dark:bg-dark-blue">
                 <div className={'flex justify-center mt-5 pt-5'}>
                     <h1 className={'flex justify-center bg-green-300 w-[100px] rounded p-1'}>
                         چاپ بلیط

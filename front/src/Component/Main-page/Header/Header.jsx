@@ -31,7 +31,7 @@ export const Header = () => {
                     <Link to="/" className="hover:text-blue-600 ml-8">صفحه اصلی</Link>
                     {user ? (
                         <>
-                            <Link to="/" className="hover:text-blue-600">پنل من</Link>
+                            <Link to="/userPanel" className="hover:text-blue-600">پنل من</Link>
                             <button onClick={logout} className="hover:text-red-500">خروج</button>
                         </>
                     ) : (

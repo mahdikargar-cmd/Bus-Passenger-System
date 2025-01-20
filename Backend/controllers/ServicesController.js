@@ -116,7 +116,23 @@ const deleteService = async (req, res) => {
 const getServiceById = async (req, res) => {
     const { id } = req.params;
     try {
-        const service = await ServicesModel.findById(id);
+        const service = await ServicesModel.findById(id)
+            .populate('CompanyName', 'CoperativeName')
+            .populate('busName', 'busName')
+            .populate('BusType', 'busType')
+            .populate({
+                path: 'SelectedRoute',
+                select: 'origin destination',
+                populate: [
+                    { path: 'origin', select: 'Cities' },
+                    { path: 'destination', select: 'Cities' }
+                ]
+            })
+            .populate('movementDate', 'moveDate')
+            .populate('movementTime', 'moveTime')
+            .populate('ChairCapacity', 'capacity')
+            .populate('ServicesOption', 'facilities');
+
         if (!service) {
             return res.status(404).json({ message: 'Service not found' });
         }
