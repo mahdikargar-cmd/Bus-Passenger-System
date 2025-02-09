@@ -2,7 +2,8 @@ import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from '../../contexts/AuthContext'; // وارد کردن AuthContext
+import { useAuth } from '../../contexts/AuthContext';
+import api from "../../../api"; // وارد کردن AuthContext
 
 export const AdminLogin = () => {
     const Navigate = useNavigate();
@@ -16,7 +17,7 @@ export const AdminLogin = () => {
 
     const onSubmit = async (data) => {
         try {
-            const response = await axios.post("http://localhost:5000/admin/loginAdmin", {
+            const response = await api.post("/admin/loginAdmin", {
                 user: data.user,
                 password: data.password,
             });

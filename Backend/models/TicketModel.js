@@ -15,18 +15,13 @@ const ticketSchema = new mongoose.Schema({
         ticketNumber: { type: String, required: true },
     },
     serviceInfo: {
-        CompanyName: {
-            CoperativeName: { type: String, required: true },
-        },
-        SelectedRoute: {
-            origin: { Cities: { type: String, required: true } },
-            destination: { Cities: { type: String, required: true } },
-        },
-        movementDate: {
-            moveDate: { type: Date, required: true },
-        },
-        ChairCapacity: { capacity: { type: Number, required: true } },
-        ticketPrice: { type: String, required: true },
+        serviceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Service', required: true }, // اضافه کردن serviceId
+        companyName: { type: String, required: true },
+        origin: { type: String, required: true },
+        destination: { type: String, required: true },
+        movementDate: { type: Date, required: true },
+        chairCapacity: { type: Number, required: true },
+        ticketPrice: { type: Number, required: true },
     },
     ticketNumber: { type: String, required: true },
     bookingDate: { type: Date, required: true },

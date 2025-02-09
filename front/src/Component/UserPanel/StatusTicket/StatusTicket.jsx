@@ -46,7 +46,7 @@ export const StatusTicket = () => {
     const handleFetchTickets = async () => {
         try {
             console.log(`Fetching tickets for ticket number: ${ticketNumber}`);
-            const response = await axios.get(`http://localhost:5000/tickets/number/${ticketNumber}`);
+            const response = await api.get(`/tickets/number/${ticketNumber}`);
             console.log('Fetched tickets:', response.data);
             setTickets(Array.isArray(response.data) ? response.data : [response.data]);
             setMessage('');

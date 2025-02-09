@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react";
 import Modal from "react-modal";
 import {useForm} from "react-hook-form";
 import axios from "axios";
+import api from "../../../api";
 
 export default function Cooperative() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,7 +14,7 @@ export default function Cooperative() {
     useEffect(() => {
         const fetchCooperatives = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/coperative');
+                const response = await api.get('/coperative');
                 setCooperatives(response.data);
             } catch (error) {
                 console.error("Error fetching cooperatives", error);

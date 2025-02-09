@@ -5,6 +5,7 @@ import axios from "axios";
 import logo from "../../Assets/images/safarino-Photoroom.png";
 import {FaApple, FaGoogle} from "react-icons/fa";
 import {CgArrowLongRight} from "react-icons/cg";
+import api from "../../api";
 
 export const SignUp = () => {
     const navigate = useNavigate();
@@ -12,7 +13,7 @@ export const SignUp = () => {
 
     const onSubmit = async (data) => {
         try {
-            const response = await axios.post('http://localhost:5000/users/register', {
+            const response = await api.post('/users/register', {
                 name: data.firstName,
                 family: data.lastName,
                 phoneNumber: data.phoneNumber,

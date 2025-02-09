@@ -9,22 +9,16 @@ const deleteTicketAndSeat = async (req, res) => {
     }
 
     try {
-        // حذف بلیط
         const ticket = await TicketModel.findByIdAndDelete(ticketId);
         if (!ticket) {
-            return res.status(404).json({ message: 'بلیط پیدا نشد  ' });
+            return res.status(404).json({ message: 'بلیط پیدا نشد' });
         }
 
-        // به‌روز رسانی وضعیت صندلی
-        const seatStatus = await SeatStatusModel.findOneAndUpdate(
+        await SeatStatusModel.findOneAndUpdate(
             { serviceId, seatNumber },
             { isOccupied: false, ticketNumber: null },
             { new: true }
         );
-
-        if (!seatStatus) {
-            return res.status(404).json({ message: 'Seat status not found' });
-        }
 
         res.status(200).json({ message: 'بلیط با موفقیت لغو شد' });
     } catch (error) {
@@ -60,7 +54,6 @@ const createTicket = async (req, res) => {
             paymentDate,
         } = req.body;
 
-        // بررسی مقدار فیلدهای ضروری
         if (!passengerInfo || !seatInfo || !serviceInfo || !ticketNumber || !bookingDate || !totalPrice) {
             return res.status(400).json({ message: 'برخی از فیلدهای ضروری خالی است' });
         }
@@ -68,11 +61,19 @@ const createTicket = async (req, res) => {
         const ticket = new TicketModel({
             passengerInfo,
             seatInfo,
-            serviceInfo,
+            serviceInfo: {
+                serviceId: new mongoose.Types.ObjectId(serviceInfo.serviceId), // مقدار serviceId اضافه شد
+                companyName: serviceInfo.CompanyName.CoperativeName,
+                origin: serviceInfo.SelectedRoute.origin.Cities,
+                destination: serviceInfo.SelectedRoute.destination.Cities,
+                movementDate: serviceInfo.movementDate.moveDate,
+                chairCapacity: serviceInfo.ChairCapacity.capacity,
+                ticketPrice: serviceInfo.ticketPrice,
+            },
             ticketNumber,
             bookingDate,
             totalPrice,
-            paymentStatus: paymentStatus || 'pending', // مقدار پیش‌فرض
+            paymentStatus: paymentStatus || 'pending',
             paymentDate,
         });
 

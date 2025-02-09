@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react";
 import Modal from "react-modal";
 import {useForm} from "react-hook-form";
 import axios from "axios";
+import api from "../../../api";
 
 export default function Amanat() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,7 +14,7 @@ export default function Amanat() {
     useEffect(() => {
         const fetchCooperatives = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/amanat');
+                const response = await api.get('/amanat');
                 setCooperatives(response.data);
             } catch (error) {
                 console.error("Error fetching cooperatives", error);

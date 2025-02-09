@@ -36,7 +36,7 @@ class Server {
 
     configureMiddleware() {
         this.app.use(cors({
-            origin: 'http://localhost:3000'
+            origin: 'https://safarinoo.onrender.com'
         }));
         this.app.use(bodyParser.json());
     }

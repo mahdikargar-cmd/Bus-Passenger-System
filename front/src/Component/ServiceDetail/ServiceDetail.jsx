@@ -1,29 +1,90 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
+import React, {useState, useEffect, useCallback} from 'react';
+import {useNavigate} from "react-router-dom";
+import axios from "axios";
+import api from "../../Services/Api";
+import { MapPin, Calendar, CreditCard, User, Clock } from "lucide-react";
 
 const ServiceDetail = () => {
     const navigate = useNavigate();
-    const [service, setService] = useState(null);
-    const [seatStatuses, setSeatStatuses] = useState([]);
-    const [selectedSeat, setSelectedSeat] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        phone: '',
-        nationalCode: '',
-        birthDate: '',
-        gender: ''
-    });
-    const [formErrors, setFormErrors] = useState({});
-
+    const BASE_URL = "https://safarino.onrender.com";
     const serviceId = window.location.pathname.split('/').pop();
 
-    useEffect(() => {
-        loadInitialData();
-    }, [navigate]);
+    // Consolidated state management
+    const [state, setState] = useState({
+        service: null,
+        seatStatuses: [],
+        selectedSeat: null,
+        loading: true,
+        formData: {
+            firstName: '',
+            lastName: '',
+            phone: '',
+            nationalCode: '',
+            birthDate: '',
+            gender: ''
+        },
+        formErrors: {}
+    });
+    const SeatGrid = ({ seatStatuses, selectedSeat, onSeatSelect }) => {
+        return (
+            <div className="grid grid-cols-4 gap-3 md:grid-cols-5 lg:grid-cols-6">
+                {seatStatuses.map((seat) => (
+                    <button
+                        key={seat.seatNumber}
+                        onClick={() => !seat.isOccupied && onSeatSelect(seat.seatNumber)}
+                        disabled={seat.isOccupied}
+                        className={`
+                            relative
+                            p-4
+                            rounded-xl
+                            text-center
+                            font-medium
+                            transition-all
+                            duration-300
+                            transform
+                            hover:scale-105
+                            ${seat.isOccupied
+                            ? 'bg-red-100 text-red-500 border-2 border-red-200'
+                            : selectedSeat === seat.seatNumber
+                                ? 'bg-green-100 text-green-600 border-2 border-green-300 shadow-lg'
+                                : 'bg-blue-50 text-blue-600 border-2 border-blue-200 hover:bg-blue-100'
+                        }
+                        `}
+                    >
+                        <span className="text-lg">{seat.seatNumber}</span>
+                    </button>
+                ))}
+            </div>
+        );
+    };    // Memoized fetch functions
+    const fetchReservedSeats = useCallback(async () => {
+        try {
+            // دریافت همزمان اطلاعات از هر دو API
+            const [axiosResponse, apiResponse] = await Promise.all([
+                axios.get(`${BASE_URL}/tickets/reserved-seats/${serviceId}`),
+                api.get(`/tickets/reserved-seats/${serviceId}`)
+            ]);
 
-    const loadInitialData = () => {
+            // تغییر نحوه استخراج شماره صندلی‌های رزرو شده
+            const reservedSeats = new Set([
+                ...axiosResponse.data.map(ticket => ticket.seatInfo.seatNumber),
+                ...apiResponse.data.map(ticket => ticket.seatInfo.seatNumber)
+            ]);
+
+            // آپدیت وضعیت صندلی‌ها
+            setState(prev => ({
+                ...prev,
+                seatStatuses: Array.from({length: prev.service?.ChairCapacity?.capacity || 44},
+                    (_, index) => ({
+                        seatNumber: index + 1,
+                        isOccupied: reservedSeats.has(index + 1)
+                    })
+                )
+            }));
+        } catch (error) {
+            console.error('خطا در دریافت اطلاعات صندلی‌های رزرو شده:', error);
+        }
+    }, [serviceId]);    const loadInitialData = useCallback(() => {
         try {
             const storedService = localStorage.getItem('selectedService');
             if (!storedService) {
@@ -32,73 +93,93 @@ const ServiceDetail = () => {
             }
 
             const parsedService = JSON.parse(storedService);
-            setService(parsedService);
-
             const totalSeats = parsedService?.ChairCapacity?.capacity || 44;
-            initializeSeatStatuses(totalSeats);
+            const initialSeatStatuses = Array.from({length: totalSeats},
+                (_, index) => ({
+                    seatNumber: index + 1,
+                    isOccupied: false
+                })
+            );
 
-            setLoading(false);
+            setState(prev => ({
+                ...prev,
+                service: parsedService,
+                seatStatuses: initialSeatStatuses,
+                loading: false
+            }));
         } catch (error) {
             console.error('Error loading initial data:', error);
             navigate('/services');
         }
-    };
+    }, [navigate]);
 
-    const initializeSeatStatuses = (totalSeats) => {
-        const initialSeatStatuses = Array(totalSeats).fill().map((_, index) => ({
-            seatNumber: index + 1,
-            isOccupied: false
-        }));
-        setSeatStatuses(initialSeatStatuses);
-    };
+    // Effects
+    useEffect(() => {
+        loadInitialData();
+        fetchReservedSeats();
 
+        const pollInterval = setInterval(fetchReservedSeats, 10000);
+        return () => clearInterval(pollInterval);
+    }, [loadInitialData, fetchReservedSeats]);
+
+    // Event handlers
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
+        const {name, value} = e.target;
+        setState(prev => ({
             ...prev,
-            [name]: value
+            formData: {...prev.formData, [name]: value},
+            formErrors: {...prev.formErrors, [name]: ''}
         }));
-        clearError(name);
     };
 
-    const clearError = (fieldName) => {
-        if (formErrors[fieldName]) {
-            setFormErrors(prev => ({
+    const handleSeatSelection = useCallback((seatNumber) => {
+        setState(prev => {
+            // بررسی وضعیت صندلی
+            const seat = prev.seatStatuses.find(s => s.seatNumber === seatNumber);
+
+            // اگر صندلی رزرو شده باشد، هیچ تغییری ایجاد نکن
+            if (seat?.isOccupied) {
+                return prev;
+            }
+
+            return {
                 ...prev,
-                [fieldName]: ''
-            }));
-        }
-    };
+                selectedSeat: seatNumber
+            };
+        });
+    }, []);
+
 
     const validateForm = () => {
         const errors = {};
+        const {formData} = state;
+
+        // Required field validation
         const requiredFields = [
-            { name: 'firstName', label: 'نام' },
-            { name: 'lastName', label: 'نام خانوادگی' },
-            { name: 'phone', label: 'شماره تلفن' },
-            { name: 'nationalCode', label: 'کد ملی' },
-            { name: 'birthDate', label: 'تاریخ تولد' },
-            { name: 'gender', label: 'جنسیت' }
+            {name: 'firstName', label: 'نام'},
+            {name: 'lastName', label: 'نام خانوادگی'},
+            {name: 'phone', label: 'شماره تلفن'},
+            {name: 'nationalCode', label: 'کد ملی'},
+            {name: 'birthDate', label: 'تاریخ تولد'},
+            {name: 'gender', label: 'جنسیت'}
         ];
 
-        // Check required fields
         requiredFields.forEach(field => {
             if (!formData[field.name]?.trim()) {
                 errors[field.name] = `${field.label} الزامی است`;
             }
         });
 
-        // Validate phone number
+        // Format validation
         if (formData.phone && !/^09[0-9]{9}$/.test(formData.phone)) {
             errors.phone = 'شماره موبایل معتبر نیست';
         }
 
-        // Validate national code
         if (formData.nationalCode && !/^[0-9]{10}$/.test(formData.nationalCode)) {
             errors.nationalCode = 'کد ملی باید ۱۰ رقم باشد';
         }
 
-        setFormErrors(errors);
+        setState(prev => ({...prev, formErrors: errors}));
         return Object.keys(errors).length === 0;
     };
 
@@ -110,263 +191,216 @@ const ServiceDetail = () => {
             return;
         }
 
-        if (!selectedSeat) {
+        if (!state.selectedSeat) {
             alert('لطفا یک صندلی انتخاب کنید');
             return;
         }
 
         try {
-            const ticketNumber = generateTicketNumber();
-            const bookingData = createBookingData(ticketNumber);
+            // Check seat availability
+            const {data: reservedSeats} = await axios.get(
+                `${BASE_URL}/tickets/reserved-seats/${serviceId}`
+            );
 
-            await updateSeatStatus(ticketNumber);
-            saveBookingData(bookingData);
+            if (reservedSeats.some(seat => seat.seatNumber === state.selectedSeat)) {
+                alert('این صندلی قبلاً رزرو شده است. لطفاً صندلی دیگری انتخاب کنید.');
+                await fetchReservedSeats();
+                setState(prev => ({...prev, selectedSeat: null}));
+                return;
+            }
+
+            const ticketNumber = Math.floor(10000000 + Math.random() * 90000000).toString();
+            const bookingData = {
+                passengerInfo: {...state.formData},
+                seatInfo: {
+                    seatNumber: state.selectedSeat,
+                    isOccupied: true,
+                    ticketNumber,
+                },
+                serviceInfo: {
+                    serviceId,
+                    companyName: state.service.CompanyName.CoperativeName,
+                    origin: state.service.SelectedRoute.origin.Cities,
+                    destination: state.service.SelectedRoute.destination.Cities,
+                    movementDate: state.service.movementDate.moveDate,
+                    chairCapacity: state.service.ChairCapacity.capacity,
+                    ticketPrice: state.service.ticketPrice,
+                },
+                ticketNumber,
+                bookingDate: new Date().toISOString(),
+                totalPrice: state.service.ticketPrice || 0,
+                paymentStatus: 'pending',
+            };
+
+            // Update seat status and create ticket
+            await Promise.all([
+                axios.patch(`${BASE_URL}/seats/${serviceId}/${state.selectedSeat}`, {
+                    isOccupied: true,
+                    ticketNumber,
+                }),
+                axios.post(`${BASE_URL}/tickets/addTicket`, bookingData)
+            ]);
+
+            // Save booking data and navigate
+            localStorage.setItem('bookingData', JSON.stringify(bookingData));
+            const bookingHistory = JSON.parse(localStorage.getItem('bookingHistory') || '[]');
+            bookingHistory.push(bookingData);
+            localStorage.setItem('bookingHistory', JSON.stringify(bookingHistory));
 
             navigate('/confirm');
         } catch (error) {
-            console.error('Error during booking:', error);
+            console.error('Error submitting form:', error);
             alert('خطا در ثبت اطلاعات. لطفا دوباره تلاش کنید.');
         }
     };
 
-    const generateTicketNumber = () => {
-        return Math.floor(10000000 + Math.random() * 90000000).toString();
-    };
-
-    const createBookingData = (ticketNumber) => {
-        return {
-            passengerInfo: {
-                ...formData,
-                ticketNumber
-            },
-            seatInfo: {
-                seatNumber: selectedSeat,
-                isOccupied: true,
-                ticketNumber
-            },
-            serviceInfo: {
-                ...service,
-                serviceId
-            },
-            ticketNumber,
-            bookingDate: new Date().toISOString(),
-            totalPrice: service.ticketPrice || 0,
-            status: 'pending' // pending, confirmed, cancelled
-        };
-    };
-
-    const updateSeatStatus = async (serviceId, seatNumber, isOccupied, ticketNumber) => {
-        try {
-            const response = await fetch(`http://localhost:5000/seats/${serviceId}/${seatNumber}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    isOccupied,
-                    ticketNumber,
-                }),
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                console.log("Seat status updated successfully:", data);
-            } else {
-                console.error("Failed to update seat status:", await response.json());
-            }
-        } catch (error) {
-            console.error("Error updating seat status:", error);
-        }
-    };
-
-// فراخوانی تابع با مقادیر تستی
-    updateSeatStatus("645cf4ce946dce181d4716ee", 7, true, "TICKET12345");
-
-    const saveBookingData = (bookingData) => {
-        // Save current booking data
-        localStorage.setItem('bookingData', JSON.stringify(bookingData));
-
-        // Save to booking history
-        const bookingHistory = JSON.parse(localStorage.getItem('bookingHistory') || '[]');
-        bookingHistory.push(bookingData);
-        localStorage.setItem('bookingHistory', JSON.stringify(bookingHistory));
-    };
-
-    const getSeatClassName = (seatNumber) => {
-        const seatStatus = seatStatuses.find(seat => seat.seatNumber === seatNumber);
-        if (seatStatus?.isOccupied) {
-            return 'bg-red-500 cursor-not-allowed';
-        }
-        return selectedSeat === seatNumber
-            ? 'bg-green-500 cursor-pointer'
-            : 'bg-blue-500 hover:bg-blue-600 cursor-pointer';
-    };
-
-    const handleSeatSelection = (seatNumber) => {
-        const seatStatus = seatStatuses.find(seat => seat.seatNumber === seatNumber);
-        if (!seatStatus?.isOccupied) {
-            setSelectedSeat(seatNumber);
-        }
-    };
-
-    if (loading) {
+    if (state.loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"/>
             </div>
         );
     }
-    const totalSeats = service?.ChairCapacity?.capacity || 44;
+    const ServiceHeader = ({ service }) => (
+        <div className="mt-12 bg-gradient-to-r from-blue-600 to-blue-800 text-white p-6 rounded-xl shadow-lg mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="flex items-center space-x-3">
+                    <MapPin className="w-6 h-6" />
+                    <div>
+                        <p className="text-sm opacity-75">مسیر</p>
+                        <p className="font-bold">{service?.SelectedRoute?.origin?.Cities} به {service?.SelectedRoute?.destination?.Cities}</p>
+                    </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                    <Calendar className="w-6 h-6" />
+                    <div>
+                        <p className="text-sm opacity-75">تاریخ حرکت</p>
+                        <p className="font-bold">{service?.movementDate?.moveDate}</p>
+                    </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                    <CreditCard className="w-6 h-6" />
+                    <div>
+                        <p className="text-sm opacity-75">قیمت بلیط</p>
+                        <p className="font-bold">{service?.ticketPrice?.toLocaleString()} تومان</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 
     return (
-        <div className="min-h-screen mt-24 bg-gray-100 p-8">
-            <div className="max-w-7xl mx-auto">
-                <form onSubmit={handleSubmit}>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {/* Passenger Information Form */}
-                        <div className="bg-white rounded-lg shadow-lg p-6">
-                            <h2 className="text-xl font-bold mb-6 text-gray-800">اطلاعات مسافر</h2>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-gray-700 text-sm font-bold mb-2">نام</label>
-                                    <input
-                                        type="text"
-                                        name="firstName"
-                                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        placeholder="نام"
-                                        value={formData.firstName}
-                                        onChange={handleInputChange}
-                                    />
-                                    {formErrors.firstName && (
-                                        <span className="text-red-500 text-sm mt-1">{formErrors.firstName}</span>
-                                    )}
-                                </div>
+        <div className="min-h-screen bg-gray-50">
+            <div className="max-w-7xl mx-auto px-4 py-8">
+                {state.service && <ServiceHeader service={state.service} />}
 
-                                <div>
-                                    <label className="block text-gray-700 text-sm font-bold mb-2">نام خانوادگی</label>
-                                    <input
-                                        type="text"
-                                        name="lastName"
-                                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        placeholder="نام خانوادگی"
-                                        value={formData.lastName}
-                                        onChange={handleInputChange}
-                                    />
-                                    {formErrors.lastName && (
-                                        <span className="text-red-500 text-sm mt-1">{formErrors.lastName}</span>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <label className="block text-gray-700 text-sm font-bold mb-2">شماره موبایل</label>
-                                    <input
-                                        type="tel"
-                                        name="phone"
-                                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        placeholder="۰۹۱۲۳۴۵۶۷۸۹"
-                                        value={formData.phone}
-                                        onChange={handleInputChange}
-                                    />
-                                    {formErrors.phone && (
-                                        <span className="text-red-500 text-sm mt-1">{formErrors.phone}</span>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <label className="block text-gray-700 text-sm font-bold mb-2">کد ملی</label>
-                                    <input
-                                        type="text"
-                                        name="nationalCode"
-                                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        placeholder="کد ملی"
-                                        value={formData.nationalCode}
-                                        onChange={handleInputChange}
-                                    />
-                                    {formErrors.nationalCode && (
-                                        <span className="text-red-500 text-sm mt-1">{formErrors.nationalCode}</span>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <label className="block text-gray-700 text-sm font-bold mb-2">تاریخ تولد</label>
-                                    <input
-                                        type="text"
-                                        name="birthDate"
-                                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        placeholder="۱۳۷۰/۰۱/۰۱"
-                                        value={formData.birthDate}
-                                        onChange={handleInputChange}
-                                    />
-                                    {formErrors.birthDate && (
-                                        <span className="text-red-500 text-sm mt-1">{formErrors.birthDate}</span>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <label className="block text-gray-700 text-sm font-bold mb-2">جنسیت</label>
-                                    <select
-                                        name="gender"
-                                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        value={formData.gender}
-                                        onChange={handleInputChange}
-                                    >
-                                        <option value="">انتخاب کنید</option>
-                                        <option value="مرد">مرد</option>
-                                        <option value="زن">زن</option>
-                                    </select>
-                                    {formErrors.gender && (
-                                        <span className="text-red-500 text-sm mt-1">{formErrors.gender}</span>
-                                    )}
-                                </div>
-                            </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {/* Passenger Form */}
+                    <div className="bg-white rounded-2xl shadow-lg p-6">
+                        <div className="flex items-center space-x-2 mb-6">
+                            <User className="w-6 h-6 text-blue-600" />
+                            <h2 className="text-2xl font-bold text-gray-800">اطلاعات مسافر</h2>
                         </div>
-                        {/* Seat Selection */}
-                        {/* Seat Selection */}
-                        <div className="bg-white rounded-lg shadow-lg p-6">
-                            <h2 className="text-xl font-bold mb-6 text-gray-800">انتخاب صندلی</h2>
-                            <div className="mb-4">
-                                <div className="text-lg font-semibold mb-4">
-                                    تعداد صندلی‌های این سرویس: {totalSeats}
-                                </div>
 
-                                <div className="flex gap-4 mb-4">
-                                    <div className="flex items-center">
-                                        <div className="w-4 h-4 bg-blue-500 rounded mr-2"></div>
-                                        <span className="text-sm">صندلی خالی</span>
-                                    </div>
-                                    <div className="flex items-center">
-                                        <div className="w-4 h-4 bg-red-500 rounded mr-2"></div>
-                                        <span className="text-sm">رزرو شده</span>
-                                    </div>
-                                    <div className="flex items-center">
-                                        <div className="w-4 h-4 bg-green-500 rounded mr-2"></div>
-                                        <span className="text-sm">انتخاب شده</span>
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-4 gap-4 mb-6">
-                                    {[...Array(totalSeats)].map((_, index) => (
-                                        <div
-                                            key={index + 1}
-                                            className={`h-12 flex items-center justify-center rounded-lg text-white font-bold transition-colors duration-200 ${getSeatClassName(index + 1)}`}
-                                            onClick={() => !seatStatuses.find(seat => seat.seatNumber === index + 1)?.isOccupied && setSelectedSeat(index + 1)}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {Object.entries(state.formData).map(([field, value]) => (
+                                <div key={field} className="space-y-2">
+                                    <label className="block text-gray-700 font-medium">
+                                        {field === 'firstName' ? 'نام' :
+                                            field === 'lastName' ? 'نام خانوادگی' :
+                                                field === 'phone' ? 'شماره موبایل' :
+                                                    field === 'nationalCode' ? 'کد ملی' :
+                                                        field === 'birthDate' ? 'تاریخ تولد' :
+                                                            'جنسیت'}
+                                    </label>
+                                    {field === 'gender' ? (
+                                        <select
+                                            name={field}
+                                            value={value}
+                                            onChange={handleInputChange}
+                                            className="w-full p-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
                                         >
-                                            {index + 1}
-                                        </div>
-                                    ))}
+                                            <option value="">انتخاب کنید</option>
+                                            <option value="مرد">مرد</option>
+                                            <option value="زن">زن</option>
+                                        </select>
+                                    ) : (
+                                        <input
+                                            type={field === 'phone' ? 'tel' : 'text'}
+                                            name={field}
+                                            value={value}
+                                            onChange={handleInputChange}
+                                            className="w-full p-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+                                            placeholder={field === 'phone' ? '۰۹۱۲۳۴۵۶۷۸۹' : ''}
+                                        />
+                                    )}
+                                    {state.formErrors[field] && (
+                                        <p className="text-red-500 text-sm mt-1">{state.formErrors[field]}</p>
+                                    )}
                                 </div>
-
-                                <button
-                                    className={`w-full p-3 rounded-lg text-white font-bold ${selectedSeat ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-300 cursor-not-allowed'}`}
-                                    type="submit"
-                                    disabled={!selectedSeat}
-                                >
-                                    مرحله بعد
-                                </button>
-                            </div>
+                            ))}
                         </div>
                     </div>
-                </form>
+
+                    {/* Seat Selection */}
+                    <div className="bg-white rounded-2xl shadow-lg p-6">
+                        <div className="flex items-center space-x-2 mb-6">
+                            <Clock className="w-6 h-6 text-blue-600" />
+                            <h2 className="text-2xl font-bold text-gray-800">انتخاب صندلی</h2>
+                        </div>
+
+                        <div className="flex justify-center space-x-6 mb-8">
+                            <div className="flex items-center">
+                                <div className="w-4 h-4 rounded-full bg-blue-50 border-2 border-blue-200 mr-2"></div>
+                                <span className="text-sm text-gray-600">صندلی خالی</span>
+                            </div>
+                            <div className="flex items-center">
+                                <div className="w-4 h-4 rounded-full bg-red-100 border-2 border-red-200 mr-2"></div>
+                                <span className="text-sm text-gray-600">رزرو شده</span>
+                            </div>
+                            <div className="flex items-center">
+                                <div className="w-4 h-4 rounded-full bg-green-100 border-2 border-green-300 mr-2"></div>
+                                <span className="text-sm text-gray-600">انتخاب شده</span>
+                            </div>
+                        </div>
+
+                        <SeatGrid
+                            seatStatuses={state.seatStatuses}
+                            selectedSeat={state.selectedSeat}
+                            onSeatSelect={handleSeatSelection}
+                        />
+
+                        {state.selectedSeat && (
+                            <div className="mt-6 p-4 rounded-xl bg-blue-50 border border-blue-200">
+                                <h3 className="font-bold text-lg text-blue-800 mb-2">صندلی انتخاب شده</h3>
+                                <p className="text-blue-600">شماره صندلی: {state.selectedSeat}</p>
+                            </div>
+                        )}
+
+                        <button
+                            type="submit"
+                            disabled={!state.selectedSeat}
+                            className={`
+                                w-full
+                                mt-6
+                                p-4
+                                rounded-xl
+                                font-bold
+                                text-white
+                                transition-all
+                                duration-300
+                                transform
+                                hover:scale-105
+                                ${state.selectedSeat
+                                ? 'bg-gradient-to-r from-green-500 to-green-600 shadow-lg'
+                                : 'bg-gray-300 cursor-not-allowed'
+                            }
+                            `}
+                        >
+                            تایید و ادامه
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     );
