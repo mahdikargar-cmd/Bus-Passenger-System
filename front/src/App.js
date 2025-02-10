@@ -39,7 +39,7 @@ function App() {
                 <Route path='/ComplaintsManagement' element={<ComplaintsManagement/>}/>
 
                 <Route path='/notfound' element={<NotFound/>}/>
-                <Route path='/adminPanel' element={<ProtectedRoute element={AdminPanel} />} />
+                <Route path='/adminPanel' element={<ProtectedRoute element={<AdminPanel />} />} />
             </Routes>
         </div>
     );
