@@ -29,6 +29,8 @@ export const Header = () => {
                 {/* Navigation Links for Desktop */}
                 <div className="hidden md:flex items-center space-x-8">
                     <Link to="/" className="hover:text-blue-600 ml-4 transition-colors">صفحه اصلی</Link>
+                    <Link to="/admin" className="hover:text-blue-600 ml-4 transition-colors">صفحه ادمین</Link>
+
                     {user ? (
                         <>
                             <Link to="/userPanel" className="hover:text-blue-600 transition-colors">پنل من</Link>
