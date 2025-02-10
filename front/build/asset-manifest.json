@@ -1,18 +1,19 @@
 {
   "files": {
-    "main.css": "/static/css/main.f67ea84c.css",
-    "main.js": "/static/js/main.075e6881.js",
-    "static/js/453.80efc53e.chunk.js": "/static/js/453.80efc53e.chunk.js",
-    "static/media/avatar.jpg": "/static/media/avatar.5272eaca014d3e0569b0.jpg",
-    "static/media/safarino-Photoroom.png": "/static/media/safarino-Photoroom.719eca3918da2f7fd4df.png",
-    "index.html": "/index.html",
-    "static/media/Decore.svg": "/static/media/Decore.2f2437d999319e11a2d6f5a5ef4a1e01.svg",
-    "main.f67ea84c.css.map": "/static/css/main.f67ea84c.css.map",
-    "main.075e6881.js.map": "/static/js/main.075e6881.js.map",
-    "453.80efc53e.chunk.js.map": "/static/js/453.80efc53e.chunk.js.map"
+    "main.css": "./static/css/main.7277c463.css",
+    "main.js": "./static/js/main.8c27cb1d.js",
+    "static/js/453.80efc53e.chunk.js": "./static/js/453.80efc53e.chunk.js",
+    "static/media/bus-background.jpg": "./static/media/bus-background.f4c23951dee866d55d6e.jpg",
+    "static/media/safarino-Photoroom.png": "./static/media/safarino-Photoroom.719eca3918da2f7fd4df.png",
+    "static/media/me.jpg": "./static/media/me.49103599b2c3ac9d5065.jpg",
+    "index.html": "./index.html",
+    "static/media/Decore.svg": "./static/media/Decore.2f2437d999319e11a2d6f5a5ef4a1e01.svg",
+    "main.7277c463.css.map": "./static/css/main.7277c463.css.map",
+    "main.8c27cb1d.js.map": "./static/js/main.8c27cb1d.js.map",
+    "453.80efc53e.chunk.js.map": "./static/js/453.80efc53e.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.f67ea84c.css",
-    "static/js/main.075e6881.js"
+    "static/css/main.7277c463.css",
+    "static/js/main.8c27cb1d.js"
   ]
 }
