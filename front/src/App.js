@@ -10,12 +10,12 @@ import {Confirm} from "./Component/Confirm-Information/Confirm";
 import {Payment} from "./Component/Payment/Payment";
 import TicketDisplay from "./Component/TicketDisplay/TicketDisplay";
 import PrintTicket from "./Component/PrintTicket/PrintTicket";
-import {AdminLogin} from "./Component/AdminPanel/AdminLogin/AdminLogin";
+import {AdminLogin} from "./Component/adminPanel/AdminLogin/AdminLogin";
 import {UserPanel} from "./Component/UserPanel/UserPanel";
 import NotFound from './Component/404/NotFound';
-import ComplaintsManagement from "./Component/AdminPanel/ComplaintsManagement/ComplaintsManagement";
-import ProtectedRoute from "./Component/AdminPanel/AdminLogin/ProtectedRoute";
-import AdminPanel from "./Component/AdminPanel/AdminPanel";
+import ComplaintsManagement from "./Component/adminPanel/ComplaintsManagement/ComplaintsManagement";
+import ProtectedRoute from "./Component/adminPanel/AdminLogin/ProtectedRoute";
+import AdminPanel from "./Component/adminPanel/AdminPanel";
 
 function App() {
     return (
@@ -26,7 +26,7 @@ function App() {
                 <Route path='/Login' element={<Login/>}/>
                 <Route path='/TicketInquiry' element={<TicketInquiry/>}/>
 {/*
-                <Route path='/adminPanel' element={<AdminPanel/>}/>
+                <Route path='/adminPanel' element={<adminPanel/>}/>
 */}
                 <Route path='/userPanel' element={<UserPanel/>}/>
                 <Route path='/cooperativeManagement' element={<AdminPanel/>}/>
