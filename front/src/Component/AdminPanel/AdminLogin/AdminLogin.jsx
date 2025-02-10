@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../Contexts/AuthContext';
 import api from "../../../api"; // وارد کردن AuthContext
 
 export const AdminLogin = () => {
@@ -22,7 +22,7 @@ export const AdminLogin = () => {
             });
             console.log("Login successfully", response.data);
             login(response.data); // ذخیره‌سازی اطلاعات ادمین
-            Navigate('/adminPanel');
+            Navigate('/AdminPanel');
         } catch (error) {
             if (error.response) {
                 setErrorMessage(error.response.data.message || 'Login failed');

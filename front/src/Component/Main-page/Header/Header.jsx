@@ -5,7 +5,7 @@ import './Header.css';
 import { DarkModeSwitch } from 'react-toggle-dark-mode';
 import useDarkSide from '../../theme/useDarkSide';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../Contexts/AuthContext';
 
 export const Header = () => {
     const [colorTheme, setTheme] = useDarkSide();

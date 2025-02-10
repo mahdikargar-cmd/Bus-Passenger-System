@@ -4,7 +4,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from 'react-router-dom';
 import {createRoot} from "react-dom/client";
-import {AuthProvider} from "./Component/contexts/AuthContext";
+import {AuthProvider} from "./Component/Contexts/AuthContext";
 import {Header} from "./Component/Main-page/Header/Header";
 
 const rootElement = document.getElementById("root");

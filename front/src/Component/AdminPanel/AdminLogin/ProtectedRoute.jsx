@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate, Route } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext'; // فرض بر این است که AuthContext ساخته شده
+import { useAuth } from '../../Contexts/AuthContext'; // فرض بر این است که AuthContext ساخته شده
 
 const ProtectedRoute = ({ element: Element, ...rest }) => {
     const { user } = useAuth(); // وضعیت ورود کاربر را از context می‌خوانیم

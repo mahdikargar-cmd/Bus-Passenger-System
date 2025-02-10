@@ -12,7 +12,7 @@ import Amanat from "./Amanat/Amanat";
 import {DriverReport} from "./DriverReport/DriverReport";
 import ComplaintsManagement from "./ComplaintsManagement/ComplaintsManagement";
 import {useNavigate} from "react-router-dom";
-import {useAuth} from "../contexts/AuthContext";
+import {useAuth} from "../Contexts/AuthContext";
 
 export const AdminPanel = () => {
     const [activeComponent, setActiveComponent] = useState("Cooperative");

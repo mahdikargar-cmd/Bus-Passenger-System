@@ -12,10 +12,10 @@ import TicketDisplay from "./Component/TicketDisplay/TicketDisplay";
 import PrintTicket from "./Component/PrintTicket/PrintTicket";
 import {UserPanel} from "./Component/UserPanel/UserPanel";
 import NotFound from './Component/404/NotFound';
-import ComplaintsManagement from "./Component/adminPanel/ComplaintsManagement/ComplaintsManagement.jsx";
-import ProtectedRoute from "./Component/adminPanel/AdminLogin/ProtectedRoute";
-import AdminPanel from "./Component/adminPanel/AdminPanel.jsx";
-import {AdminLogin} from "./Component/adminPanel/AdminLogin/AdminLogin";
+import ComplaintsManagement from "./Component/AdminPanel/ComplaintsManagement/ComplaintsManagement.jsx";
+import ProtectedRoute from "./Component/AdminPanel/AdminLogin/ProtectedRoute";
+import AdminPanel from "./Component/AdminPanel/AdminPanel.jsx";
+import {AdminLogin} from "./Component/AdminPanel/AdminLogin/AdminLogin";
 function App() {
     return (
         <div className='app-container'>
