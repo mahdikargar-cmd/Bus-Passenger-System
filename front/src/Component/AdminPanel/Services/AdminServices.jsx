@@ -9,7 +9,7 @@ import {BiEdit} from "react-icons/bi";
 import {AiFillDelete} from "react-icons/ai";
 
 export const AdminServices = () => {
-    const {register, handleSubmit, reset, control, formState: {errors}} = useForm();
+    const { handleSubmit, reset, control, formState: {errors}} = useForm();
     const [BusManagement, setBusManagement] = useState([]);
     const [coperative, setCoperative] = useState([]);
     const [routes, setRoutes] = useState([]);

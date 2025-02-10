@@ -7,10 +7,7 @@ import {FaPrint} from "react-icons/fa";
 import {CgArrowsExchangeAlt} from "react-icons/cg";
 
 export const Tickets = () => {
-    const {register, handleSubmit} = useForm()
-    const onSubmit = async (data) => {
-        console.log(data)
-    }
+
     const [openModal, setOpenModal] = useState(false);
     const isOpen = () => {
         setOpenModal(true)
