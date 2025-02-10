@@ -12,11 +12,9 @@ import TicketDisplay from "./Component/TicketDisplay/TicketDisplay";
 import PrintTicket from "./Component/PrintTicket/PrintTicket";
 import {UserPanel} from "./Component/UserPanel/UserPanel";
 import NotFound from './Component/404/NotFound';
-import ComplaintsManagement from "./Component/adminPanel/ComplaintsManagement/ComplaintsManagement";
+import ComplaintsManagement from "./Component/adminPanel/ComplaintsManagement/ComplaintsManagement.jsx";
 import ProtectedRoute from "./Component/adminPanel/AdminLogin/ProtectedRoute";
-/*
-import AdminPanel from "./Component/adminPanel/AdminPanel";
-*/
+import AdminPanel from "./Component/adminPanel/AdminPanel.jsx";
 import {AdminLogin} from "./Component/adminPanel/AdminLogin/AdminLogin";
 function App() {
     return (
@@ -27,9 +25,7 @@ function App() {
                 <Route path='/Login' element={<Login/>}/>
                 <Route path='/TicketInquiry' element={<TicketInquiry/>}/>
                 <Route path='/userPanel' element={<UserPanel/>}/>
-{/*
                 <Route path='/cooperativeManagement' element={<AdminPanel/>}/>
-*/}
                 <Route path='/services' element={<Services/>}/>
                 <Route path='/services/se/:serviceId' element={<ServiceDetail/>}/>
                 <Route path={'/confirm'} element={<Confirm/>}/>
@@ -42,9 +38,7 @@ function App() {
                 <Route path="/services/:serviceId" element={<ServiceDetail/>} />
                 <Route path='/ComplaintsManagement' element={<ComplaintsManagement/>}/>
                 <Route path='/notfound' element={<NotFound/>}/>
-{/*
                 <Route path='/adminPanel' element={<ProtectedRoute element={<AdminPanel />} />} />
-*/}
             </Routes>
         </div>
     );
