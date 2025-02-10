@@ -16,7 +16,6 @@ import NotFound from './Component/404/NotFound';
 import ComplaintsManagement from "./Component/adminPanel/ComplaintsManagement/ComplaintsManagement";
 import ProtectedRoute from "./Component/adminPanel/AdminLogin/ProtectedRoute";
 import AdminPanel from "./Component/adminPanel/AdminPanel";
-
 function App() {
     return (
         <div className='app-container'>

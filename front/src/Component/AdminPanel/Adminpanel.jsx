@@ -14,7 +14,7 @@ import ComplaintsManagement from "./ComplaintsManagement/ComplaintsManagement";
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../contexts/AuthContext";
 
-const AdminPanel = () => {
+export const AdminPanel = () => {
     const [activeComponent, setActiveComponent] = useState("Cooperative");
     const [showMenu, setShowMenu] = useState(false); // نمایش منوی کشویی
     const navigate = useNavigate(); // استفاده از navigate برای هدایت به صفحه اصلی

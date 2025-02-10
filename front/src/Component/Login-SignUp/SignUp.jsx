@@ -1,7 +1,6 @@
 import React from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {useForm} from "react-hook-form";
-import axios from "axios";
 import logo from "../../Assets/images/safarino-Photoroom.png";
 import {FaApple, FaGoogle} from "react-icons/fa";
 import {CgArrowLongRight} from "react-icons/cg";
