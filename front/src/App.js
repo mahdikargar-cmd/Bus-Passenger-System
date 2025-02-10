@@ -14,7 +14,7 @@ import {UserPanel} from "./Component/UserPanel/UserPanel";
 import NotFound from './Component/404/NotFound';
 import ComplaintsManagement from "./Component/AdminPanel/ComplaintsManagement/ComplaintsManagement.jsx";
 import ProtectedRoute from "./Component/AdminPanel/AdminLogin/ProtectedRoute";
-import {AdminPanel} from "./Component/AdminPanel/AdminPanel.jsx";
+import AdminPanel from "./Component/AdminPanel/AdminPanel.js";
 import {AdminLogin} from "./Component/AdminPanel/AdminLogin/AdminLogin";
 function App() {
     return (
