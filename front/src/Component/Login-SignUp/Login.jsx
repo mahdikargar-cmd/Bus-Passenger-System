@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../Contexts/AuthContext";
+import { useAuth } from "../AuthContext/AuthContext";
 import logo from "../../Assets/images/safarino-Photoroom.png";
 import { FaApple, FaGoogle } from "react-icons/fa";
 import { CgArrowLongRight } from "react-icons/cg";

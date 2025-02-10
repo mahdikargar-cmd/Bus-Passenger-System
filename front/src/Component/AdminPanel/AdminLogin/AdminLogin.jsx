@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from '../../Contexts/AuthContext';
+import { useAuth } from '../../AuthContext/AuthContext';
 import api from "../../../api"; // وارد کردن AuthContext
 
 export const AdminLogin = () => {
