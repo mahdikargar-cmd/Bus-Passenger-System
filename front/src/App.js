@@ -10,7 +10,9 @@ import {Confirm} from "./Component/Confirm-Information/Confirm";
 import {Payment} from "./Component/Payment/Payment";
 import TicketDisplay from "./Component/TicketDisplay/TicketDisplay";
 import PrintTicket from "./Component/PrintTicket/PrintTicket";
+/*
 import {AdminLogin} from "./Component/adminPanel/AdminLogin/AdminLogin";
+*/
 import {UserPanel} from "./Component/UserPanel/UserPanel";
 import NotFound from './Component/404/NotFound';
 import ComplaintsManagement from "./Component/adminPanel/ComplaintsManagement/ComplaintsManagement";
@@ -24,9 +26,6 @@ function App() {
                 <Route path='/SignUp' element={<SignUp/>}/>
                 <Route path='/Login' element={<Login/>}/>
                 <Route path='/TicketInquiry' element={<TicketInquiry/>}/>
-{/*
-                <Route path='/adminPanel' element={<adminPanel/>}/>
-*/}
                 <Route path='/userPanel' element={<UserPanel/>}/>
                 <Route path='/cooperativeManagement' element={<AdminPanel/>}/>
                 <Route path='/services' element={<Services/>}/>
@@ -35,10 +34,11 @@ function App() {
                 <Route path={'/payment'} element={<Payment/>}/>
                 <Route path="/tickets" element={<TicketDisplay/>}/>
                 <Route path="/print-ticket" element={<PrintTicket/>}/>
+{/*
                 <Route path='/admin' element={<AdminLogin/>}/>
+*/}
                 <Route path="/services/:serviceId" element={<ServiceDetail/>} />
                 <Route path='/ComplaintsManagement' element={<ComplaintsManagement/>}/>
-
                 <Route path='/notfound' element={<NotFound/>}/>
                 <Route path='/adminPanel' element={<ProtectedRoute element={<AdminPanel />} />} />
             </Routes>
