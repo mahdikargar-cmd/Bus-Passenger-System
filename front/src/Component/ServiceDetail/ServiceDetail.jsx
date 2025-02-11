@@ -1,12 +1,11 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import api from "../../Services/Api";
 import { MapPin, Calendar, CreditCard, User, Clock } from "lucide-react";
 
 const ServiceDetail = () => {
     const navigate = useNavigate();
-    const BASE_URL = "https://safarino.onrender.com";
-    const serviceId = window.location.pathname.split('/').pop();
+    const { serviceId } = useParams();
 
     // Consolidated state management
     const [state, setState] = useState({
@@ -57,22 +56,22 @@ const ServiceDetail = () => {
         );
     };
     const fetchReservedSeats = useCallback(async () => {
+        if (!serviceId) {
+            console.warn('No serviceId available');
+            return;
+        }
+
         try {
-            if (!serviceId) {
-                console.log('No serviceId available yet');
-                return;
+            const response = await api.get(`/seats/${serviceId}`);
+            if (response.data) {
+                setState(prev => ({
+                    ...prev,
+                    seatStatuses: response.data.map(seat => ({
+                        seatNumber: seat.seatNumber,
+                        isOccupied: seat.isOccupied
+                    }))
+                }));
             }
-
-            const response = await api.get(`seats/${serviceId}`);
-            const seatStatuses = response.data;
-
-            setState(prev => ({
-                ...prev,
-                seatStatuses: seatStatuses.map(seat => ({
-                    seatNumber: seat.seatNumber,
-                    isOccupied: seat.isOccupied
-                }))
-            }));
         } catch (error) {
             console.error('Error fetching seat statuses:', error);
             // Initialize with default empty seats if there's an error
@@ -88,7 +87,7 @@ const ServiceDetail = () => {
             }));
         }
     }, [serviceId, state.service?.ChairCapacity?.capacity]);
-    const loadInitialData = useCallback(() => {
+    const loadInitialData = useCallback(async () => {
         try {
             const storedService = localStorage.getItem('selectedService');
             if (!storedService) {
@@ -97,19 +96,22 @@ const ServiceDetail = () => {
             }
 
             const parsedService = JSON.parse(storedService);
-            const totalSeats = parsedService?.ChairCapacity?.capacity || 44;
-            const initialSeatStatuses = Array.from({length: totalSeats},
-                (_, index) => ({
-                    seatNumber: index + 1,
-                    isOccupied: false
-                })
-            );
-
             setState(prev => ({
                 ...prev,
                 service: parsedService,
-                seatStatuses: initialSeatStatuses,
                 loading: false
+            }));
+
+            // Initialize seat statuses after loading service
+            const totalSeats = parsedService?.ChairCapacity?.capacity || 44;
+            setState(prev => ({
+                ...prev,
+                seatStatuses: Array.from({ length: totalSeats },
+                    (_, index) => ({
+                        seatNumber: index + 1,
+                        isOccupied: false
+                    })
+                )
             }));
         } catch (error) {
             console.error('Error loading initial data:', error);
@@ -120,11 +122,15 @@ const ServiceDetail = () => {
     // Effects
     useEffect(() => {
         loadInitialData();
-        fetchReservedSeats();
+    }, [loadInitialData]);
 
-        const pollInterval = setInterval(fetchReservedSeats, 10000);
-        return () => clearInterval(pollInterval);
-    }, [loadInitialData, fetchReservedSeats]);
+    useEffect(() => {
+        if (serviceId) {
+            fetchReservedSeats();
+            const pollInterval = setInterval(fetchReservedSeats, 10000);
+            return () => clearInterval(pollInterval);
+        }
+    }, [serviceId, fetchReservedSeats]);
 
     // Event handlers
     const handleInputChange = (e) => {
@@ -200,15 +206,22 @@ const ServiceDetail = () => {
             return;
         }
 
+        if (!serviceId) {
+            alert('خطا در شناسایی سرویس');
+            return;
+        }
+
         try {
+            // Generate a unique ticket number
+            const ticketNumber = Math.floor(10000000 + Math.random() * 90000000).toString();
+
             // First update the seat status
-            await api.patch(`seats/${serviceId}/${state.selectedSeat}`, {
+            await api.patch(`/seats/${serviceId}/${state.selectedSeat}`, {
                 isOccupied: true,
-                ticketNumber: Math.floor(10000000 + Math.random() * 90000000).toString()
+                ticketNumber
             });
 
-            // Then create the ticket
-            const ticketNumber = Math.floor(10000000 + Math.random() * 90000000).toString();
+            // Prepare booking data
             const bookingData = {
                 passengerInfo: { ...state.formData },
                 seatInfo: {
@@ -231,7 +244,8 @@ const ServiceDetail = () => {
                 paymentStatus: 'pending',
             };
 
-            await api.post(`tickets/addTicket`, bookingData);
+            // Create the ticket
+            await api.post(`/tickets/addTicket`, bookingData);
 
             // Save booking data and navigate
             localStorage.setItem('bookingData', JSON.stringify(bookingData));
@@ -239,8 +253,7 @@ const ServiceDetail = () => {
         } catch (error) {
             console.error('Error submitting form:', error);
             alert('خطا در ثبت اطلاعات. لطفا دوباره تلاش کنید.');
-            // Refresh seat statuses in case of error
-            await fetchReservedSeats();
+            await fetchReservedSeats(); // Refresh seat statuses
         }
     };
     if (state.loading) {
