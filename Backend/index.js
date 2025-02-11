@@ -28,8 +28,8 @@ class Server {
         this.startServer();
     }
 
-    connectToDatabase() {
-        mongoose.connect(process.env.MONGO_URI).then(() => console.log('mongodb connected'))
+    connectToDatabase() {   
+        mongoose.connect("mongodb+srv://mahdikargar:13521380@cluster0.pw2b7.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0").then(() => console.log('mongodb connected'))
             .catch(err => console.error('error in mongodb:', err));
     }
 
