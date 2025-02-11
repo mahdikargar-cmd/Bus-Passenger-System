@@ -60,7 +60,7 @@ const ServiceDetail = () => {
         try {
             if (!serviceId) return; // Add this check
 
-            const response = await api.get(`/tickets/reserved-seats/${serviceId}`);
+            const response = await api.get(`tickets/reserved-seats/${serviceId}`);
             const reservedSeats = new Set(
                 response.data.map(ticket => ticket.seatInfo.seatNumber)
             );
@@ -193,7 +193,7 @@ const ServiceDetail = () => {
         try {
             // Check seat availability
             const {data: reservedSeats} = await api.get(
-                `/tickets/reserved-seats/${serviceId}`
+                `tickets/reserved-seats/${serviceId}`
             );
 
             if (reservedSeats.some(seat => seat.seatNumber === state.selectedSeat)) {
@@ -228,11 +228,11 @@ const ServiceDetail = () => {
 
             // Update seat status and create ticket
             await Promise.all([
-                api.patch(`/seats/${serviceId}/${state.selectedSeat}`, {
+                api.patch(`seats/${serviceId}/${state.selectedSeat}`, {
                     isOccupied: true,
                     ticketNumber,
                 }),
-                api.post(`/tickets/addTicket`, bookingData)
+                api.post(`tickets/addTicket`, bookingData)
             ]);
 
             // Save booking data and navigate
