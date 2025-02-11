@@ -20,7 +20,7 @@ export const StatusTicket = () => {
 
     const fetchCities = async () => {
         try {
-            const response = await api.get('destination');
+            const response = await api.get('/destination');
             setCities(response.data);
         } catch (error) {
             console.error('Error fetching cities', error);
@@ -29,7 +29,7 @@ export const StatusTicket = () => {
 
     const fetchRoutes = async () => {
         try {
-            const response = await api.get('Route');
+            const response = await api.get('/Route');
             setRoutes(response.data);
         } catch (error) {
             console.error('Error fetching routes', error);
@@ -38,7 +38,7 @@ export const StatusTicket = () => {
 
     const fetchBuses = async () => {
         try {
-            const response = await api.get('bus');
+            const response = await api.get('/bus');
             setBuses(response.data);
             setCooperatives(response.data);
         } catch (error) {

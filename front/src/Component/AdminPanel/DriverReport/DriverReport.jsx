@@ -20,7 +20,7 @@ export const DriverReport = () => {
     useEffect(() => {
         const fetchDrivers = async () => {
             try {
-                const response = await api.get("driverreports");
+                const response = await api.get("/driverreports");
                 setDriver(response.data);
                 setDriverCount(response.data.length);
             } catch (error) {
@@ -41,12 +41,12 @@ export const DriverReport = () => {
 
         try {
             if (isEdit && currentDriver) {
-                const response = await api.patch(`driver/updateDriver/${currentDriver._id}`, data, {
+                const response = await api.patch(`/driver/updateDriver/${currentDriver._id}`, data, {
                     headers: { 'Content-Type': 'application/json' }
                 });
                 setDriver(driver.map(item => item._id === currentDriver._id ? response.data.data.Driver : item));
             } else {
-                const response = await api.post("driver/registerDriver", data, {
+                const response = await api.post("/driver/registerDriver", data, {
                     headers: { 'Content-Type': 'application/json' }
                 });
                 setDriver([...driver, response.data.data.Driver]);

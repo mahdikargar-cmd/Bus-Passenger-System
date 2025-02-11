@@ -17,7 +17,7 @@ export default function Destination() {
     useEffect(() => {
         const fetchDestinations = async () => {
             try {
-                const response = await api.get("destination");
+                const response = await api.get("/destination");
                 console.log(response.data);
                 setDestinations(response.data);
             } catch (error) {
@@ -35,7 +35,7 @@ export default function Destination() {
             console.log("Current Destination:", currentDestination);
 
             if (isEdit && currentDestination) {
-                await api.patch(`destination/updateDestination/${currentDestination._id}`, {cityName: data.cityName}, {
+                await api.patch(`/destination/updateDestination/${currentDestination._id}`, {cityName: data.cityName}, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -45,7 +45,7 @@ export default function Destination() {
                     Cities: data.cityName
                 } : item));
             } else {
-                const response = await api.post("destination/registerDestination", {
+                const response = await api.post("/destination/registerDestination", {
                     Cities: data.cityName
                 }, {
                     headers: {
@@ -80,7 +80,7 @@ export default function Destination() {
 
     const handleDelete = async (id) => {
         try {
-            await api.delete(`destination/deleteDestination/${id}`, {
+            await api.delete(`/destination/deleteDestination/${id}`, {
                 headers: {
                     'Content-Type': 'application/json'
                 }

@@ -43,7 +43,7 @@ export const BusMovementManagement = () => {
 
     const fetchCities = async () => {
         try {
-            const response = await api.get("destination");
+            const response = await api.get("/destination");
             setCities(response.data);
         } catch (error) {
             console.error("Error fetching cities", error);
@@ -52,7 +52,7 @@ export const BusMovementManagement = () => {
 
     const fetchRoutes = async () => {
         try {
-            const response = await api.get("busMovement");
+            const response = await api.get("/busMovement");
             console.log(response.data); // بررسی داده‌های بازگشتی
             setRoutes(response.data);
         } catch (error) {
@@ -63,7 +63,7 @@ export const BusMovementManagement = () => {
 
     const fetchBuses = async () => {
         try {
-            const response = await api.get("bus");
+            const response = await api.get("/bus");
             setBuses(response.data);
         } catch (error) {
             console.error("Error fetching buses", error);
@@ -72,7 +72,7 @@ export const BusMovementManagement = () => {
 
     const deleteRoute = async (id) => {
         try {
-            await api.delete(`busMovement/deleteBusMovement/${id}`);
+            await api.delete(`/busMovement/deleteBusMovement/${id}`);
             await fetchRoutes();
         } catch (error) {
             console.error("Error deleting route", error);
@@ -95,9 +95,9 @@ export const BusMovementManagement = () => {
 
         try {
             if (isEdit && currentRoute) {
-                await api.patch(`busMovement/updateBusMovement/${currentRoute._id}`, data);
+                await api.patch(`/busMovement/updateBusMovement/${currentRoute._id}`, data);
             } else {
-                await api.post("busMovement/registerBusMovement", data);
+                await api.post("/busMovement/registerBusMovement", data);
             }
             closeModalHandler();
         } catch (error) {
