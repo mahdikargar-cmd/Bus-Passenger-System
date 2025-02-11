@@ -78,7 +78,6 @@ const ServiceDetail = () => {
             console.error('خطا در دریافت اطلاعات صندلی‌های رزرو شده:', error);
         }
     }, [serviceId]);
-
     const loadInitialData = useCallback(() => {
         try {
             const storedService = localStorage.getItem('selectedService');
@@ -108,14 +107,15 @@ const ServiceDetail = () => {
         }
     }, [navigate]);
 
-    // Effects
     useEffect(() => {
-        loadInitialData();
-        fetchReservedSeats();
+        if (serviceId) {  // Add this check
+            loadInitialData();
+            fetchReservedSeats();
 
-        const pollInterval = setInterval(fetchReservedSeats, 10000);
-        return () => clearInterval(pollInterval);
-    }, [loadInitialData, fetchReservedSeats]);
+            const pollInterval = setInterval(fetchReservedSeats, 10000);
+            return () => clearInterval(pollInterval);
+        }
+    }, [loadInitialData, fetchReservedSeats, serviceId]);
 
     // Event handlers
     const handleInputChange = (e) => {
