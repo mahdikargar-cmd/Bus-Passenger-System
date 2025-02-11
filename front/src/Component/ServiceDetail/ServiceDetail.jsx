@@ -63,7 +63,7 @@ const ServiceDetail = () => {
                 return;
             }
 
-            const response = await api.get(`/seats/${serviceId}`);
+            const response = await api.get(`seats/${serviceId}`);
             const seatStatuses = response.data;
 
             setState(prev => ({
@@ -202,7 +202,7 @@ const ServiceDetail = () => {
 
         try {
             // First update the seat status
-            await api.patch(`/seats/${serviceId}/${state.selectedSeat}`, {
+            await api.patch(`seats/${serviceId}/${state.selectedSeat}`, {
                 isOccupied: true,
                 ticketNumber: Math.floor(10000000 + Math.random() * 90000000).toString()
             });
@@ -231,7 +231,7 @@ const ServiceDetail = () => {
                 paymentStatus: 'pending',
             };
 
-            await api.post(`/tickets/addTicket`, bookingData);
+            await api.post(`tickets/addTicket`, bookingData);
 
             // Save booking data and navigate
             localStorage.setItem('bookingData', JSON.stringify(bookingData));
