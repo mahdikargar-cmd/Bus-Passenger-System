@@ -28,7 +28,6 @@ router.patch("/:serviceId/:seatNumber", async (req, res) => {
     }
 });
 
-/*router.patch('/:serviceId/:seatNumber', updateSeatStatus);*/
 router.get('/:serviceId', getSeatStatuses);
 router.delete('/:serviceId', deleteSeatStatusesByService); // این مسیر تمام وضعیت‌های صندلی مربوط به یک سرویس را حذف می‌کند
 

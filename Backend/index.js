@@ -8,16 +8,14 @@ const coperativeRoutes = require('./routes/CoperativeRoutes');
 const destinationRoutes = require('./routes/DestinationRouter');
 const driverRoutes = require('./routes/DriverRoutes');
 const busRoutes = require('./routes/BusRoutes');
-/*
-const routeRoutes = require('./routes/RouteManagementRouter');
-*/
+
 const busMovement = require('./routes/BusMovementManagementRouter');
 const servicesRoutes = require('./routes/ServicesRouter');
 const ticketRoutes = require('./routes/ticketsRoute');
 const adminRoutes = require('./AAA/routes/AdminRoutes');
 const seatsRoutes = require('./routes/SeatStatusRouter');
 const amanatRoutes = require('./routes/AmanatRoutes');
-const {join, join} = require("path");
+const {join} = require("path");
 
 class Server {
     constructor() {
