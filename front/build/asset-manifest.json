@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.9d11b613.css",
-    "main.js": "/static/js/main.7dd79357.js",
+    "main.js": "/static/js/main.f3adf8c5.js",
     "static/js/453.80efc53e.chunk.js": "/static/js/453.80efc53e.chunk.js",
     "static/media/bus-background.jpg": "/static/media/bus-background.f4c23951dee866d55d6e.jpg",
     "static/media/safarino-Photoroom.png": "/static/media/safarino-Photoroom.719eca3918da2f7fd4df.png",
@@ -9,11 +9,11 @@
     "index.html": "/index.html",
     "static/media/Decore.svg": "/static/media/Decore.2f2437d999319e11a2d6f5a5ef4a1e01.svg",
     "main.9d11b613.css.map": "/static/css/main.9d11b613.css.map",
-    "main.7dd79357.js.map": "/static/js/main.7dd79357.js.map",
+    "main.f3adf8c5.js.map": "/static/js/main.f3adf8c5.js.map",
     "453.80efc53e.chunk.js.map": "/static/js/453.80efc53e.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.9d11b613.css",
-    "static/js/main.7dd79357.js"
+    "static/js/main.f3adf8c5.js"
   ]
 }

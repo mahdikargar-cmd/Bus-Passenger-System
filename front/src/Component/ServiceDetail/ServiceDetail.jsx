@@ -1,12 +1,10 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import {useNavigate} from "react-router-dom";
-import axios from "axios";
 import api from "../../Services/Api";
 import { MapPin, Calendar, CreditCard, User, Clock } from "lucide-react";
 
 const ServiceDetail = () => {
     const navigate = useNavigate();
-    const BASE_URL = "https://safarino.onrender.com";
     const serviceId = window.location.pathname.split('/').pop();
 
     // Consolidated state management
@@ -56,22 +54,16 @@ const ServiceDetail = () => {
                 ))}
             </div>
         );
-    };    // Memoized fetch functions
+    };
     const fetchReservedSeats = useCallback(async () => {
         try {
-            // دریافت همزمان اطلاعات از هر دو API
-            const [axiosResponse, apiResponse] = await Promise.all([
-                api.get(`/tickets/reserved-seats/${serviceId}`),
-                api.get(`/tickets/reserved-seats/${serviceId}`)
-            ]);
+            if (!serviceId) return; // Add this check
 
-            // تغییر نحوه استخراج شماره صندلی‌های رزرو شده
-            const reservedSeats = new Set([
-                ...axiosResponse.data.map(ticket => ticket.seatInfo.seatNumber),
-                ...apiResponse.data.map(ticket => ticket.seatInfo.seatNumber)
-            ]);
+            const response = await api.get(`/tickets/reserved-seats/${serviceId}`);
+            const reservedSeats = new Set(
+                response.data.map(ticket => ticket.seatInfo.seatNumber)
+            );
 
-            // آپدیت وضعیت صندلی‌ها
             setState(prev => ({
                 ...prev,
                 seatStatuses: Array.from({length: prev.service?.ChairCapacity?.capacity || 44},
@@ -84,7 +76,9 @@ const ServiceDetail = () => {
         } catch (error) {
             console.error('خطا در دریافت اطلاعات صندلی‌های رزرو شده:', error);
         }
-    }, [serviceId]);    const loadInitialData = useCallback(() => {
+    }, [serviceId]);
+
+    const loadInitialData = useCallback(() => {
         try {
             const storedService = localStorage.getItem('selectedService');
             if (!storedService) {
@@ -113,14 +107,15 @@ const ServiceDetail = () => {
         }
     }, [navigate]);
 
-    // Effects
     useEffect(() => {
-        loadInitialData();
-        fetchReservedSeats();
+        if (serviceId) {  // Add this check
+            loadInitialData();
+            fetchReservedSeats();
 
-        const pollInterval = setInterval(fetchReservedSeats, 10000);
-        return () => clearInterval(pollInterval);
-    }, [loadInitialData, fetchReservedSeats]);
+            const pollInterval = setInterval(fetchReservedSeats, 10000);
+            return () => clearInterval(pollInterval);
+        }
+    }, [loadInitialData, fetchReservedSeats, serviceId]);
 
     // Event handlers
     const handleInputChange = (e) => {
