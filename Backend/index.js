@@ -29,13 +29,16 @@ class Server {
     }
 
     connectToDatabase() {
-        mongoose.connect("mongodb+srv://mahdikargar:13521380@cluster0.pw2b7.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0").then(() => console.log('mongodb connected'))
+        console.log('MongoDB URI:', process.env.MONGO_URI);
+
+        mongoose.connect("mongodb://127.0.0.1:27017/Travel").then(() => console.log('mongodb connected'))
             .catch(err => console.error('error in mongodb:', err));
     }
 
     configureMiddleware() {
         this.app.use(cors({
-            origin: 'https://safarinoo.onrender.com'
+            origin: 'https://localhost:3000'
+        /*    origin: 'https://safarinoo.onrender.com'*/
         }));
         this.app.use(bodyParser.json());
     }
