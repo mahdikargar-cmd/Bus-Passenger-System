@@ -5,6 +5,7 @@ import { MapPin, Calendar, CreditCard, User, Clock } from "lucide-react";
 
 const ServiceDetail = () => {
     const navigate = useNavigate();
+    const BASE_URL = "https://safarino.onrender.com";
     const serviceId = window.location.pathname.split('/').pop();
 
     // Consolidated state management
@@ -107,15 +108,14 @@ const ServiceDetail = () => {
         }
     }, [navigate]);
 
+    // Effects
     useEffect(() => {
-        if (serviceId) {  // Add this check
-            loadInitialData();
-            fetchReservedSeats();
+        loadInitialData();
+        fetchReservedSeats();
 
-            const pollInterval = setInterval(fetchReservedSeats, 10000);
-            return () => clearInterval(pollInterval);
-        }
-    }, [loadInitialData, fetchReservedSeats, serviceId]);
+        const pollInterval = setInterval(fetchReservedSeats, 10000);
+        return () => clearInterval(pollInterval);
+    }, [loadInitialData, fetchReservedSeats]);
 
     // Event handlers
     const handleInputChange = (e) => {
