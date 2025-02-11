@@ -26,7 +26,7 @@ export const Services = () => {
             const [busResponse, servicesResponse] = await Promise.all([
                 api.get("/bus"),
                 originId && destinationId
-                    ? api.get(`/services?origin=${originId}&destination=${destinationId}`)
+                    ? api.get(`services?origin=${originId}&destination=${destinationId}`)
                     : Promise.resolve({ data: [] })
             ]);
 

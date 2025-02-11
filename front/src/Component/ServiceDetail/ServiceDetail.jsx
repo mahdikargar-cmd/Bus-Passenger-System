@@ -5,7 +5,6 @@ import { MapPin, Calendar, CreditCard, User, Clock } from "lucide-react";
 
 const ServiceDetail = () => {
     const navigate = useNavigate();
-    const BASE_URL = "https://safarino.onrender.com";
     const serviceId = window.location.pathname.split('/').pop();
 
     // Consolidated state management
@@ -132,11 +131,9 @@ const ServiceDetail = () => {
             // بررسی وضعیت صندلی
             const seat = prev.seatStatuses.find(s => s.seatNumber === seatNumber);
 
-            // اگر صندلی رزرو شده باشد، هیچ تغییری ایجاد نکن
             if (seat?.isOccupied) {
                 return prev;
             }
-
             return {
                 ...prev,
                 selectedSeat: seatNumber
@@ -148,8 +145,6 @@ const ServiceDetail = () => {
     const validateForm = () => {
         const errors = {};
         const {formData} = state;
-
-        // Required field validation
         const requiredFields = [
             {name: 'firstName', label: 'نام'},
             {name: 'lastName', label: 'نام خانوادگی'},
@@ -372,7 +367,7 @@ const ServiceDetail = () => {
                             </div>
                         )}
 
-                        <button
+                        <button onClick={handleSubmit}
                             type="submit"
                             disabled={!state.selectedSeat}
                             className={`
