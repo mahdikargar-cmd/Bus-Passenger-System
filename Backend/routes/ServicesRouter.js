@@ -1,5 +1,4 @@
     const express = require("express");
-    const mongoose = require('mongoose'); // Add mongoose import
     const {
         getServiceById,
         createService,

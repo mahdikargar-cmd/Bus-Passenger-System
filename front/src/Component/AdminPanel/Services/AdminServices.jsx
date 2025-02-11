@@ -147,12 +147,13 @@ export const AdminServices = () => {
                 CompanyName: data.companyName.value,
                 busName: data.busName.value,
                 BusType: data.busType.value,
-                ChairCapacity: selectedBus.value, // Use the bus ID for ChairCapacity
+                ChairCapacity: selectedBus.value,
                 SelectedRoute: data.route.value,
                 movementDate: data.moveDate.value,
                 movementTime: data.moveTime.value,
                 ticketPrice: parseFloat(data.ticketPrice),
-                ServicesOption: data.ServicesOption.map(option => option.value)
+                // اضافه کردن چک برای ServicesOption
+                ServicesOption: data.ServicesOption ? data.ServicesOption.map(option => option.value) : []
             };
 
             const response = editingServiceId
@@ -162,11 +163,10 @@ export const AdminServices = () => {
             if (response.status === 201 || response.status === 200) {
                 fetchServicesOptions();
                 closeModalHandler();
-                reset(); // Reset form after successful submission
+                reset();
             }
         } catch (error) {
             console.error("Error saving service:", error);
-            // Add error handling UI feedback here
         }
     };
     return (
@@ -395,7 +395,27 @@ export const AdminServices = () => {
                                     className="p-2 border rounded w-full"
                                 />
                             </div>
-
+                            {/* Service Options */}
+                            <div className="space-y-2">
+                                <label className="block">امکانات</label>
+                                <Controller
+                                    name="ServicesOption"
+                                    control={control}
+                                    defaultValue={[]}
+                                    render={({ field }) => (
+                                        <Select
+                                            {...field}
+                                            isMulti
+                                            options={services.map(service => ({
+                                                value: service._id,
+                                                label: service.facilities
+                                            }))}
+                                            className="text-black w-full"
+                                            placeholder="انتخاب امکانات"
+                                        />
+                                    )}
+                                />
+                            </div>
                             {/* Ticket Price */}
                             <div className="space-y-2">
                                 <label className="block">قیمت بلیط</label>
