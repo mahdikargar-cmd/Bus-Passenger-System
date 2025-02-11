@@ -61,7 +61,7 @@ const ServiceDetail = () => {
         try {
             // دریافت همزمان اطلاعات از هر دو API
             const [axiosResponse, apiResponse] = await Promise.all([
-                axios.get(`${BASE_URL}/tickets/reserved-seats/${serviceId}`),
+                api.get(`/tickets/reserved-seats/${serviceId}`),
                 api.get(`/tickets/reserved-seats/${serviceId}`)
             ]);
 
@@ -198,8 +198,8 @@ const ServiceDetail = () => {
 
         try {
             // Check seat availability
-            const {data: reservedSeats} = await axios.get(
-                `${BASE_URL}/tickets/reserved-seats/${serviceId}`
+            const {data: reservedSeats} = await api.get(
+                `/tickets/reserved-seats/${serviceId}`
             );
 
             if (reservedSeats.some(seat => seat.seatNumber === state.selectedSeat)) {
@@ -234,11 +234,11 @@ const ServiceDetail = () => {
 
             // Update seat status and create ticket
             await Promise.all([
-                axios.patch(`${BASE_URL}/seats/${serviceId}/${state.selectedSeat}`, {
+                api.patch(`/seats/${serviceId}/${state.selectedSeat}`, {
                     isOccupied: true,
                     ticketNumber,
                 }),
-                axios.post(`${BASE_URL}/tickets/addTicket`, bookingData)
+                api.post(`/tickets/addTicket`, bookingData)
             ]);
 
             // Save booking data and navigate

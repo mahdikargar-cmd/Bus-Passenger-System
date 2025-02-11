@@ -1,12 +1,13 @@
-import React, {useEffect, useState} from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { Search, RefreshCw, AlertCircle, TicketX } from 'lucide-react';
 import api from "../../../Services/Api";
-import moment from "moment-jalaali";
 
 export const TicketInquiry = () => {
     const [ticketNumber, setTicketNumber] = useState('');
     const [tickets, setTickets] = useState([]);
     const [message, setMessage] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [cancelling, setCancelling] = useState(false);
     const [ticketData, setTicketData] = useState(null);
     const [buses, setBuses] = useState([]);
     const [cooperatives, setCooperatives] = useState([]);
@@ -24,9 +25,6 @@ export const TicketInquiry = () => {
         } catch (error) {
             console.error('Error fetching cities', error);
         }
-    };
-    const formatDate = (date) => {
-        return moment(date).format('jYYYY-jMM-jDD');
     };
     const fetchRoutes = async () => {
         try {
@@ -57,16 +55,20 @@ export const TicketInquiry = () => {
         return company ? company.companyName : 'Unknown';
     };
     const handleFetchTickets = async () => {
+        if (!ticketNumber.trim()) {
+            setMessage('لطفاً شماره بلیط را وارد کنید');
+            return;
+        }
+        setLoading(true);
         try {
-            console.log(`Fetching tickets for ticket number: ${ticketNumber}`);
             const response = await api.get(`/tickets/number/${ticketNumber}`);
-            console.log('Fetched tickets:', response.data);
             setTickets(Array.isArray(response.data) ? response.data : [response.data]);
             setMessage('');
         } catch (error) {
-            console.error('Error fetching tickets:', error);
-            setMessage(error.response ? error.response.data.message : 'Error fetching tickets');
+            setMessage(error.response?.data?.message || 'خطا در دریافت اطلاعات بلیط');
             setTickets([]);
+        } finally {
+            setLoading(false);
         }
     };
     const getBusNameById = (id) => {
@@ -81,59 +83,144 @@ export const TicketInquiry = () => {
         return route ? `${origin} به ${destination} ` : 'Unknown';
     };
 
-    const getServiceOptionsByIds = (ids) => {
-        return ids.map((id) => {
-            const service = buses.find((service) => service._id === id);
-            return service ? service.facilities : 'Unknown';
-        });
-    };
     const handleCancel = async () => {
+        if (!window.confirm('آیا از استرداد این بلیط اطمینان دارید؟')) {
+            return;
+        }
+        setCancelling(true);
         try {
-            console.log(`Cancelling all tickets with ticket number: ${ticketNumber}`);
             const response = await api.delete(`/tickets/number/${ticketNumber}`);
-            console.log('Cancellation response:', response.data);
-            setMessage(response.data.message);
+            setMessage('بلیط با موفقیت لغو شد');
             setTickets([]);
         } catch (error) {
-            console.error('Error cancelling tickets:', error);
-            setMessage(error.response ? error.response.data.message : 'Error cancelling tickets');
+            setMessage(error.response?.data?.message || 'خطا در لغو بلیط');
+        } finally {
+            setCancelling(false);
         }
     };
     return (
-        <div className="w-full bg-white-blue rounded text-white dark:bg-dark-blue p-2 flex justify-center">
-            <div className="dark:text-white h-80">
-                <h1 className="font-semibold mb-10">استرداد بلیط</h1>
-                <input
-                    className="placeholder:text-black text-black rounded p-2 ml-2"
-                    type="text"
-                    value={ticketNumber}
-                    onChange={(e) => setTicketNumber(e.target.value)}
-                    placeholder="شماره بلیط را وارد کنید"
-                />
-                <button className="bg-green-300 p-2 rounded text-black" onClick={handleFetchTickets}>جستجو</button>
-                {message && <p>{message}</p>}
-                <ul>
-                    {Array.isArray(tickets) && tickets.map(ticket => (
-                        <li key={ticket._id}>
-                            <p>شماره بلیط: {ticketData.ticketNumber}</p>
-                            <p>نام: {ticketData.firstName}</p>
-                            <p>نام خانوادگی: {ticketData.lastName}</p>
-                            <p>شماره تلفن: {ticketData.phone}</p>
-                            <p>کدملی: {ticketData.nationalCode}</p>
-                            <p>تاریخ تولد: {ticketData.birthDate}</p>
-                            <p>جنسیت: {ticketData.gender}</p>
-                            <p>شماره صندلی: {ticketData.seatNumber}</p>
-                            <h2>جزئیات سرویس</h2>
-                            <p>نام شرکت: {getCompanyNameById(ticketData.serviceDetails.CompanyName)}</p>
-                        </li>
-                    ))}
-                </ul>
-                {tickets.length > 0 && (
-                    <button className="bg-red-300 text-black p-1" onClick={handleCancel}>استرداد بلیط</button>
-                )}
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-6 lg:p-8">
+            <div className="max-w-3xl mx-auto">
+                {/* Search Section */}
+                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 md:p-8">
+                    <div className="text-center">
+                        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white mb-6">
+                            استرداد بلیط
+                        </h1>
+                        <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-8">
+                            <div className="relative w-full md:w-2/3">
+                                <input
+                                    type="text"
+                                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600
+                                             bg-white dark:bg-gray-700 text-gray-800 dark:text-white
+                                             focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                                             transition-all duration-200"
+                                    value={ticketNumber}
+                                    onChange={(e) => setTicketNumber(e.target.value)}
+                                    placeholder="شماره بلیط را وارد کنید"
+                                />
+                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                            </div>
+                            <button
+                                onClick={handleFetchTickets}
+                                disabled={loading}
+                                className="w-full md:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700
+                                         text-white rounded-lg transition-colors duration-200
+                                         flex items-center justify-center gap-2 disabled:opacity-50"
+                            >
+                                {loading ? (
+                                    <><RefreshCw className="animate-spin" size={20} /> در حال جستجو...</>
+                                ) : (
+                                    <><Search size={20} /> جستجوی بلیط</>
+                                )}
+                            </button>
+                        </div>
+
+                        {message && (
+                            <div className={`flex items-center justify-center gap-2 text-sm mt-4 ${
+                                message.includes('موفقیت') ? 'text-green-500' : 'text-red-500'
+                            }`}>
+                                <AlertCircle size={16} />
+                                {message}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Ticket Details */}
+                {tickets.map(ticket => (
+                    <div key={ticket._id} className="mt-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+                        <div className="p-6 md:p-8">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Passenger Information */}
+                                <div className="space-y-4">
+                                    <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                                        اطلاعات مسافر
+                                    </h2>
+                                    <div className="space-y-3">
+                                        <InfoItem label="شماره بلیط" value={ticket.ticketNumber} />
+                                        <InfoItem label="نام" value={ticket.firstName} />
+                                        <InfoItem label="نام خانوادگی" value={ticket.lastName} />
+                                        <InfoItem label="شماره تلفن" value={ticket.phone} />
+                                        <InfoItem label="کد ملی" value={ticket.nationalCode} />
+                                        <InfoItem label="تاریخ تولد" value={ticket.birthDate} />
+                                        <InfoItem label="جنسیت" value={ticket.gender} />
+                                        <InfoItem label="شماره صندلی" value={ticket.seatNumber} />
+                                    </div>
+                                </div>
+
+                                {/* Service Details */}
+                                <div className="space-y-4">
+                                    <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                                        جزئیات سرویس
+                                    </h2>
+                                    <div className="space-y-3">
+                                        <InfoItem
+                                            label="نام شرکت"
+                                            value={getCompanyNameById(ticket.serviceDetails.CompanyName)}
+                                        />
+                                        <InfoItem
+                                            label="نام اتوبوس"
+                                            value={getBusNameById(ticket.serviceDetails.busName)}
+                                        />
+                                        <InfoItem
+                                            label="مسیر"
+                                            value={getRouteNameById(ticket.serviceDetails.SelectedRoute)}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Cancel Button */}
+                            <div className="mt-8 flex justify-center">
+                                <button
+                                    onClick={handleCancel}
+                                    disabled={cancelling}
+                                    className="flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700
+                                             text-white rounded-lg transition-colors duration-200
+                                             disabled:opacity-50"
+                                >
+                                    {cancelling ? (
+                                        <><RefreshCw className="animate-spin" size={20} /> در حال لغو بلیط...</>
+                                    ) : (
+                                        <><TicketX size={20} /> استرداد بلیط</>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     );
 };
+
+// Helper component for displaying information items
+const InfoItem = ({ label, value }) => (
+    <div className="flex flex-col space-y-1">
+        <span className="text-sm text-gray-500 dark:text-gray-400">{label}</span>
+        <span className="text-gray-800 dark:text-white">{value || '—'}</span>
+    </div>
+);
 
 export default TicketInquiry;
