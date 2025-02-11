@@ -22,7 +22,7 @@ export const AdminLogin = () => {
             });
             console.log("Login successfully", response.data);
             login(response.data); // ذخیره‌سازی اطلاعات ادمین
-            Navigate('/AdminPanel');
+            Navigate('/cooperativeManagement');
         } catch (error) {
             if (error.response) {
                 setErrorMessage(error.response.data.message || 'Login failed');

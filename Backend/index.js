@@ -28,7 +28,7 @@ class Server {
         this.startServer();
     }
 
-    connectToDatabase() {   
+    connectToDatabase() {
         mongoose.connect("mongodb+srv://mahdikargar:13521380@cluster0.pw2b7.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0").then(() => console.log('mongodb connected'))
             .catch(err => console.error('error in mongodb:', err));
     }
@@ -61,6 +61,13 @@ class Server {
     }
 
     startServer() {
+        this.app.use('/dist', express.static(join(__dirname, 'client/dist'), {
+            setHeaders: (res, path) => {
+                if (path.endsWith('.css')) {
+                    res.setHeader('Content-Type', 'text/css');
+                }
+            }
+        }));
 
 // ارائه فولدر build به عنوان استاتیک
         this.app.use(express.static(join(__dirname, "client/build")));

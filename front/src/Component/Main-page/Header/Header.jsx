@@ -29,7 +29,6 @@ export const Header = () => {
                 {/* Navigation Links for Desktop */}
                 <div className="hidden md:flex items-center space-x-6">
                     <Link to="/" className="hover:text-blue-600 transition-colors">صفحه اصلی</Link>
-                    <Link to="/cooperativeManagement" className="hover:text-blue-600 transition-colors">صفحه ادمین</Link>
 
                     {user ? (
                         <>
@@ -67,7 +66,6 @@ export const Header = () => {
                 }`}
             >
                 <Link to="/" className="block py-2 hover:text-blue-600 transition-colors">صفحه اصلی</Link>
-                <Link to="/cooperativeManagement" className="hover:text-blue-600 transition-colors">صفحه ادمین</Link>
 
                 {user ? (
                     <>
