@@ -17,6 +17,7 @@ const ticketRoutes = require('./routes/ticketsRoute');
 const adminRoutes = require('./AAA/routes/AdminRoutes');
 const seatsRoutes = require('./routes/SeatStatusRouter');
 const amanatRoutes = require('./routes/AmanatRoutes');
+const {join, join} = require("path");
 
 class Server {
     constructor() {
@@ -49,9 +50,9 @@ class Server {
         this.app.use('/driverreports', driverRoutes);
 
         this.app.use('/bus', busRoutes);
-/*
-        this.app.use('/Route', routeRoutes);
-*/
+        /*
+                this.app.use('/Route', routeRoutes);
+        */
         this.app.use('/busMovement', busMovement);
         this.app.use('/services', servicesRoutes);
         this.app.use('/tickets', ticketRoutes);
@@ -62,6 +63,12 @@ class Server {
     }
 
     startServer() {
+
+// ارائه فولدر build به عنوان استاتیک
+        this.app.use(express.static(join(__dirname, "client/build")));
+        this.app.get("*", (req, res) => {
+            res.sendFile(join(__dirname, "client/build", "index.html"));
+        });
         this.app.listen(this.port, () => {
             console.log(`Server is running on port ${this.port}`);
         });

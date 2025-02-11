@@ -44,7 +44,7 @@ export default function Cooperative() {
     const onSubmit = async (data) => {
         try {
             if (isEdit && currentCooperative) {
-                await axios.patch(`http://localhost:5000/coperative/updatecoperative/${currentCooperative.CoperativeName}`, data, {
+                await api.patch(`/coperative/updatecoperative/${currentCooperative.CoperativeName}`, data, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -53,7 +53,7 @@ export default function Cooperative() {
                     coop.CoperativeName === currentCooperative.CoperativeName ? {...coop, ...data} : coop
                 ));
             } else {
-                const response = await axios.post('http://localhost:5000/coperative/registercoperative', {
+                const response = await api.post('/coperative/registercoperative', {
                     CoperativeName: data.CoperativeName,
                     CoperativeManagement: data.CoperativeManagement
                 }, {
@@ -73,7 +73,7 @@ export default function Cooperative() {
 
     const handleDelete = async (cooperativeName) => {
         try {
-            await axios.delete(`http://localhost:5000/coperative/deletecoperative/${cooperativeName}`, {
+            await api.delete(`/coperative/deletecoperative/${cooperativeName}`, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
