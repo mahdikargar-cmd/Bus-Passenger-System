@@ -58,26 +58,36 @@ const ServiceDetail = () => {
     };
     const fetchReservedSeats = useCallback(async () => {
         try {
-            if (!serviceId) return; // Add this check
+            if (!serviceId) {
+                console.log('No serviceId available yet');
+                return;
+            }
 
-            const response = await api.get(`tickets/reserved-seats/${serviceId}`);
-            const reservedSeats = new Set(
-                response.data.map(ticket => ticket.seatInfo.seatNumber)
-            );
+            const response = await api.get(`/seats/${serviceId}`);
+            const seatStatuses = response.data;
 
             setState(prev => ({
                 ...prev,
-                seatStatuses: Array.from({length: prev.service?.ChairCapacity?.capacity || 44},
+                seatStatuses: seatStatuses.map(seat => ({
+                    seatNumber: seat.seatNumber,
+                    isOccupied: seat.isOccupied
+                }))
+            }));
+        } catch (error) {
+            console.error('Error fetching seat statuses:', error);
+            // Initialize with default empty seats if there's an error
+            const totalSeats = state.service?.ChairCapacity?.capacity || 44;
+            setState(prev => ({
+                ...prev,
+                seatStatuses: Array.from({ length: totalSeats },
                     (_, index) => ({
                         seatNumber: index + 1,
-                        isOccupied: reservedSeats.has(index + 1)
+                        isOccupied: false
                     })
                 )
             }));
-        } catch (error) {
-            console.error('خطا در دریافت اطلاعات صندلی‌های رزرو شده:', error);
         }
-    }, [serviceId]);
+    }, [serviceId, state.service?.ChairCapacity?.capacity]);
     const loadInitialData = useCallback(() => {
         try {
             const storedService = localStorage.getItem('selectedService');
@@ -191,21 +201,16 @@ const ServiceDetail = () => {
         }
 
         try {
-            // Check seat availability
-            const {data: reservedSeats} = await api.get(
-                `tickets/reserved-seats/${serviceId}`
-            );
+            // First update the seat status
+            await api.patch(`/seats/${serviceId}/${state.selectedSeat}`, {
+                isOccupied: true,
+                ticketNumber: Math.floor(10000000 + Math.random() * 90000000).toString()
+            });
 
-            if (reservedSeats.some(seat => seat.seatNumber === state.selectedSeat)) {
-                alert('این صندلی قبلاً رزرو شده است. لطفاً صندلی دیگری انتخاب کنید.');
-                await fetchReservedSeats();
-                setState(prev => ({...prev, selectedSeat: null}));
-                return;
-            }
-
+            // Then create the ticket
             const ticketNumber = Math.floor(10000000 + Math.random() * 90000000).toString();
             const bookingData = {
-                passengerInfo: {...state.formData},
+                passengerInfo: { ...state.formData },
                 seatInfo: {
                     seatNumber: state.selectedSeat,
                     isOccupied: true,
@@ -213,7 +218,7 @@ const ServiceDetail = () => {
                 },
                 serviceInfo: {
                     serviceId,
-                    companyName: state.service.CompanyName.CoperativeName,
+                    companyName: state.service.CompanyName,
                     origin: state.service.SelectedRoute.origin.Cities,
                     destination: state.service.SelectedRoute.destination.Cities,
                     movementDate: state.service.movementDate.moveDate,
@@ -226,28 +231,18 @@ const ServiceDetail = () => {
                 paymentStatus: 'pending',
             };
 
-            // Update seat status and create ticket
-            await Promise.all([
-                api.patch(`seats/${serviceId}/${state.selectedSeat}`, {
-                    isOccupied: true,
-                    ticketNumber,
-                }),
-                api.post(`tickets/addTicket`, bookingData)
-            ]);
+            await api.post(`/tickets/addTicket`, bookingData);
 
             // Save booking data and navigate
             localStorage.setItem('bookingData', JSON.stringify(bookingData));
-            const bookingHistory = JSON.parse(localStorage.getItem('bookingHistory') || '[]');
-            bookingHistory.push(bookingData);
-            localStorage.setItem('bookingHistory', JSON.stringify(bookingHistory));
-
             navigate('/confirm');
         } catch (error) {
             console.error('Error submitting form:', error);
             alert('خطا در ثبت اطلاعات. لطفا دوباره تلاش کنید.');
+            // Refresh seat statuses in case of error
+            await fetchReservedSeats();
         }
     };
-
     if (state.loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
