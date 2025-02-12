@@ -100,7 +100,7 @@
       <recent name="F:\Uni_project\travel\Backend\AAA\routes" />
     </key>
   </component>
-  <component name="RunManager" selected="npm.front start">
+  <component name="RunManager" selected="npm.build">
     <configuration name="beckend start" type="js.build_tools.npm" temporary="true">
       <package-json value="$PROJECT_DIR$/Backend/package.json" />
       <command value="run" />
@@ -149,9 +149,9 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="npm.build" />
         <item itemvalue="npm.dev" />
         <item itemvalue="npm.beckend start" />
-        <item itemvalue="npm.build" />
         <item itemvalue="npm.front start" />
       </list>
     </recent_temporary>

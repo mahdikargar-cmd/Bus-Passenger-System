@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Header } from '../Main-page/Header/Header';
 import { Footer } from '../Main-page/Footer/Footer';
 import { Printer, Ticket, User, MapPin, Calendar, CreditCard } from 'lucide-react';
 import moment from "moment-jalaali";

@@ -60,7 +60,7 @@ const ServiceDetail = () => {
             // دریافت همزمان اطلاعات از هر دو API
             const [ apiResponse] = await Promise.all([
 
-                api.get(`/tickets/reserved-seats/${serviceId}`)
+                api.get(`tickets/reserved-seats/${serviceId}`)
             ]);
 
             const reservedSeats = new Set([
