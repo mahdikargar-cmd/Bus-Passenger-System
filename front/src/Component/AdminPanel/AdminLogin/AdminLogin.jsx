@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../../AuthContext/AuthContext';
-import api from "../../../api"; // وارد کردن AuthContext
+import api from "../../../Services/Api"; // وارد کردن AuthContext
 
 export const AdminLogin = () => {
     const Navigate = useNavigate();
@@ -16,7 +16,7 @@ export const AdminLogin = () => {
 
     const onSubmit = async (data) => {
         try {
-            const response = await api.post("/admin/loginAdmin", {
+            const response = await api.post("admin/loginAdmin", {
                 user: data.user,
                 password: data.password,
             });

@@ -32,7 +32,7 @@ export const ManagementOfBuses = () => {
 
     const fetchBuses = async () => {
         try {
-            const response = await api.get("/bus");
+            const response = await api.get("bus");
             setBuses(response.data);
         } catch (error) {
             console.error("Error fetching buses", error);
@@ -41,7 +41,7 @@ export const ManagementOfBuses = () => {
 
     const fetchDrivers = async () => {
         try {
-            const response = await api.get("/driver");
+            const response = await api.get("driver");
             setDrivers(response.data);
         } catch (error) {
             console.error("Error fetching drivers", error);
@@ -50,7 +50,7 @@ export const ManagementOfBuses = () => {
 
     const fetchCooperatives = async () => {
         try {
-            const response = await api.get("/coperative");
+            const response = await api.get("coperative");
             setCooperatives(response.data);
         } catch (error) {
             console.error("Error fetching cooperatives", error);
@@ -59,7 +59,7 @@ export const ManagementOfBuses = () => {
 
     const fetchDestinations = async () => {
         try {
-            const response = await api.get("/destination");
+            const response = await api.get("destination");
             setDestinations(response.data);
         } catch (error) {
             console.error("Error fetching destinations", error);
@@ -90,13 +90,13 @@ export const ManagementOfBuses = () => {
 
             if (isEdit && currentBus) {
                 // Edit existing bus
-                await api.patch(`/bus/updateBus/${currentBus._id}`, data, {
+                await api.patch(`bus/updateBus/${currentBus._id}`, data, {
                     headers: {'Content-Type': 'application/json'}
                 });
                 setBuses(buses.map(item => item._id === currentBus._id ? {...item, ...data} : item));
             } else {
                 // Add new bus
-                const response = await api.post("/bus/registerBus", data, {
+                const response = await api.post("bus/registerBus", data, {
                     headers: {'Content-Type': 'application/json'}
                 });
                 setBuses([...buses, response.data]);

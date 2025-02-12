@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from "react";
 import Modal from "react-modal";
 import {useForm} from "react-hook-form";
-import axios from "axios";
-import api from "../../../api";
+import api from "../../../Services/Api"; // وارد کردن AuthContext
+
 
 export default function Cooperative() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,7 +14,7 @@ export default function Cooperative() {
     useEffect(() => {
         const fetchCooperatives = async () => {
             try {
-                const response = await api.get('/coperative');
+                const response = await api.get('coperative');
                 setCooperatives(response.data);
             } catch (error) {
                 console.error("Error fetching cooperatives", error);
@@ -44,7 +44,7 @@ export default function Cooperative() {
     const onSubmit = async (data) => {
         try {
             if (isEdit && currentCooperative) {
-                await api.patch(`/coperative/updatecoperative/${currentCooperative.CoperativeName}`, data, {
+                await api.patch(`coperative/updatecoperative/${currentCooperative.CoperativeName}`, data, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -53,7 +53,7 @@ export default function Cooperative() {
                     coop.CoperativeName === currentCooperative.CoperativeName ? {...coop, ...data} : coop
                 ));
             } else {
-                const response = await api.post('/coperative/registercoperative', {
+                const response = await api.post('coperative/registercoperative', {
                     CoperativeName: data.CoperativeName,
                     CoperativeManagement: data.CoperativeManagement
                 }, {
@@ -73,7 +73,7 @@ export default function Cooperative() {
 
     const handleDelete = async (cooperativeName) => {
         try {
-            await api.delete(`/coperative/deletecoperative/${cooperativeName}`, {
+            await api.delete(`coperative/deletecoperative/${cooperativeName}`, {
                 headers: {
                     'Content-Type': 'application/json'
                 }

@@ -6,7 +6,7 @@ import { useAuth } from "../AuthContext/AuthContext";
 import logo from "../../Assets/images/safarino-Photoroom.png";
 import { FaApple, FaGoogle } from "react-icons/fa";
 import { CgArrowLongRight } from "react-icons/cg";
-import api from "../../api";
+import api from "../../Services/Api";
 
 export const Login = () => {
     const navigate = useNavigate();
@@ -16,7 +16,7 @@ export const Login = () => {
 
     const onSubmit = async (data) => {
         try {
-            const response = await api.post("/users/login", {
+            const response = await api.post("users/login", {
                 phoneNumber: data.phoneNumber,
             });
             console.log("Login successfully", response.data);

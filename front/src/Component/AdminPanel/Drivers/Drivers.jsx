@@ -25,7 +25,7 @@ export const Drivers = () => {
 
     const fetchDrivers = async () => {
         try {
-            const response = await api.get("/driver");
+            const response = await api.get("driver");
             setDriver(response.data);
         } catch (error) {
             console.error("Error fetching drivers:", error);
@@ -45,12 +45,12 @@ export const Drivers = () => {
 
         try {
             if (isEdit && currentDriver) {
-                const response = await api.patch(`/driver/updateDriver/${currentDriver._id}`, data, {
+                const response = await api.patch(`driver/updateDriver/${currentDriver._id}`, data, {
                     headers: { 'Content-Type': 'application/json' }
                 });
                 setDriver(driver.map(item => item._id === currentDriver._id ? response.data.data.Driver : item));
             } else {
-                const response = await api.post("/driver/registerDriver", data, {
+                const response = await api.post("driver/registerDriver", data, {
                     headers: { 'Content-Type': 'application/json' }
                 });
                 setDriver([...driver, response.data.data.Driver]);
@@ -93,7 +93,7 @@ export const Drivers = () => {
     const handleDeleteDriver = async (id) => {
         if (window.confirm("آیا از حذف این راننده اطمینان دارید؟")) {
             try {
-                await api.delete(`/driver/deleteDriver/${id}`, {
+                await api.delete(`driver/deleteDriver/${id}`, {
                     headers: { 'Content-Type': 'application/json' }
                 });
                 setDriver(driver.filter(item => item._id !== id));

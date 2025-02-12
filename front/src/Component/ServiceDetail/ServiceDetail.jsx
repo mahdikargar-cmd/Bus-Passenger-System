@@ -56,38 +56,30 @@ const ServiceDetail = () => {
         );
     };
     const fetchReservedSeats = useCallback(async () => {
-        if (!serviceId) {
-            console.warn('No serviceId available');
-            return;
-        }
-
         try {
-            const response = await api.get(`/seats/${serviceId}`);
-            if (response.data) {
-                setState(prev => ({
-                    ...prev,
-                    seatStatuses: response.data.map(seat => ({
-                        seatNumber: seat.seatNumber,
-                        isOccupied: seat.isOccupied
-                    }))
-                }));
-            }
-        } catch (error) {
-            console.error('Error fetching seat statuses:', error);
-            // Initialize with default empty seats if there's an error
-            const totalSeats = state.service?.ChairCapacity?.capacity || 44;
+            // دریافت همزمان اطلاعات از هر دو API
+            const [ apiResponse] = await Promise.all([
+
+                api.get(`/tickets/reserved-seats/${serviceId}`)
+            ]);
+
+            const reservedSeats = new Set([
+                ...apiResponse.data.map(ticket => ticket.seatInfo.seatNumber)
+            ]);
+
             setState(prev => ({
                 ...prev,
-                seatStatuses: Array.from({ length: totalSeats },
+                seatStatuses: Array.from({length: prev.service?.ChairCapacity?.capacity || 44},
                     (_, index) => ({
                         seatNumber: index + 1,
-                        isOccupied: false
+                        isOccupied: reservedSeats.has(index + 1)
                     })
                 )
             }));
+        } catch (error) {
+            console.error('خطا در دریافت اطلاعات صندلی‌های رزرو شده:', error);
         }
-    }, [serviceId, state.service?.ChairCapacity?.capacity]);
-    const loadInitialData = useCallback(async () => {
+    }, [serviceId]);    const loadInitialData = useCallback(() => {
         try {
             const storedService = localStorage.getItem('selectedService');
             if (!storedService) {
@@ -96,22 +88,19 @@ const ServiceDetail = () => {
             }
 
             const parsedService = JSON.parse(storedService);
+            const totalSeats = parsedService?.ChairCapacity?.capacity || 44;
+            const initialSeatStatuses = Array.from({length: totalSeats},
+                (_, index) => ({
+                    seatNumber: index + 1,
+                    isOccupied: false
+                })
+            );
+
             setState(prev => ({
                 ...prev,
                 service: parsedService,
+                seatStatuses: initialSeatStatuses,
                 loading: false
-            }));
-
-            // Initialize seat statuses after loading service
-            const totalSeats = parsedService?.ChairCapacity?.capacity || 44;
-            setState(prev => ({
-                ...prev,
-                seatStatuses: Array.from({ length: totalSeats },
-                    (_, index) => ({
-                        seatNumber: index + 1,
-                        isOccupied: false
-                    })
-                )
             }));
         } catch (error) {
             console.error('Error loading initial data:', error);
@@ -216,7 +205,7 @@ const ServiceDetail = () => {
             const ticketNumber = Math.floor(10000000 + Math.random() * 90000000).toString();
 
             // First update the seat status
-            await api.patch(`/seats/${serviceId}/${state.selectedSeat}`, {
+            await api.patch(`seats/${serviceId}/${state.selectedSeat}`, {
                 isOccupied: true,
                 ticketNumber
             });
@@ -230,13 +219,14 @@ const ServiceDetail = () => {
                     ticketNumber,
                 },
                 serviceInfo: {
-                    serviceId,
-                    companyName: state.service.CompanyName,
-                    origin: state.service.SelectedRoute.origin.Cities,
-                    destination: state.service.SelectedRoute.destination.Cities,
-                    movementDate: state.service.movementDate.moveDate,
-                    chairCapacity: state.service.ChairCapacity.capacity,
-                    ticketPrice: state.service.ticketPrice,
+                    serviceId: serviceId,
+                    // Match the backend model's expected structure
+                    companyName: state.service.CompanyName?.CoperativeName || '',
+                    origin: state.service.SelectedRoute?.origin?.Cities || '',
+                    destination: state.service.SelectedRoute?.destination?.Cities || '',
+                    movementDate: new Date(state.service.movementDate?.moveDate).toISOString(),
+                    chairCapacity: state.service.ChairCapacity?.capacity || 0,
+                    ticketPrice: state.service.ticketPrice || 0,
                 },
                 ticketNumber,
                 bookingDate: new Date().toISOString(),
@@ -244,8 +234,9 @@ const ServiceDetail = () => {
                 paymentStatus: 'pending',
             };
 
+
             // Create the ticket
-            await api.post(`/tickets/addTicket`, bookingData);
+            await api.post(`tickets/addTicket`, bookingData);
 
             // Save booking data and navigate
             localStorage.setItem('bookingData', JSON.stringify(bookingData));
@@ -270,21 +261,30 @@ const ServiceDetail = () => {
                     <MapPin className="w-6 h-6" />
                     <div>
                         <p className="text-sm opacity-75">مسیر</p>
-                        <p className="font-bold">{service?.SelectedRoute?.origin?.Cities} به {service?.SelectedRoute?.destination?.Cities}</p>
+                        <p className="font-bold">
+                            {service?.SelectedRoute?.origin?.Cities?.name || service?.SelectedRoute?.origin?.Cities || 'N/A'} به{' '}
+                            {service?.SelectedRoute?.destination?.Cities?.name || service?.SelectedRoute?.destination?.Cities || 'N/A'}
+                        </p>
                     </div>
                 </div>
                 <div className="flex items-center space-x-3">
                     <Calendar className="w-6 h-6" />
                     <div>
                         <p className="text-sm opacity-75">تاریخ حرکت</p>
-                        <p className="font-bold">{service?.movementDate?.moveDate}</p>
+                        <p className="font-bold">{typeof service?.movementDate?.moveDate === 'object' ?
+                            service?.movementDate?.moveDate?.toString() :
+                            service?.movementDate?.moveDate || 'N/A'}</p>
                     </div>
                 </div>
                 <div className="flex items-center space-x-3">
                     <CreditCard className="w-6 h-6" />
                     <div>
                         <p className="text-sm opacity-75">قیمت بلیط</p>
-                        <p className="font-bold">{service?.ticketPrice?.toLocaleString()} تومان</p>
+                        <p className="font-bold">
+                            {typeof service?.ticketPrice === 'number' ?
+                                service?.ticketPrice?.toLocaleString() :
+                                'N/A'} تومان
+                        </p>
                     </div>
                 </div>
             </div>

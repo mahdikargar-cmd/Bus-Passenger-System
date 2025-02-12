@@ -100,7 +100,7 @@
       <recent name="F:\Uni_project\travel\Backend\AAA\routes" />
     </key>
   </component>
-  <component name="RunManager" selected="npm.dev">
+  <component name="RunManager" selected="npm.front start">
     <configuration name="beckend start" type="js.build_tools.npm" temporary="true">
       <package-json value="$PROJECT_DIR$/Backend/package.json" />
       <command value="run" />

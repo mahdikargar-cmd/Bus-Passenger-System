@@ -33,7 +33,7 @@ export const AdminServices = () => {
 
     const fetchCities = async () => {
         try {
-            const response = await api.get("/destination");
+            const response = await api.get("destination");
             setCities(response.data);
         } catch (error) {
             console.error("Error fetching cities", error);
@@ -42,7 +42,7 @@ export const AdminServices = () => {
 
     const fetchCooperatives = async () => {
         try {
-            const response = await api.get("/coperative");
+            const response = await api.get("coperative");
             setCoperative(response.data);
         } catch (error) {
             console.error("Error fetching cooperatives", error);
@@ -51,7 +51,7 @@ export const AdminServices = () => {
 
     const fetchServicesOptions = async () => {
         try {
-            const response = await api.get("/services");
+            const response = await api.get("services");
             setServices(response.data);
         } catch (error) {
             console.error("Error fetching Services", error);
@@ -60,7 +60,7 @@ export const AdminServices = () => {
 
     const fetchRoutes = async () => {
         try {
-            const response = await api.get("/busMovement");
+            const response = await api.get("busMovement");
             setRoutes(response.data);
         } catch (error) {
             console.error("Error fetching routes", error);
@@ -85,7 +85,7 @@ export const AdminServices = () => {
 
     const fetchBuses = async () => {
         try {
-            const response = await api.get("/bus"); //BusManagement
+            const response = await api.get("bus"); //BusManagement
             setBusManagement(response.data);
             setCapacities(response.data.map(bus => ({value: bus._id, label: bus.capacity})));
         } catch (error) {
@@ -94,7 +94,7 @@ export const AdminServices = () => {
     };
     const handleEdit = async (serviceId) => {
         try {
-            const response = await api.get(`/services/${serviceId}`);
+            const response = await api.get(`services/${serviceId}`);
             const serviceData = response.data;
 
             // Set the form data
@@ -124,7 +124,7 @@ export const AdminServices = () => {
     const handleDelete = async (serviceId) => {
         if (window.confirm('آیا از حذف این سرویس اطمینان دارید؟')) {
             try {
-                await api.delete(`/services/deleteService/${serviceId}`);
+                await api.delete(`services/deleteService/${serviceId}`);
                 fetchServicesOptions(); // Refresh the list
             } catch (error) {
                 console.error('Error deleting service:', error);
@@ -157,8 +157,8 @@ export const AdminServices = () => {
             };
 
             const response = editingServiceId
-                ? await api.patch(`/services/updateService/${editingServiceId}`, newService)
-                : await api.post("/services/registerService", newService);
+                ? await api.patch(`services/updateService/${editingServiceId}`, newService)
+                : await api.post("services/registerService", newService);
 
             if (response.status === 201 || response.status === 200) {
                 fetchServicesOptions();

@@ -50,7 +50,7 @@ export const Confirm = () => {
         };
 
         try {
-            const response = await fetch('https://safarino.onrender.com/tickets/addTicket', {
+            const response = await fetch('http://localhost:5000/tickets/addTicket', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedTicketData),

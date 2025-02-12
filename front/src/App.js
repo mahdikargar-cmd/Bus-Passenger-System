@@ -27,7 +27,7 @@ function App() {
                 <Route path='/userPanel' element={<UserPanel/>}/>
                 <Route path='/cooperativeManagement' element={<AdminPanel/>}/>
                 <Route path='/services' element={<Services/>}/>
-                <Route path='/services/se/:serviceId' element={<ServiceDetail/>}/>
+                <Route path='/services/:serviceId' element={<ServiceDetail/>}/>
                 <Route path={'/confirm'} element={<Confirm/>}/>
                 <Route path={'/payment'} element={<Payment/>}/>
                 <Route path="/tickets" element={<TicketDisplay/>}/>

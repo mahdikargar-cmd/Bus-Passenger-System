@@ -2,7 +2,7 @@ import React, {useState, useEffect} from "react";
 import Modal from "react-modal";
 import {useForm} from "react-hook-form";
 import axios from "axios";
-import api from "../../../api";
+import api from "../../../Services/Api"; // وارد کردن AuthContext
 
 export default function Amanat() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,7 +46,7 @@ export default function Amanat() {
     const onSubmit = async (data) => {
         try {
             if (isEdit && currentCooperative) {
-                await axios.patch(`http://localhost:5000/amanat/updateAmanat/${currentCooperative.user}`, {
+                await api.patch(`amanat/updateAmanat/${currentCooperative.user}`, {
                     user: data.user,
                     weight: data.weight,
                     phoneNumber: data.phoneNumber
@@ -59,7 +59,7 @@ export default function Amanat() {
                     coop.user === currentCooperative.user ? {...coop, ...data} : coop
                 ));
             } else {
-                const response = await axios.post('http://localhost:5000/amanat/registerAmanat', {
+                const response = await api.post('amanat/registerAmanat', {
                     user: data.user,
                     weight: data.weight,
                     phoneNumber: data.phoneNumber
@@ -80,7 +80,7 @@ export default function Amanat() {
 
     const handleDelete = async (user) => {
         try {
-            await axios.delete(`http://localhost:5000/amanat/deleteAmanat/${user}`, {
+            await api.delete(`amanat/deleteAmanat/${user}`, {
                 headers: {
                     'Content-Type': 'application/json'
                 }

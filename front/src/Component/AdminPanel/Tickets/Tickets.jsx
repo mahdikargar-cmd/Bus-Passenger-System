@@ -1,4 +1,3 @@
-import {useForm} from "react-hook-form";
 import React, {useState} from "react";
 import {BiEdit} from "react-icons/bi";
 import {AiFillDelete} from "react-icons/ai";
