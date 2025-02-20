@@ -93,11 +93,11 @@
       <recent name="F:\Uni_project\travel\front\src\Component" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="F:\Uni_project\travel\Backend\public" />
+      <recent name="F:\Uni_project\travel\front\public" />
       <recent name="F:\Uni_project\travel\front" />
       <recent name="F:\Uni_project\travel\Backend\view" />
       <recent name="F:\Uni_project\travel\front\src\Component\contexts" />
-      <recent name="F:\Uni_project\travel\front\src\Component\UserPanel" />
-      <recent name="F:\Uni_project\travel\Backend\AAA\routes" />
     </key>
   </component>
   <component name="RunManager" selected="npm.build">
@@ -150,8 +150,8 @@
     <recent_temporary>
       <list>
         <item itemvalue="npm.build" />
-        <item itemvalue="npm.dev" />
         <item itemvalue="npm.beckend start" />
+        <item itemvalue="npm.dev" />
         <item itemvalue="npm.front start" />
       </list>
     </recent_temporary>
@@ -269,6 +269,7 @@
       <workItem from="1739291464423" duration="7279000" />
       <workItem from="1739312799597" duration="1432000" />
       <workItem from="1739314725278" duration="1776000" />
+      <workItem from="1740075802899" duration="408000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />

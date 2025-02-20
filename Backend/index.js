@@ -41,6 +41,8 @@ class Server {
             origin: 'https://safarinoo.onrender.com'
         }));
         this.app.use(bodyParser.json());
+        this.app.use(express.static(join(__dirname, "public")));
+
     }
 
     setupRoutes() {
