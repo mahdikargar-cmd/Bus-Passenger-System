@@ -292,7 +292,7 @@ const ServiceDetail = () => {
     );
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen dark:bg-dark-black bg-gray-50">
             <div className="max-w-7xl mx-auto px-4 py-8">
                 {state.service && <ServiceHeader service={state.service} />}
 
@@ -304,7 +304,7 @@ const ServiceDetail = () => {
                             <h2 className="text-2xl font-bold text-gray-800">اطلاعات مسافر</h2>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 dark:bg-gray-800">
                             {Object.entries(state.formData).map(([field, value]) => (
                                 <div key={field} className="space-y-2">
                                     <label className="block text-gray-700 font-medium">
@@ -345,7 +345,7 @@ const ServiceDetail = () => {
                     </div>
 
                     {/* Seat Selection */}
-                    <div className="bg-white rounded-2xl shadow-lg p-6">
+                    <div className="bg-white rounded-2xl shadow-lg p-6 dark:bg-gray-800">
                         <div className="flex items-center space-x-2 mb-6">
                             <Clock className="w-6 h-6 text-blue-600" />
                             <h2 className="text-2xl font-bold text-gray-800">انتخاب صندلی</h2>

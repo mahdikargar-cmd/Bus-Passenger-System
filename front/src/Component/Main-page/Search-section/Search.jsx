@@ -74,7 +74,7 @@ export const Search = () => {
     );
 
     return (
-        <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="bg-white rounded-lg shadow-lg dark:bg-gray-800 dark:text-white p-6">
             <h1 className="text-xl md:text-2xl font-bold text-center mb-6">خرید بلیط اتوبوس</h1>
 
             <div className="space-y-4">

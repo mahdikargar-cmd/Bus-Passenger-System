@@ -107,7 +107,7 @@ export const Services = () => {
                 <Header />
             </div>
 
-            <div className="container mx-auto px-4 py-6">
+            <div className="container mx-auto px-4 py-6 dark:bg-dark-black">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <div className="lg:col-span-4">
                         <div className="sticky top-24">
@@ -123,7 +123,7 @@ export const Services = () => {
                         </div>
 
                         {apiServices.length === 0 ? (
-                            <div className="bg-white p-6 rounded-lg shadow text-center">
+                            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow text-center">
                                 <p className="text-gray-600">هیچ سرویسی برای مسیر انتخابی یافت نشد.</p>
                             </div>
                         ) : (
@@ -131,8 +131,7 @@ export const Services = () => {
                                 {apiServices.map((item, index) => (
                                     <div
                                         key={item._id || index}
-                                        className="bg-white rounded-lg shadow-lg p-4 transition-transform duration-300 hover:scale-[1.02]"
-                                    >
+                                        className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 transition-transform duration-300 hover:scale-[1.02]">
                                         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
                                             <div className="flex items-center gap-2">
                                                 <FaBus className="text-gray-500" />

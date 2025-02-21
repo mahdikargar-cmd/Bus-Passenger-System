@@ -32,9 +32,7 @@ function App() {
                 <Route path={'/payment'} element={<Payment/>}/>
                 <Route path="/tickets" element={<TicketDisplay/>}/>
                 <Route path="/print-ticket" element={<PrintTicket/>}/>
-
                 <Route path='/admin' element={<AdminLogin/>}/>
-
                 <Route path="/services/:serviceId" element={<ServiceDetail/>} />
                 <Route path='/ComplaintsManagement' element={<ComplaintsManagement/>}/>
                 <Route path='/notfound' element={<NotFound/>}/>
