@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/static/css/main.757fbc8a.css",
-    "main.js": "/static/js/main.71114579.js",
+    "main.css": "/static/css/main.576f1181.css",
+    "main.js": "/static/js/main.952e41a0.js",
     "static/js/453.80efc53e.chunk.js": "/static/js/453.80efc53e.chunk.js",
     "static/media/bus-background.jpg": "/static/media/bus-background.f4c23951dee866d55d6e.jpg",
     "static/media/safarino-Photoroom.png": "/static/media/safarino-Photoroom.719eca3918da2f7fd4df.png",
     "static/media/me.jpg": "/static/media/me.49103599b2c3ac9d5065.jpg",
     "index.html": "/index.html",
     "static/media/Decore.svg": "/static/media/Decore.2f2437d999319e11a2d6f5a5ef4a1e01.svg",
-    "main.757fbc8a.css.map": "/static/css/main.757fbc8a.css.map",
-    "main.71114579.js.map": "/static/js/main.71114579.js.map",
+    "main.576f1181.css.map": "/static/css/main.576f1181.css.map",
+    "main.952e41a0.js.map": "/static/js/main.952e41a0.js.map",
     "453.80efc53e.chunk.js.map": "/static/js/453.80efc53e.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.757fbc8a.css",
-    "static/js/main.71114579.js"
+    "static/css/main.576f1181.css",
+    "static/js/main.952e41a0.js"
   ]
 }

@@ -100,7 +100,7 @@
       <recent name="F:\Uni_project\travel\front\src\Component\contexts" />
     </key>
   </component>
-  <component name="RunManager" selected="npm.front start">
+  <component name="RunManager" selected="npm.build">
     <configuration name="beckend start" type="js.build_tools.npm" temporary="true">
       <package-json value="$PROJECT_DIR$/Backend/package.json" />
       <command value="run" />
@@ -149,9 +149,9 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="npm.build" />
         <item itemvalue="npm.beckend start" />
         <item itemvalue="npm.dev" />
-        <item itemvalue="npm.build" />
         <item itemvalue="npm.front start" />
       </list>
     </recent_temporary>
@@ -278,7 +278,7 @@
       <workItem from="1740374202483" duration="164000" />
       <workItem from="1740385120549" duration="4344000" />
       <workItem from="1740414646426" duration="37000" />
-      <workItem from="1740567077883" duration="1617000" />
+      <workItem from="1740567077883" duration="2172000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />
