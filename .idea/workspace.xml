@@ -60,7 +60,7 @@
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;javascript.nodejs.core.library.configured.version&quot;: &quot;21.0.0&quot;,
-    &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;22.10.7&quot;,
+    &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;22.13.5&quot;,
     &quot;last_opened_file_path&quot;: &quot;F:/Uni_project/travel/front/src/Component&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -68,7 +68,7 @@
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.tools&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;inlay.hints&quot;,
     &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\WebStorm 2023.2.3\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -149,9 +149,9 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="npm.build" />
         <item itemvalue="npm.beckend start" />
         <item itemvalue="npm.dev" />
+        <item itemvalue="npm.build" />
         <item itemvalue="npm.front start" />
       </list>
     </recent_temporary>
@@ -271,6 +271,14 @@
       <workItem from="1739314725278" duration="1776000" />
       <workItem from="1740075802899" duration="3962000" />
       <workItem from="1740118947326" duration="1082000" />
+      <workItem from="1740120170608" duration="12000" />
+      <workItem from="1740207906007" duration="5000" />
+      <workItem from="1740221373466" duration="251000" />
+      <workItem from="1740223559409" duration="680000" />
+      <workItem from="1740374202483" duration="164000" />
+      <workItem from="1740385120549" duration="4344000" />
+      <workItem from="1740414646426" duration="37000" />
+      <workItem from="1740567077883" duration="1617000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />

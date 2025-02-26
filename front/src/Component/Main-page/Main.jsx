@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 
 export const Main = () => {
     return (
-        <div className="bg-[#f6f6f9] dark:bg-dark-black min-h-screen font-sans">
+        <div className="bg-[#f6f6f9] dark:bg-dark-black min-h-screen font-sans " dir={'rtl'}>
             {/* Hero Section */}
             <div
                 className="relative grid grid-cols-12 items-center justify-center h-[400px] md:h-[500px] lg:h-[600px] bg-no-repeat bg-cover px-6 sm:px-10"
@@ -18,7 +18,7 @@ export const Main = () => {
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
-                    className="col-span-12 md:col-span-6 text-center md:text-left"
+                    className="col-span-12 md:col-span-6 text-center md:text-right"
                 >
                     <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 dark:text-white leading-tight">
                         سفر کنید، لذت ببرید <br /> و یک زندگی جدید داشته باشید
@@ -39,12 +39,15 @@ export const Main = () => {
             </div>
 
             {/* Services Section */}
-            <div className="py-12 sm:py-16 bg-white dark:bg-gray-800 text-center px-4 sm:px-8">
-                <h2 className="text-3xl sm:text-4xl font-bold mb-6 sm:mb-8 text-gray-900 dark:text-white">
+            <div className=" py-12 sm:py-16 bg-white dark:bg-gray-800 text-center px-4 sm:px-8">
+                <h2 className="text-3xl  flex justify-center text-center sm:text-4xl font-bold mb-6 sm:mb-8 text-gray-900 dark:text-white">
                     بهترین خدمات ما برای شما
                 </h2>
-                <InfoSection />
+                <div className="flex mt-20 justify-center">
+                    <InfoSection />
+                </div>
             </div>
+
 
             {/* Accordion Menu */}
             <div className="bg-white dark:bg-gray-800 py-12 sm:py-16 px-4 sm:px-8">
