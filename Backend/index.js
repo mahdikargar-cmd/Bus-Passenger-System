@@ -31,10 +31,10 @@ class Server {
     connectToDatabase() {
         console.log('MongoDB URI:', process.env.MONGO_URI);
 
-            mongoose.connect("mongodb://localhost:27017/Travel").then(() => console.log('mongodb connected'))
-                .catch(err => console.error('error in mongodb:', err));
-/*        mongoose.connect("mongodb+srv://mahdikargar:13521380@cluster0.pw2b7.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0").then(() => console.log('mongodb connected'))
-            .catch(err => console.error('error in mongodb:', err));*/
+       /*     mongoose.connect("mongodb://localhost:27017/Travel").then(() => console.log('mongodb connected'))
+                .catch(err => console.error('error in mongodb:', err));*/
+        mongoose.connect("mongodb+srv://mahdikargar:13521380@cluster0.pw2b7.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0").then(() => console.log('mongodb connected'))
+            .catch(err => console.error('error in mongodb:', err));
     }
 
     configureMiddleware() {
